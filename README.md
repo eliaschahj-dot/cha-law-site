@@ -86,6 +86,35 @@ public/                     robots.txt, favicon.svg, og.png
 3. 네이버 서치어드바이저·구글 서치 콘솔에서 주소 변경 신청.
 4. 이후 호스팅 해지, 도메인은 만료까지 보유(타인 등록 방지).
 
+## 글·문구 편집 (2026.10.16 추가)
+
+### /admin 편집기 (Decap CMS)
+- 주소: `https://cha-law-site.onrender.com/admin/` — GitHub 계정으로 로그인하면 칼럼(작성·수정·비공개), 업무 분야 13개, 사이트 설정(연락처·표제부·소개·언론·FAQ)을 폼으로 고칠 수 있습니다. 저장하면 GitHub에 커밋되고 2~3분 뒤 사이트에 반영됩니다(자동 배포가 켜져 있을 때).
+- 처음 한 번 설정 (사용자가 직접)
+  1. GitHub → Settings → Developer settings → OAuth Apps → **New OAuth App**
+     - Application name: `cha-law-site admin`
+     - Homepage URL: `https://cha-law-site.onrender.com`
+     - Authorization callback URL: `https://cha-law-site.onrender.com/callback`
+  2. 생성 후 **Client ID**와 **Generate a new client secret**으로 만든 secret을 Render → cha-law-site → Environment에 `GITHUB_OAUTH_CLIENT_ID`, `GITHUB_OAUTH_CLIENT_SECRET`으로 저장.
+  3. 도메인을 바꾸면 OAuth App의 두 URL, `public/admin/config.yml`의 `base_url`·`site_url`, Render의 `SITE_URL`을 함께 바꿉니다.
+- 글 본문에 '무료 상담', '승소 보장', '하루 300명' 같은 표현이 들어가면 빌드가 자동으로 걸러 그 글은 전문 대신 요약만 보입니다(`src/lib/review.ts`). 편집 화면의 '검토 필요 항목'을 비우고 문장을 고치면 전문이 올라갑니다.
+
+### 네이버 블로그 자동 동기화
+- `scripts/naver_sync.py`가 글 목록을 받아 사이트에 없는 글만 내려받고(`.naver-cache/`), 마크다운으로 변환해 `src/content/columns/{logNo}.md`와 `public/columns/{logNo}/NN.webp`를 만듭니다. 회사 상호·CTA 문단 제거, 광고규정 검사는 아카이브 이관과 같은 규칙입니다.
+- GitHub Actions(`.github/workflows/naver-sync.yml`)가 매일 06:00 KST에 실행하고, 새 글이 있으면 커밋·푸시합니다. Actions 탭에서 "Run workflow"로 즉시 실행할 수도 있습니다.
+- 자동 배포까지 이어지려면 둘 중 하나: ① Render → Settings → Deploy Hook 주소를 GitHub 저장소 Settings → Secrets → Actions에 `RENDER_DEPLOY_HOOK`으로 저장, 또는 ② Render의 GitHub 연결에 이 저장소를 추가해 푸시 자동 배포를 켬.
+- 로컬 실행: `npm run sync` (Python 3.12, `pip install requests beautifulsoup4 lxml pillow`). GitHub 러너에서 네이버 접속이 막히면 이 명령을 PC 작업 스케줄러에 등록해 쓰면 됩니다.
+
+### 콘텐츠 파일 구조
+```
+src/content/columns/*.md   칼럼 467편 (네이버 logNo = 파일명). 프런트매터: title, date, section, tags, excerpt, public, review, source, naverUrl
+src/content/areas/*.json   업무 분야 13개
+src/content/site/*.json    연락처(site) · 표제부(trust) · 소개(bio) · 언론(press) · FAQ(faq)
+public/columns/{logNo}/    칼럼 이미지(WebP)
+public/uploads/            편집기에서 올린 이미지
+```
+`src/data/site.ts`·`areas.ts`·`posts.ts`는 위 파일을 읽어 페이지에 넘기는 얇은 층입니다.
+
 ## 블로그 아카이브 이관 (완료 · 2026.10.16)
 
 `../cha-blog-archive`(467편 마크다운 + 이미지 2,082장)를 `scripts/import_archive.py`가 사이트로 옮깁니다.

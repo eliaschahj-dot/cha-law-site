@@ -1,23 +1,14 @@
-export const site = {
-  name: '차형진 변호사',
-  tagline: '부동산 · 상속',
-  url: 'https://chahyungjin.com',
-  description:
-    '부동산과 상속, 분쟁이 되기 전에 설계하고 분쟁이 되면 끝까지 함께합니다. 법무법인 베율 파트너 변호사 차형진. 상담도 재판도 변호사가 직접 합니다.',
-  firm: '법무법인 베율',
-  role: '파트너 변호사',
-  bar: '서울지방변호사회',
-  phone: '070-4571-7668',
-  phoneHref: 'tel:07045717668',
-  kakaoName: '차형진 변호사',
-  kakaoUrl: '', // 카카오톡 채널 개설 후 pf.kakao.com 주소 입력
-  blog: 'https://blog.naver.com/ontracksign',
-  address: '서울 강남구 테헤란로103길 10 길훈빌딩 2층',
-  transit: '지하철 2호선 선릉역 8번 출구 도보 5분',
-  parking: '건물 주차장 이용 가능',
-  hours: '평일 10:00 – 18:00 · 토요일 10:00 – 14:00',
-  closed: '일요일·공휴일 휴무',
-  reply: '24시간 안에 변호사가 직접 연락드립니다',
+// 사이트 설정은 src/content/site/*.json 에 있고 /admin(편집기)에서 고칠 수 있다. 이 파일은 그 JSON을 읽어 내보내기만 한다.
+import siteJson from '../content/site/site.json';
+import trustJson from '../content/site/trust.json';
+import bioJson from '../content/site/bio.json';
+import pressJson from '../content/site/press.json';
+import faqJson from '../content/site/faq.json';
+
+export const site = siteJson as {
+  name: string; tagline: string; url: string; description: string; firm: string; role: string; bar: string;
+  phone: string; phoneHref: string; kakaoName: string; kakaoUrl: string; blog: string;
+  address: string; transit: string; parking: string; hours: string; closed: string; reply: string;
 };
 
 export const nav = [
@@ -29,86 +20,10 @@ export const nav = [
   { href: '/press', label: '언론·활동' },
 ];
 
-/** 표제부: 확인된 사실만. 숫자는 집계 기준을 함께 적는다. */
-export const trust: { k: string; v: string; s: string; n?: number; unit?: string }[] = [
-  { k: '전공', v: '건축학 · 법학 복수전공', s: '도면과 계약서를 함께 읽는 변호사' },
-  { k: '소속', v: '법무법인 베율 파트너', s: '변호사·세무사·회계사 한 팀' },
-  { k: '공익', v: '서울시 공익변호사', s: '2020년부터 활동' },
-  { k: '표창', v: '서울특별시장 표창', s: '2023년 12월' },
-  { k: '위원', v: '변협 성년후견회 전문위원', s: '대한변호사협회 미래청년위원' },
-  { k: '기록', v: '법률 칼럼', n: 460, unit: '편', s: '네이버 블로그 누적 방문 15만 (2026.10 기준)' },
-];
-
-export const bio = {
-  quote: '의뢰인에게는 친절함으로, 재판에서는 냉철함으로 다가갑니다.',
-  intro:
-    '건축과 법을 함께 공부한 변호사입니다. 로펌에서 부동산 사건을 맡으며 "미리 막을 수 있었던" 분쟁을 너무 많이 보았고, 그래서 사전 예방을 위한 리걸테크 회사를 직접 세웠습니다. 서울시 공익변호사로 시민의 법률 복지에 기여한 공로로 서울특별시장 표창을 받았고, 지금은 법무법인 베율의 파트너 변호사로 부동산과 상속 사건을 맡고 있습니다.',
-  education: ['한동대학교 건축학·법학 복수전공', '카이스트 경영대학원 사회적기업가 MBA'],
-  career: [
-    '현) 법무법인 베율 파트너 변호사',
-    '현) 리걸테크 기업 온전 주식회사 대표',
-    '전) 온전 법률사무소 대표 변호사',
-    '전) 중원종합법률사무소 (부동산 분야)',
-    '전) 서울북부지방법원 국선변호인',
-  ],
-  activity: [
-    '서울시 공익변호사 (2020~)',
-    '대한변호사협회 성년후견회 전문위원',
-    '대한변호사협회 미래청년위원',
-    '(사)한국상사법학회 정회원',
-  ],
-  awards: ['서울특별시장 표창 (2023.12)', '부동산·상속 설계 강의 (고려대 등 대학 특강)', '2022 정보접근성 기술 국제협력 컨퍼런스 참여'],
-};
-
-export const press = [
-  { date: '2026.06', outlet: '톱클래스 (조선뉴스프레스) 6월호', title: '[인터뷰] 리걸테크로 법의 문턱을 낮추는 변호사 — 변호사의 일, "사후 대처"보다 "사전 예방"이 중요', url: '' },
-  { date: '2025.02', outlet: '더비비드', title: '"전세 사기 이렇게 하면 다 잡습니다" LG가 반한 변호사의 아이디어', url: 'https://v.daum.net/v/UBVggio9oz' },
-  { date: '2024.09', outlet: '서울경제TV', title: '강남구 신중년 디지털 일자리센터와 업무 협약 체결', url: 'https://www.sentv.co.kr/article/view/sentv202409270075' },
-  { date: '2024.07', outlet: '중앙일보 · 로변 오디세이', title: 'AI가 말했다 "유죄 확률 97%"…기발한 법률 서비스 쏟아졌다', url: 'https://www.joongang.co.kr/article/25263868', pick: true, summary: '치매 할머니의 사연이 로펌 변호사를 리걸테크 창업으로 이끈 이야기.' },
-  { date: '2024.06', outlet: '이데일리', title: '리걸테크 기업, 보험전문변호사 고문 영입', url: 'https://www.edaily.co.kr/News/Read?newsId=01682646638920736&mediaCodeNo=257' },
-  { date: '2024.05', outlet: '동아일보 · 전자신문', title: '전세사기 예방 가이드라인 제공, 안심 계약 서비스 정식 오픈', url: 'https://www.donga.com/news/It/article/all/20240503/124772454/1' },
-  { date: '2024.01', outlet: '마이데일리', title: '차형진 변호사, 서울시 표창장 수상', url: 'https://www.mydaily.co.kr/page/view/2024012214405756948', pick: true, summary: '서울시 공익변호사로서 시민 법률복지 향상에 기여한 공로.' },
-  { date: '2023.12', outlet: '법률신문', title: '"미래 법률시장은 AI가 대세" 변호사들, 리걸테크 창업 붐', url: 'https://www.lawtimes.co.kr/news/articleView.html?idxno=193811', pick: true, summary: '부동산 분야 변호사가 만든 실시간 화상 계약 솔루션.' },
-  { date: '2023.09', outlet: '전자신문', title: '화상 계약 베타 서비스 오픈', url: 'https://www.etnews.com/20230915000218' },
-  { date: '2023.05', outlet: '전자신문', title: '치매 대비 "내 뜻 전달서" 법률서비스 정식 오픈', url: 'https://www.etnews.com/20230504000018' },
-];
-
-export const pressOutlets = ['중앙일보', '법률신문', '톱클래스', '이데일리', '전자신문', '동아일보', '서울경제', '마이데일리'];
-
-export const activities = [
-  { k: '표창', v: '서울특별시장 표창 (2023.12.18)', s: '서울시 공익변호사 직무 수행과 시민 법률복지 향상 기여' },
-  { k: '위원', v: '대한변호사협회 성년후견회 전문위원 · 미래청년위원', s: '' },
-  { k: '강의', v: '부동산·상속 설계 강의', s: '고려대학교 등 대학 특강, 지자체·기관 강의' },
-  { k: '컨퍼런스', v: '정보접근성 기술 국제협력 컨퍼런스 (2022)', s: '' },
-  { k: '협약', v: '강남구 신중년 디지털 일자리센터 업무협약 (2024.9)', s: '' },
-];
-
-export const faq = [
-  {
-    q: '상담은 변호사가 직접 하나요?',
-    a: '네. 첫 전화부터 변호사가 직접 받습니다. 사무장이 상담하거나 예약만 잡는 방식은 아닙니다. 그래서 하루에 받을 수 있는 상담 수가 정해져 있습니다.',
-  },
-  {
-    q: '전세보증금을 못 받고 있습니다. 바로 소송을 해야 하나요?',
-    a: '바로 소송으로 가지 않아도 되는 경우가 많습니다. 임차권등기명령, 내용증명, 지급명령 등 단계마다 선택지가 있고, 어떤 순서가 유리한지는 임대인의 재산 상태에 따라 다릅니다. 상담에서 그 순서를 먼저 정합니다.',
-  },
-  {
-    q: '부모님이 치매 진단을 받으셨는데 재산 문제가 걱정됩니다.',
-    a: '성년후견 개시 심판을 청구할 수 있고, 의사능력이 남아 있는 단계라면 임의후견·유언으로 미리 설계하는 편이 훨씬 낫습니다. 진단서와 가족 구성을 보고 어느 단계인지 먼저 판단합니다.',
-  },
-  {
-    q: '상속세까지 같이 봐주시나요?',
-    a: '네. 법무법인 베율은 변호사와 세무사·회계사가 한 팀으로 움직입니다. 상속재산분할과 유류분 협의가 세금에 어떤 영향을 주는지 한자리에서 검토합니다.',
-  },
-  {
-    q: '비용은 얼마나 드나요?',
-    a: '사건마다 다르므로 상담에서 총 예상 비용과 기간을 숫자로 말씀드립니다. 대부분의 소송 사건은 착수금과 성공보수로 구성된 일반 수임 계약으로, 자문과 일부 사건은 수행 시간을 기준으로 한 시간제로 진행합니다.',
-  },
-];
-
-export const feeFaq = [
-  { q: '상담료가 있나요?', a: '상담료는 예약 시 안내해 드립니다. 상담에서 사건의 방향과 총 예상 비용을 함께 말씀드리므로, 상담만으로 끝나는 경우도 많습니다.' },
-  { q: '착수금과 성공보수는 어떻게 정해지나요?', a: '사건의 종류, 소송물 가액, 예상 기간과 난이도를 기준으로 정합니다. 상담 자리에서 범위를 숫자로 제시하고, 계약서에 명시합니다.' },
-  { q: '시간제는 어떤 사건에 적용되나요?', a: '임대사업자·법인의 정기 자문, 계약서 검토, 분쟁 초기 대응처럼 업무량을 예측할 수 있는 일부 사건에 적용합니다. 수행 시간을 기준으로 청구하고 월별 상한을 계약 시 함께 정합니다. 적용 여부는 상담에서 결정합니다.' },
-  { q: '중간에 비용이 늘어날 수 있나요?', a: '감정, 가압류 공탁금, 인지·송달료처럼 사건 진행에 따라 발생하는 실비는 미리 안내하고 영수증과 함께 정산합니다. 수임료 자체는 계약서에 적은 대로입니다.' },
-];
+export const trust = trustJson.items as { k: string; v: string; s: string; n?: number; unit?: string }[];
+export const bio = bioJson as { quote: string; intro: string; education: string[]; career: string[]; activity: string[]; awards: string[] };
+export const press = pressJson.items as { date: string; outlet: string; title: string; url: string; pick?: boolean; summary?: string }[];
+export const pressOutlets = pressJson.outlets as string[];
+export const activities = pressJson.activities as { k: string; v: string; s: string }[];
+export const faq = faqJson.home as { q: string; a: string }[];
+export const feeFaq = faqJson.fees as { q: string; a: string }[];

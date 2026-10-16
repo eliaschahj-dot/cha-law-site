@@ -1,14 +1,14 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import CtaBand from '../../../components/CtaBand.astro';
-import { publicPosts, sections, postPath, fmtDate } from '../../../data/posts';
+import { getPublicColumns, sections, postPath, fmtDate, type Post } from '../../../data/posts';
 
-export function getStaticPaths() {
-  return sections.map((s) => ({ params: { section: s.slug }, props: { s } }));
+export async function getStaticPaths() {
+  const cols = await getPublicColumns();
+  const counts = Object.fromEntries(sections.map((x) => [x.slug, cols.filter((p) => p.section === x.name).length]));
+  return sections.map((s) => ({ params: { section: s.slug }, props: { s, list: cols.filter((p) => p.section === s.name), counts } }));
 }
-const { s } = Astro.props;
-const list = publicPosts.filter((p) => p.section === s.name);
-const counts = Object.fromEntries(sections.map((x) => [x.slug, publicPosts.filter((p) => p.section === x.name).length]));
+const { s, list, counts } = Astro.props as { s: (typeof sections)[number]; list: Post[]; counts: Record<string, number> };
 ---
 <Base title={s.label} description={`${s.desc}. 차형진 변호사의 ${s.label} ${list.length}편.`}>
   <section class="area-hero">

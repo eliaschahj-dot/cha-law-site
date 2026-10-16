@@ -1,0 +1,182 @@
+# Decap CMS 설정 — /admin
+# 로그인: GitHub 계정(저장소 접근 권한 필요). 인증은 이 사이트의 /auth 가 처리한다 (server.js).
+backend:
+  name: github
+  repo: eliaschahj-dot/cha-law-site
+  branch: main
+  base_url: https://cha-law-site.onrender.com   # 도메인 연결 후 실제 주소로 (SITE_URL 과 같게)
+  auth_endpoint: auth
+  commit_messages:
+    create: "글 추가: {{slug}}"
+    update: "글 수정: {{slug}}"
+    delete: "글 삭제: {{slug}}"
+    uploadMedia: "이미지 추가: {{path}}"
+    deleteMedia: "이미지 삭제: {{path}}"
+
+locale: ko
+site_url: https://cha-law-site.onrender.com
+display_url: https://cha-law-site.onrender.com
+logo_url: /favicon.svg
+media_folder: public/uploads
+public_folder: /uploads
+slug:
+  encoding: unicode
+  clean_accents: false
+  sanitize_replacement: "-"
+
+collections:
+  - name: columns
+    label: 칼럼 · 꿀팁
+    label_singular: 글
+    folder: src/content/columns
+    create: true
+    extension: md
+    format: frontmatter
+    slug: "{{year}}{{month}}{{day}}-{{slug}}"
+    summary: "{{date}} · {{section}} · {{title}}"
+    sortable_fields: [date, title, section]
+    view_filters:
+      - { label: 상속, field: section, pattern: 상속 }
+      - { label: 부동산, field: section, pattern: 부동산 }
+      - { label: 분쟁 절차, field: section, pattern: 분쟁 절차 }
+      - { label: 꿀팁, field: section, pattern: 꿀팁 }
+      - { label: 비공개, field: public, pattern: false }
+    editor:
+      preview: false
+    fields:
+      - { label: 제목, name: title, widget: string }
+      - { label: 날짜, name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+      - { label: 코너, name: section, widget: select, options: [상속, 부동산, 분쟁 절차, 꿀팁, 비공개], default: 상속 }
+      - { label: 태그, name: tags, widget: list, required: false, hint: "유류분, 전세보증금 처럼 쉼표로 구분" }
+      - { label: 요약 (목록에 보이는 두 줄), name: excerpt, widget: text, required: false }
+      - { label: 공개, name: public, widget: boolean, default: true, hint: "끄면 사이트에서 사라집니다" }
+      - { label: 검토 필요 항목, name: review, widget: list, required: false, hint: "비어 있지 않으면 전문 대신 요약만 보입니다. 빌드 때 '무료 상담·승소 보장' 같은 표현은 자동으로 다시 검사합니다." }
+      - { label: 출처, name: source, widget: select, options: [site, naver], default: site }
+      - { label: 네이버 원문 주소, name: naverUrl, widget: string, required: false }
+      - { label: 네이버 글번호, name: naverLogno, widget: string, required: false }
+      - { label: 네이버 카테고리, name: category, widget: string, required: false }
+      - { label: 네이버 카테고리 번호, name: categoryNo, widget: number, required: false, value_type: int }
+      - { label: 본문, name: body, widget: markdown }
+
+  - name: areas
+    label: 업무 분야 (13)
+    label_singular: 분야
+    folder: src/content/areas
+    create: false
+    delete: false
+    extension: json
+    format: json
+    identifier_field: name
+    summary: "{{name}}"
+    editor:
+      preview: false
+    fields:
+      - { label: 축, name: axis, widget: select, options: [{ label: 부동산, value: re }, { label: 상속, value: in }] }
+      - { label: 주소 조각, name: slug, widget: string, hint: "바꾸면 페이지 주소가 바뀝니다" }
+      - { label: 이름, name: name, widget: string }
+      - { label: 한 줄 설명, name: short, widget: string }
+      - { label: 첫 문장, name: lead, widget: text }
+      - { label: 이런 상황이라면, name: situations, widget: list }
+      - label: 절차와 순서
+        name: steps
+        widget: list
+        fields:
+          - { label: 단계, name: t, widget: string }
+          - { label: 설명, name: d, widget: text }
+      - { label: 준비 서류, name: docs, widget: list }
+      - label: 자주 묻는 질문
+        name: faq
+        widget: list
+        fields:
+          - { label: 질문, name: q, widget: string }
+          - { label: 답변, name: a, widget: text }
+      - { label: 관련 글 태그, name: tags, widget: list, required: false }
+
+  - name: settings
+    label: 사이트 설정
+    editor:
+      preview: false
+    files:
+      - name: site
+        label: 연락처 · 사무실
+        file: src/content/site/site.json
+        fields:
+          - { label: 사이트 이름, name: name, widget: string }
+          - { label: 분야 표기, name: tagline, widget: string }
+          - { label: 사이트 주소, name: url, widget: string }
+          - { label: 설명(검색 결과용), name: description, widget: text }
+          - { label: 소속, name: firm, widget: string }
+          - { label: 직함, name: role, widget: string }
+          - { label: 소속 변호사회, name: bar, widget: string }
+          - { label: 직통 전화, name: phone, widget: string }
+          - { label: 전화 링크, name: phoneHref, widget: string, hint: "tel:07045717668 형식" }
+          - { label: 카카오톡 채널 이름, name: kakaoName, widget: string }
+          - { label: 카카오톡 채널 주소, name: kakaoUrl, widget: string, required: false }
+          - { label: 네이버 블로그 주소, name: blog, widget: string }
+          - { label: 주소, name: address, widget: string }
+          - { label: 교통, name: transit, widget: string }
+          - { label: 주차, name: parking, widget: string }
+          - { label: 운영시간, name: hours, widget: string }
+          - { label: 휴무, name: closed, widget: string }
+          - { label: 회신 안내 문구, name: reply, widget: string }
+      - name: trust
+        label: 표제부 (첫 화면 6칸)
+        file: src/content/site/trust.json
+        fields:
+          - label: 항목
+            name: items
+            widget: list
+            fields:
+              - { label: 구분, name: k, widget: string }
+              - { label: 내용, name: v, widget: string }
+              - { label: 설명, name: s, widget: string }
+              - { label: 숫자(카운트), name: n, widget: number, required: false, value_type: int }
+              - { label: 단위, name: unit, widget: string, required: false }
+      - name: bio
+        label: 변호사 소개
+        file: src/content/site/bio.json
+        fields:
+          - { label: 인용문, name: quote, widget: string }
+          - { label: 소개 문단, name: intro, widget: text }
+          - { label: 학력, name: education, widget: list }
+          - { label: 경력, name: career, widget: list }
+          - { label: 활동, name: activity, widget: list }
+          - { label: 수상 · 강의, name: awards, widget: list }
+      - name: press
+        label: 언론 · 활동
+        file: src/content/site/press.json
+        fields:
+          - { label: 매체 이름 띠, name: outlets, widget: list }
+          - label: 기사
+            name: items
+            widget: list
+            fields:
+              - { label: 날짜, name: date, widget: string }
+              - { label: 매체, name: outlet, widget: string }
+              - { label: 제목, name: title, widget: string }
+              - { label: 링크, name: url, widget: string, required: false }
+              - { label: 홈 노출, name: pick, widget: boolean, required: false, default: false }
+              - { label: 한 줄 요약(홈 카드), name: summary, widget: string, required: false }
+          - label: 활동
+            name: activities
+            widget: list
+            fields:
+              - { label: 구분, name: k, widget: string }
+              - { label: 내용, name: v, widget: string }
+              - { label: 설명, name: s, widget: string, required: false }
+      - name: faq
+        label: 자주 묻는 질문
+        file: src/content/site/faq.json
+        fields:
+          - label: 홈 FAQ
+            name: home
+            widget: list
+            fields:
+              - { label: 질문, name: q, widget: string }
+              - { label: 답변, name: a, widget: text }
+          - label: 비용 FAQ
+            name: fees
+            widget: list
+            fields:
+              - { label: 질문, name: q, widget: string }
+              - { label: 답변, name: a, widget: text }

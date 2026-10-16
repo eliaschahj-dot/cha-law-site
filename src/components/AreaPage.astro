@@ -1,13 +1,13 @@
 ---
 import Faq from './Faq.astro';
 import { axisMeta, type Area, byAxis, areaPath } from '../data/areas';
-import { related, postPath, fmtDate } from '../data/posts';
+import { getPublicColumns, related, postPath, fmtDate } from '../data/posts';
 import { site } from '../data/site';
 interface Props { area: Area }
 const { area } = Astro.props;
 const meta = axisMeta[area.axis];
 const siblings = byAxis(area.axis).filter((a) => a.slug !== area.slug);
-const posts = related(area.tags, 6);
+const posts = related(await getPublicColumns(), area.tags, 6);
 ---
 <section class="area-hero">
   <div class="wrap">

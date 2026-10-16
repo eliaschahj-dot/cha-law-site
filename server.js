@@ -25,6 +25,52 @@ app.use((req, res, next) => {
   next();
 });
 
+// ---- /admin 편집기(Decap CMS)용 GitHub OAuth ----
+// 환경변수: GITHUB_OAUTH_CLIENT_ID, GITHUB_OAUTH_CLIENT_SECRET (GitHub → Settings → Developer settings → OAuth Apps)
+// Authorization callback URL 은 `${SITE_URL}/callback`
+const OAUTH_ID = process.env.GITHUB_OAUTH_CLIENT_ID;
+const OAUTH_SECRET = process.env.GITHUB_OAUTH_CLIENT_SECRET;
+const oauthStates = new Map();
+
+app.get('/auth', (req, res) => {
+  if (!OAUTH_ID || !OAUTH_SECRET) return res.status(500).type('text/plain').send('GITHUB_OAUTH_CLIENT_ID / GITHUB_OAUTH_CLIENT_SECRET 환경변수가 없습니다.');
+  const state = Math.random().toString(36).slice(2) + Date.now().toString(36);
+  oauthStates.set(state, Date.now());
+  for (const [k, t] of oauthStates) if (Date.now() - t > 10 * 60 * 1000) oauthStates.delete(k);
+  const url = new URL('https://github.com/login/oauth/authorize');
+  url.searchParams.set('client_id', OAUTH_ID);
+  url.searchParams.set('redirect_uri', `${SITE_URL}/callback`);
+  url.searchParams.set('scope', 'repo,user');
+  url.searchParams.set('state', state);
+  res.redirect(url.href);
+});
+
+app.get('/callback', async (req, res) => {
+  const { code, state } = req.query;
+  const page = (status, payload) => res.type('html').send(`<!doctype html><meta charset="utf-8"><title>로그인</title><script>
+(function(){
+  var msg = 'authorization:github:${status}:' + ${JSON.stringify(JSON.stringify(payload))};
+  function receive(e){ window.opener.postMessage(msg, e.origin); window.removeEventListener('message', receive, false); }
+  window.addEventListener('message', receive, false);
+  window.opener.postMessage('authorizing:github', '*');
+})();
+</script><p>${status === 'success' ? '로그인되었습니다. 이 창은 닫아도 됩니다.' : '로그인에 실패했습니다.'}</p>`);
+  if (!code || !state || !oauthStates.has(String(state))) return page('error', { error: 'invalid state' });
+  oauthStates.delete(String(state));
+  try {
+    const r = await fetch('https://github.com/login/oauth/access_token', {
+      method: 'POST',
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_id: OAUTH_ID, client_secret: OAUTH_SECRET, code, redirect_uri: `${SITE_URL}/callback` }),
+    });
+    const j = await r.json();
+    if (!j.access_token) return page('error', { error: j.error_description || 'no token' });
+    return page('success', { token: j.access_token, provider: 'github' });
+  } catch (e) {
+    return page('error', { error: 'exchange failed' });
+  }
+});
+
 app.get('/robots.txt', (req, res) => {
   res.type('text/plain').send(`User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_URL}/sitemap-index.xml\n`);
 });

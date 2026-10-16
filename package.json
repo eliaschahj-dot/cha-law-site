@@ -8,8 +8,7 @@
     "build": "astro build",
     "preview": "astro preview --host 127.0.0.1 --port 4321",
     "start": "node server.js",
-    "posts": "python -I scripts/build_posts.py",
-    "import": "python -I -X utf8 scripts/import_archive.py"
+    "sync": "python -I -X utf8 scripts/naver_sync.py"
   },
   "engines": { "node": ">=20" },
   "dependencies": {

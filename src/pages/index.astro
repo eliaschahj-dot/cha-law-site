@@ -5,14 +5,15 @@ import Faq from '../components/Faq.astro';
 import ContactForm from '../components/ContactForm.astro';
 import { site, trust, bio, press, pressOutlets, faq } from '../data/site';
 import { byAxis, axisMeta, areaPath } from '../data/areas';
-import { publicPosts, postPath, fmtDate, sectionSlug } from '../data/posts';
+import { getPublicColumns, postPath, fmtDate } from '../data/posts';
 import fs from 'node:fs';
 
 const hasPhoto = fs.existsSync(new URL('../../public/profile.jpg', import.meta.url));
 const re = byAxis('re');
 const inh = byAxis('in');
 const picks = press.filter((p) => p.pick);
-const latest = (name: string) => publicPosts.find((p) => p.section === name && p.excerpt);
+const cols = await getPublicColumns();
+const latest = (name: string) => cols.find((p) => p.section === name && p.full && p.excerpt);
 const homePosts = [latest('상속'), latest('부동산'), latest('꿀팁')].filter(Boolean);
 
 const rail = [
@@ -177,7 +178,7 @@ const faqLd = {
       <div class="sec-head">
         <div class="gu">칼럼 · 꿀팁</div>
         <h2>섣불리 결정하지 마세요. 글 세 개만 먼저 읽어보세요.</h2>
-        <p>같은 상황을 겪은 분들의 질문에 답해 온 기록 430편입니다. 사례는 의뢰인 동의를 받아 익명으로 소개합니다.</p>
+        <p>같은 상황을 겪은 분들의 질문에 답해 온 기록 {cols.length}편입니다. 사례는 의뢰인 동의를 받아 익명으로 소개합니다.</p>
       </div>
       <div class="posts">
         {homePosts.map((p) => (

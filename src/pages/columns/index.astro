@@ -1,17 +1,19 @@
 ---
 import Base from '../../layouts/Base.astro';
 import CtaBand from '../../components/CtaBand.astro';
-import { publicPosts, sections, postPath, fmtDate, sectionSlug } from '../../data/posts';
-const latest = publicPosts.slice(0, 40);
-const counts = Object.fromEntries(sections.map((s) => [s.slug, publicPosts.filter((p) => p.section === s.name).length]));
+import { getPublicColumns, sections, postPath, fmtDate } from '../../data/posts';
+const cols = await getPublicColumns();
+const latest = cols.slice(0, 40);
+const counts = Object.fromEntries(sections.map((s) => [s.slug, cols.filter((p) => p.section === s.name).length]));
+const firstYear = cols.length ? cols[cols.length - 1].date.slice(0, 4) : '2023';
 ---
-<Base title="칼럼 · 꿀팁" description="부동산과 상속에 관해 2023년부터 매일 써 온 법률 칼럼과 계약 꿀팁 430편. 유류분, 상속재산분할, 전세보증금, 분양계약, 명도, 가압류까지.">
+<Base title="칼럼 · 꿀팁" description={`부동산과 상속에 관해 ${firstYear}년부터 매일 써 온 법률 칼럼과 계약 꿀팁 ${cols.length}편. 유류분, 상속재산분할, 전세보증금, 분양계약, 명도, 가압류까지.`}>
   <section class="area-hero">
     <div class="wrap">
       <div class="crumbs"><a href="/">홈</a><span>/</span><span>칼럼 · 꿀팁</span></div>
       <div class="gu" style="margin-top:18px">칼럼 · 꿀팁</div>
       <h1>같은 질문에 답해 온 기록</h1>
-      <p class="lead">2023년 12월부터 거의 매일 한 편씩 써 온 글입니다. 상속 {counts.inheritance}편, 부동산 {counts['real-estate']}편, 분쟁 절차 {counts.procedure}편, 계약 꿀팁 {counts.tips}편. 전문은 차례로 옮겨 싣고 있으며, 그동안은 요약과 원문 링크를 함께 둡니다.</p>
+      <p class="lead">{firstYear}년 12월부터 거의 매일 한 편씩 써 온 글입니다. 상속 {counts.inheritance}편, 부동산 {counts['real-estate']}편, 분쟁 절차 {counts.procedure}편, 계약 꿀팁 {counts.tips}편.</p>
     </div>
   </section>
   <section class="sec">

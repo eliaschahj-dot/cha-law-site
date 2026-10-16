@@ -1,0 +1,53 @@
+name: 네이버 블로그 동기화
+
+on:
+  schedule:
+    - cron: "0 21 * * *"   # 매일 06:00 KST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: naver-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 의존성
+        run: pip install --quiet requests beautifulsoup4 lxml pillow
+
+      - name: 새 글 가져오기
+        run: python -I -X utf8 scripts/naver_sync.py --limit 30
+
+      - name: 변경 사항 커밋·푸시
+        id: commit
+        run: |
+          git add src/content/columns public/columns
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "새 글 없음"
+          else
+            n=$(git diff --cached --name-only -- src/content/columns | wc -l)
+            git config user.name "naver-sync"
+            git config user.email "naver-sync@users.noreply.github.com"
+            git commit -m "네이버 동기화: 칼럼 ${n}편 추가"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Render 배포 (훅이 설정된 경우)
+        if: steps.commit.outputs.changed == 'true' && env.HOOK != ''
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: curl -fsS -X POST "$HOOK" > /dev/null && echo "배포 요청 완료"

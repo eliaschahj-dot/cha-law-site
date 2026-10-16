@@ -1,12 +1,12 @@
 ---
 import { byAxis, axisMeta, areaPath, type Axis } from '../data/areas';
-import { publicPosts, postPath, fmtDate } from '../data/posts';
+import { getPublicColumns, postPath, fmtDate } from '../data/posts';
 interface Props { axis: Axis }
 const { axis } = Astro.props;
 const meta = axisMeta[axis];
 const list = byAxis(axis);
 const sectionName = axis === 're' ? '부동산' : '상속';
-const recent = publicPosts.filter((p) => p.section === sectionName).slice(0, 6);
+const recent = (await getPublicColumns()).filter((p) => p.section === sectionName).slice(0, 6);
 ---
 <section class="area-hero">
   <div class="wrap">

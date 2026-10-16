@@ -145,18 +145,24 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
           else if (c.nodeType === 1 && !['BR', 'svg', 'SVG'].includes((c as Element).tagName)) walk(c);
         });
         walk(el);
-        let i = 0; const step = 42;
+        const chars: HTMLElement[] = [];
         texts.forEach((t) => {
           const frag = document.createDocumentFragment();
           for (const ch of t.textContent ?? '') {
-            const s = document.createElement('span'); s.className = 'ch'; s.textContent = ch; s.style.animationDelay = `${i++ * step}ms`; frag.appendChild(s);
+            const s = document.createElement('span'); s.className = 'ch'; s.textContent = ch; frag.appendChild(s); chars.push(s);
           }
           t.replaceWith(frag);
         });
         const caret = document.createElement('span'); caret.className = 'caret'; caret.setAttribute('aria-hidden', 'true'); el.appendChild(caret);
         el.classList.add('tw');
-        setTimeout(() => { el.classList.add('done'); el.querySelectorAll('.brush').forEach((b) => b.classList.add('draw')); }, i * step + 300);
+        const step = 42;
+        chars.forEach((s, i) => setTimeout(() => s.classList.add('on'), 120 + i * step));
+        const finish = () => { el.classList.add('done'); el.querySelectorAll('.brush').forEach((b) => b.classList.add('draw')); };
+        setTimeout(finish, 120 + chars.length * step + 250);
+        setTimeout(finish, 6000); // 어떤 경우에도 6초 뒤에는 전부 보이게
       });
+      // 등기부 행·도장: 애니메이션이 누락돼도 3초 뒤에는 보이게
+      setTimeout(() => { document.querySelectorAll('.ledger tbody tr').forEach((r) => r.classList.add('on')); document.documentElement.classList.add('ledger-done'); }, 3200);
       // 숫자 카운트업: data-count
       if ('IntersectionObserver' in window) {
         const cio = new IntersectionObserver((es) => {
@@ -188,6 +194,10 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
         if (el.getBoundingClientRect().top < vh * 0.92) el.classList.add('in');
         else ro.observe(el);
       });
+      // 안전장치: 관찰이 실패해도 화면 안에 있는 블록은 2.5초 뒤 보이게, 스크롤 때마다 다시 확인
+      const sweep = () => els.forEach((el) => { if (!el.classList.contains('in') && el.getBoundingClientRect().top < window.innerHeight) el.classList.add('in'); });
+      setTimeout(sweep, 2500);
+      window.addEventListener('scroll', sweep, { passive: true });
     }
   </script>
 </body>

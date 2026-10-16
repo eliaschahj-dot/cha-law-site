@@ -28,7 +28,11 @@ functions/api/contact.js    Cloudflare Pages Function — 상담 폼 수신(Rese
 public/                     robots.txt, favicon.svg, og.png
 ```
 
-## 배포 (Render)
+## 배포 (Render) — 2026.10.16 배포 완료
+
+- 주소: https://cha-law-site.onrender.com (Blueprint `cha-law-site`, 웹 서비스 `srv-db8rif2jnfac73bk83n0`, Free 플랜, Singapore)
+- 저장소를 Render GitHub 앱이 아니라 **Public Git Repository URL**로 연결했기 때문에 푸시해도 자동 배포되지 않습니다. 새 커밋을 반영하려면 대시보드 → cha-law-site → **Manual Deploy → Deploy latest commit**. 자동 배포를 원하면 Render Settings의 GitHub 연결에서 이 저장소 접근을 추가한 뒤 다시 연결하세요.
+- 환경변수는 `NODE_VERSION`, `SITE_URL`만 설정되어 있습니다. 메일 수신용 `RESEND_API_KEY`·`CONTACT_TO`·`CONTACT_FROM`은 아직 없으며, 그동안 상담 신청은 Render 로그에만 남습니다.
 
 `render.yaml`(Blueprint)이 들어 있습니다. `server.js`(Express)가 `dist/` 정적 파일과 `/api/contact`를 함께 서비스합니다.
 

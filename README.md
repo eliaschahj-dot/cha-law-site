@@ -38,8 +38,8 @@ public/                     robots.txt, favicon.svg, og.png
 ## 배포 (Render) — 2026.10.16 배포 완료
 
 - 주소: https://cha-law-site.onrender.com (Blueprint `cha-law-site`, 웹 서비스 `srv-db8rif2jnfac73bk83n0`, Free 플랜, Singapore)
-- 2026.10.16 GitHub의 Render 앱에 이 저장소 접근을 추가해 **푸시 자동 배포**를 켰습니다(Auto-Deploy: On Commit). 자동 배포가 멈추면 대시보드 → cha-law-site → Manual Deploy → Deploy latest commit.
-- 환경변수는 `NODE_VERSION`, `SITE_URL`만 설정되어 있습니다. 메일 수신용 `RESEND_API_KEY`·`CONTACT_TO`·`CONTACT_FROM`은 아직 없으며, 그동안 상담 신청은 Render 로그에만 남습니다.
+- 2026.10.16 GitHub의 Render 앱에 이 저장소 접근을 추가해 **푸시 자동 배포**를 켰습니다(Auto-Deploy: On Commit). 확인: 커밋 07ea7ad 푸시 후 약 2분 만에 라이브 `X-App-Version` 헤더가 바뀌었습니다. 자동 배포가 멈추면 대시보드 → cha-law-site → Manual Deploy → Deploy latest commit.
+- 환경변수(2026.10.16 기준): `NODE_VERSION`, `SITE_URL`, `RESEND_API_KEY`, `CONTACT_TO`, `CONTACT_FROM`(아직 `onboarding@resend.dev`), `GITHUB_OAUTH_CLIENT_ID`, `GITHUB_OAUTH_CLIENT_SECRET`. 상담 폼 메일 수신과 `/admin` 로그인 모두 확인됨.
 
 `render.yaml`(Blueprint)이 들어 있습니다. `server.js`(Express)가 `dist/` 정적 파일과 `/api/contact`를 함께 서비스합니다.
 
@@ -60,6 +60,16 @@ public/                     robots.txt, favicon.svg, og.png
 5. 도메인 연결: Render → Settings → Custom Domains에 도메인 추가 후 DNS(CNAME) 설정. 그 뒤 `SITE_URL`을 바꾸고 재배포.
 6. 네이버 서치어드바이저·구글 서치 콘솔에 `https://도메인/sitemap-index.xml` 제출.
 
+### 도메인 연결 체크리스트 (구매 후 순서대로)
+1. 등록기관(가비아 등)에서 구매. 사이트 본인 명의로 등록하고 자동 연장을 켭니다.
+2. Render → cha-law-site → Settings → Custom Domains → Add: `도메인`과 `www.도메인` 둘 다 추가. Render가 알려 주는 값대로 DNS 설정(루트는 A 레코드 또는 ALIAS, `www`는 CNAME `cha-law-site.onrender.com`). 인증서는 Render가 자동 발급(수 분~수십 분).
+3. Render → Environment → `SITE_URL`을 `https://도메인`으로 바꾸고 저장(자동 재배포). canonical·sitemap·robots·OG가 새 주소로 바뀝니다.
+4. `public/admin/config.yml`의 `base_url`·`site_url`을 새 주소로 바꿔 푸시하고, GitHub OAuth App(Settings → Developer settings)의 Homepage URL·Callback URL(`https://도메인/callback`)도 바꿉니다. `/admin` 로그인으로 확인.
+5. Resend → Domains에서 도메인 인증(DNS에 SPF·DKIM 추가) 후 `CONTACT_FROM`을 `consult@도메인`으로 교체. 상담 폼 테스트 1회.
+6. 옛 주소는 그대로 둡니다. `cha-law-site.onrender.com`은 Render가 새 도메인과 함께 계속 응답하므로 끊기지 않습니다.
+7. 네이버 서치어드바이저·구글 서치 콘솔에 새 도메인 등록 → 소유 확인 메타값을 `PUBLIC_NAVER_SITE_VERIFICATION`·`PUBLIC_GOOGLE_SITE_VERIFICATION`에 넣고 재배포 → `https://도메인/sitemap-index.xml` 제출.
+8. theirlaw.org 정리 절차(아래)를 시작합니다.
+
 로컬에서 Render와 같은 방식으로 확인하려면 `npm run build && npm start` 후 http://localhost:3000.
 
 ### 대안: Cloudflare Pages
@@ -69,7 +79,7 @@ public/                     robots.txt, favicon.svg, og.png
 
 | 항목 | 현재 값 | 위치 |
 |---|---|---|
-| 도메인 | `https://chahyungjin.com` (미구매) | `astro.config.mjs`, `public/robots.txt` |
+| 도메인 | 미구매. 후보 `chahyungjin.com` / `hjcha.com` / `chalawyer.com` — 셋 다 .com·.co.kr·.kr 등록 가능(가비아, 2026.10.16 확인; .com 연 19,800원·.kr 16,500원 행사가) | `astro.config.mjs` 기본값, `public/admin/config.yml`, Render `SITE_URL` |
 | 직통 전화 | 070-4571-7668 (블로그 공개 번호) | `src/data/site.ts` `phone` |
 | 카카오톡 채널 | 개설 전 ("개설 준비 중" 표시) | `src/data/site.ts` `kakaoUrl` + `index.astro`/`contact.astro` 문구 |
 | 프로필 사진 | 회색 플레이스홀더 (4:5) | `index.astro`, `about.astro` `.photo` |
@@ -109,7 +119,7 @@ public/                     robots.txt, favicon.svg, og.png
 ### 네이버 블로그 자동 동기화
 - `scripts/naver_sync.py`가 글 목록을 받아 사이트에 없는 글만 내려받고(`.naver-cache/`), 마크다운으로 변환해 `src/content/columns/{logNo}.md`와 `public/columns/{logNo}/NN.webp`를 만듭니다. 회사 상호·CTA 문단 제거, 광고규정 검사는 아카이브 이관과 같은 규칙입니다.
 - GitHub Actions(`.github/workflows/naver-sync.yml`)가 매일 06:00 KST에 실행하고, 새 글이 있으면 커밋·푸시합니다. Actions 탭에서 "Run workflow"로 즉시 실행할 수도 있습니다.
-- 자동 배포까지 이어지려면 둘 중 하나: ① Render → Settings → Deploy Hook 주소를 GitHub 저장소 Settings → Secrets → Actions에 `RENDER_DEPLOY_HOOK`으로 저장, 또는 ② Render의 GitHub 연결에 이 저장소를 추가해 푸시 자동 배포를 켬.
+- 워크플로가 푸시하면 Render 푸시 자동 배포(2026.10.16 확인)가 이어서 돌므로 따로 할 일은 없습니다. `RENDER_DEPLOY_HOOK` 시크릿(Render → Settings → Deploy Hook 주소)은 선택 사항이며, 넣어 두면 푸시 자동 배포가 꺼졌을 때의 예비 경로가 됩니다.
 - 로컬 실행: `npm run sync` (Python 3.12, `pip install requests beautifulsoup4 lxml pillow`). GitHub 러너에서 네이버 접속이 막히면 이 명령을 PC 작업 스케줄러에 등록해 쓰면 됩니다.
 
 ### 콘텐츠 파일 구조

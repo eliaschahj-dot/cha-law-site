@@ -480,7 +480,13 @@ html.anim .topbar::before { animation: sheen 9s linear infinite; }
 /* 타이핑 */
 /* 글자는 JS가 순서대로 .on 을 붙여 켠다. 끝(.done)나면 무조건 전부 보인다. */
 html.anim .tw .ch { opacity: 0; transition: opacity .08s linear; }
-html.anim .tw .ch.on, html.anim .tw.done .ch { opacity: 1; }
+html.anim .tw .ch.on { opacity: 1; }
+html.anim .tw.done .ch { opacity: 1; transition: none; }
+/* 모든 등장 효과는 정해진 시간이 지나면 애니메이션 없이 최종 상태로 고정된다(.settled) */
+html.anim .rise.settled { animation: none; opacity: 1; transform: none; }
+html.anim .rv.settled { transition: none; opacity: 1; transform: none; }
+html.anim .sec-head.settled h2 { clip-path: none; transition: none; }
+html.anim .sec-head.settled h2::after { transform: scaleX(1); transition: none; }
 .tw .caret { display: inline-block; width: .07em; height: .95em; background: var(--seal); vertical-align: -.08em; margin-left: .05em; animation: blink .9s steps(1) infinite; }
 .tw.done .caret { display: none; }
 @keyframes blink { 50% { opacity: 0; } }

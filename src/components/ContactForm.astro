@@ -1,0 +1,53 @@
+---
+import { site } from '../data/site';
+interface Props { area?: string }
+const { area } = Astro.props;
+const areas = ['전세보증금 · 임대차', '분양 · 매매 계약', '재개발 · 재건축 · 명도', '공사대금 · 하자', '유류분 · 상속재산분할', '유언 · 성년후견', '상속세 · 증여 설계', '상속포기 · 한정승인', '기타'];
+---
+<form class="consult" id="consult" method="post" action="/api/contact" novalidate>
+  <div class="row">
+    <label for="f-name">성함<input id="f-name" name="name" required autocomplete="name" placeholder="홍길동" /></label>
+    <label for="f-phone">연락처<input id="f-phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="010-0000-0000" /></label>
+  </div>
+  <label for="f-area">분야
+    <select id="f-area" name="area">
+      {areas.map((a) => <option selected={a === area}>{a}</option>)}
+    </select>
+  </label>
+  <label for="f-msg">상황을 간단히 적어주세요
+    <textarea id="f-msg" name="message" required placeholder="언제, 누구와, 어떤 계약(또는 상속)에서 문제가 생겼는지 적어주시면 첫 상담이 훨씬 빨라집니다."></textarea>
+  </label>
+  <label for="f-src">어디서 보고 오셨나요?
+    <select id="f-src" name="source">
+      <option>네이버 검색</option><option>구글 검색</option><option>네이버 블로그</option><option>지인 소개</option><option>강의·언론</option><option>기타</option>
+    </select>
+  </label>
+  <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
+  <label class="consent" for="f-agree"><input id="f-agree" type="checkbox" name="agree" required /><span>상담 목적의 개인정보 수집·이용에 동의합니다. 수집 항목: 성함, 연락처, 상담 내용 · 보유 기간: 상담 종료 후 1년 · <a href="/privacy">개인정보처리방침</a></span></label>
+  <button class="btn btn-seal" type="submit" id="f-submit">상담 신청 보내기</button>
+  <p class="note">보내주신 내용은 변호사만 확인합니다. {site.reply}.</p>
+  <div class="msg" id="f-msg-box" role="status" aria-live="polite"></div>
+</form>
+
+<script>
+  const form = document.getElementById('consult') as HTMLFormElement | null;
+  const box = document.getElementById('f-msg-box') as HTMLDivElement | null;
+  const btn = document.getElementById('f-submit') as HTMLButtonElement | null;
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    btn!.disabled = true; btn!.textContent = '보내는 중…';
+    const data = Object.fromEntries(new FormData(form).entries());
+    try {
+      const r = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && j.ok) {
+        box!.className = 'msg ok'; box!.textContent = '접수되었습니다. 24시간 안에 변호사가 직접 연락드리겠습니다.';
+        form.reset();
+      } else { throw new Error(j.error || 'send failed'); }
+    } catch {
+      box!.className = 'msg err';
+      box!.textContent = '전송에 실패했습니다. 전화 070-4571-7668 로 연락 주시면 바로 안내드리겠습니다.';
+    } finally { btn!.disabled = false; btn!.textContent = '상담 신청 보내기'; }
+  });
+</script>

@@ -1,0 +1,16 @@
+---
+import { site } from '../data/site';
+interface Props { title?: string; text?: string; area?: string }
+const { title = '지금 상황을 먼저 들려주세요', text = '24시간 안에 변호사가 직접 연락드립니다. 상담 자리에서 방향과 총 예상 비용을 숫자로 말씀드립니다.', area } = Astro.props;
+---
+<section class="sec band-ink">
+  <div class="wrap" style="display:grid;gap:18px;max-width:var(--wrap)">
+    <div class="gu">상담 예약</div>
+    <h2 style="font-size:clamp(26px,3.2vw,38px);font-weight:800">{title}</h2>
+    <p style="color:#C3CAD9;max-width:40em;font-size:16px">{text}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px">
+      <a class="btn btn-seal" href={area ? `/contact?area=${encodeURIComponent(area)}` : '/contact'}>상담 신청하기</a>
+      <a class="btn btn-ghost" href={site.phoneHref}>변호사 직통 {site.phone}</a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,46 @@
+---
+import { byAxis, axisMeta, areaPath, type Axis } from '../data/areas';
+import { publicPosts, postPath, fmtDate } from '../data/posts';
+interface Props { axis: Axis }
+const { axis } = Astro.props;
+const meta = axisMeta[axis];
+const list = byAxis(axis);
+const sectionName = axis === 're' ? '부동산' : '상속';
+const recent = publicPosts.filter((p) => p.section === sectionName).slice(0, 6);
+---
+<section class="area-hero">
+  <div class="wrap">
+    <div class="crumbs"><a href="/">홈</a><span>/</span><span>{meta.name}</span></div>
+    <div class="gu" style="margin-top:18px">{meta.gu}</div>
+    <h1>{meta.name}</h1>
+    <p class="lead">{meta.sub}. 아래에서 지금 상황과 가장 가까운 항목을 고르세요. 각 페이지에 절차와 기간, 준비 서류, 자주 묻는 질문을 정리해 두었습니다.</p>
+  </div>
+</section>
+<section class="sec">
+  <div class="wrap">
+    <div class="areas-grid">
+      {list.map((a, i) => (
+        <a class="area-card" href={areaPath(a)}>
+          <span class="n">순위 {i + 1}</span>
+          <h3>{a.name}</h3>
+          <p>{a.short}</p>
+          <p style="color:var(--ink);font-size:13px;font-weight:600">{a.situations[0]}</p>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+{recent.length > 0 && (
+  <section class="sec band-paper">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="gu">칼럼 · {sectionName}</div>
+        <h2>최근 글</h2>
+      </div>
+      <div class="list">
+        {recent.map((p) => <a href={postPath(p)}><time datetime={p.date}>{fmtDate(p.date)}</time><div><b>{p.title}</b>{p.excerpt && <span>{p.excerpt}</span>}</div></a>)}
+      </div>
+      <p style="margin-top:22px"><a class="btn btn-ghost" href={`/columns/topic/${axis === 're' ? 'real-estate' : 'inheritance'}`}>{sectionName} 칼럼 전체 보기</a></p>
+    </div>
+  </section>
+)}

@@ -1,0 +1,78 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { publicPosts, related, postPath, fmtDate, sectionSlug, sections } from '../../data/posts';
+import { areas, areaPath } from '../../data/areas';
+
+export function getStaticPaths() {
+  return publicPosts.map((p) => ({ params: { logno: p.logno }, props: { p } }));
+}
+const { p } = Astro.props;
+const sec = sections.find((s) => s.name === p.section);
+const rel = related(p.tags, 5, p.logno);
+const linkedAreas = areas.filter((a) => a.tags.some((t) => p.tags.includes(t))).slice(0, 3);
+const ld = {
+  '@context': 'https://schema.org', '@type': 'BlogPosting', headline: p.title, datePublished: p.date,
+  author: { '@type': 'Person', name: '차형진', jobTitle: '변호사' }, inLanguage: 'ko',
+};
+---
+<Base title={p.title} description={p.excerpt || `${p.title} — 차형진 변호사의 ${p.section} 칼럼 (${fmtDate(p.date)})`} jsonLd={ld}>
+  <article>
+    <section class="area-hero">
+      <div class="wrap">
+        <div class="crumbs"><a href="/">홈</a><span>/</span><a href="/columns">칼럼 · 꿀팁</a><span>/</span><a href={`/columns/topic/${sectionSlug(p.section)}`}>{sec?.label}</a></div>
+        <div class="gu" style="margin-top:18px">{sec?.label} <small>{fmtDate(p.date)}</small></div>
+        <h1 style="font-size:clamp(28px,4vw,46px)">{p.title}</h1>
+        <p class="lead" style="font-size:14px;color:var(--ink-2);margin-top:14px">글 · <b>부동산 · 상속 전문 변호사 차형진</b> (법무법인 베율) · 처음 게시 {fmtDate(p.date)} 네이버 블로그{p.tags.length > 0 && <span style="color:var(--ink-3)"> · {p.tags.map((t) => `#${t}`).join(' ')}</span>}</p>
+      </div>
+    </section>
+    <div class="wrap area-body">
+      <div class="main">
+        {p.body ? (
+          <div>
+            <div class="prose" set:html={p.body} />
+            <p class="notice bronze" style="margin-top:28px">이 글은 {fmtDate(p.date)} 네이버 블로그에 처음 쓴 글을 옮긴 것입니다. 법령과 실무는 그 뒤로 바뀌었을 수 있으니, 지금 상황에는 상담에서 현재 기준으로 다시 확인합니다. <a href={p.naverUrl} target="_blank" rel="noopener">원문 보기</a></p>
+          </div>
+        ) : (
+          <div class="prose">
+            {p.excerpt && <p style="font-size:17px;color:var(--ink)">{p.excerpt}</p>}
+            <div class="notice" style="margin-top:18px">
+              이 글의 전문은 네이버 블로그에서 옮겨 싣는 중입니다. 지금은 원문에서 전체 내용을 읽으실 수 있습니다.
+              <br /><a href={p.naverUrl} target="_blank" rel="noopener" style="font-weight:600">네이버 블로그 원문 보기 ({fmtDate(p.date)}) →</a>
+            </div>
+          </div>
+        )}
+        {linkedAreas.length > 0 && (
+          <section>
+            <h2>이 글과 관련된 업무 분야</h2>
+            <div class="areas-grid">
+              {linkedAreas.map((a) => <a class="area-card" href={areaPath(a)}><span class="n">{a.axis === 're' ? '부동산' : '상속'}</span><h3>{a.name}</h3><p>{a.short}</p></a>)}
+            </div>
+          </section>
+        )}
+        {rel.length > 0 && (
+          <section>
+            <h2>함께 읽는 글</h2>
+            <div class="list">
+              {rel.map((r) => <a href={postPath(r)}><time datetime={r.date}>{fmtDate(r.date)}</time><div><b>{r.title}</b></div></a>)}
+            </div>
+          </section>
+        )}
+      </div>
+      <aside class="side">
+        <div class="card">
+          <div class="k">글쓴이</div>
+          <h3 style="font-size:18px">차형진 변호사</h3>
+          <p>부동산 · 상속 전문 변호사. 법무법인 베율 파트너. 상담도 재판도 변호사가 직접 합니다.</p>
+          <a class="btn btn-seal" href="/contact">상담 신청</a>
+        </div>
+        <div class="card">
+          <div class="k">원문</div>
+          <p>네이버 블로그 · {fmtDate(p.date)} · {p.category}</p>
+          <a href={p.naverUrl} target="_blank" rel="noopener" style="font-weight:600;font-size:14px">원문 열기 →</a>
+        </div>
+      </aside>
+    </div>
+  </article>
+  <CtaBand />
+</Base>

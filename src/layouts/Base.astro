@@ -1,0 +1,156 @@
+---
+import '../styles/global.css';
+import { site, nav } from '../data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  jsonLd?: object | object[];
+  rail?: { id: string; label: string }[];
+}
+const { title, description = site.description, jsonLd, rail } = Astro.props;
+const path = Astro.url.pathname;
+const canonical = new URL(path, site.url).href;
+const fullTitle = title === site.name ? `${site.name} | ${site.tagline}` : `${title} | ${site.name}`;
+const naverVerify = import.meta.env.PUBLIC_NAVER_SITE_VERIFICATION;
+const googleVerify = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
+const ogImage = new URL('/og.png', site.url).href;
+
+const orgLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Attorney',
+  name: `${site.name} (${site.firm})`,
+  url: site.url,
+  telephone: site.phone,
+  address: { '@type': 'PostalAddress', streetAddress: '테헤란로103길 10 길훈빌딩 2층', addressLocality: '강남구', addressRegion: '서울', addressCountry: 'KR' },
+  areaServed: 'KR',
+  knowsAbout: ['부동산 분쟁', '전세보증금 반환', '분양계약', '명도소송', '재개발·재건축', '유류분', '상속재산분할', '유언', '성년후견', '상속세'],
+  openingHours: ['Mo-Fr 10:00-18:00', 'Sa 10:00-14:00'],
+};
+const ldItems = [orgLd, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
+const isCurrent = (href: string) => path === href || (href !== '/' && path.startsWith(href + '/')) || path === href + '/';
+---
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={site.name} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  {naverVerify && <meta name="naver-site-verification" content={naverVerify} />}
+  {googleVerify && <meta name="google-site-verification" content={googleVerify} />}
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="sitemap" href="/sitemap-index.xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <meta name="theme-color" content="#F5F4EF" />
+  <script is:inline>if (document.visibilityState === 'visible' && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('anim');</script>
+  {ldItems.map((ld) => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)}
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="/" aria-label={`${site.name} 홈`}>
+        <span class="seal-mark" aria-hidden="true">차</span>
+        <span class="t"><strong>{site.name}</strong><span>{site.tagline} | {site.firm} {site.role}</span></span>
+      </a>
+      <nav class="nav" id="nav" aria-label="주 메뉴">
+        {nav.map((n) => <a href={n.href} aria-current={isCurrent(n.href) ? 'page' : undefined}>{n.label}</a>)}
+        <a class="btn btn-ink btn-sm" href="/contact">상담 예약</a>
+      </nav>
+      <button class="nav-toggle" type="button" aria-controls="nav" aria-expanded="false" id="nav-toggle">메뉴</button>
+    </div>
+  </header>
+
+  {rail && (
+    <nav class="rail" aria-label="구(區) 바로가기" id="rail">
+      {rail.map((r, i) => <a href={`#${r.id}`} data-rail={r.id}><b>{i + 1}</b><span>{r.label}</span></a>)}
+    </nav>
+  )}
+
+  <main id="top">
+    <slot />
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div>
+        <a class="brand" href="/"><span class="seal-mark" aria-hidden="true">차</span><span class="t"><strong>{site.name}</strong><span>{site.tagline} | {site.firm} {site.role}</span></span></a>
+        <p>{site.firm} · {site.address}<br />변호사 차형진 · {site.bar} 소속<br />변호사 직통 {site.phone} · {site.hours}</p>
+      </div>
+      <div class="links">
+        {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+        <a href="/contact">상담 예약</a>
+        <a href={site.blog} target="_blank" rel="noopener">네이버 블로그</a>
+        <a href="https://beyullaw.com" target="_blank" rel="noopener">법무법인 베율</a>
+        <a href="/privacy">개인정보처리방침</a>
+      </div>
+      <div class="legal">
+        광고 주체: 변호사 차형진 ({site.firm} · {site.bar}) · 이 홈페이지의 내용은 일반적인 법률 정보이며 개별 사건에 대한 법률 자문이 아닙니다. 사건의 결과는 사안에 따라 다를 수 있습니다. © 2026 차형진 변호사
+      </div>
+    </div>
+  </footer>
+
+  <div class="mobile-cta">
+    <a class="btn btn-ink" href={site.phoneHref}>전화 {site.phone}</a>
+    <a class="btn btn-seal" href="/contact">상담 신청</a>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('nav-toggle');
+    const nav = document.getElementById('nav');
+    toggle?.addEventListener('click', () => {
+      const open = nav!.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.textContent = open ? '닫기' : '메뉴';
+    });
+    nav?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => { nav.classList.remove('open'); toggle?.setAttribute('aria-expanded', 'false'); if (toggle) toggle.textContent = '메뉴'; }));
+
+    const rail = document.getElementById('rail');
+    if (rail && 'IntersectionObserver' in window) {
+      const links = Array.from(rail.querySelectorAll('a[data-rail]')) as HTMLAnchorElement[];
+      const map = new Map(links.map((l) => [l.dataset.rail!, l]));
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            links.forEach((l) => l.classList.remove('on'));
+            map.get((e.target as HTMLElement).id)?.classList.add('on');
+          }
+        });
+      }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+      links.forEach((l) => { const s = document.getElementById(l.dataset.rail!); if (s) io.observe(s); });
+    }
+    document.querySelectorAll('.stamp').forEach((s) => s.classList.add('press'));
+
+    // 스크롤 등장 효과: 화면에 들어오는 블록을 순서대로 띄운다 (html.anim 이 없으면 CSS가 적용되지 않아 그대로 보인다)
+    if (document.documentElement.classList.contains('anim') && 'IntersectionObserver' in window) {
+      const sel = '.sec-head, .axis, .phase, .divider, .story, .profile > *, .principle, .post, .press, .faq, .contact > *, .pyoje .wrap > div, .area-card, .card, .steps li, .situ li, .list > a, .press-row, .filters, .grid2 > *, .grid3 > *, .area-hero .wrap > *';
+      const els = Array.from(document.querySelectorAll(sel)) as HTMLElement[];
+      const vh = window.innerHeight;
+      const ro = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) { (e.target as HTMLElement).classList.add('in'); ro.unobserve(e.target); } });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+      els.forEach((el) => {
+        if (el.classList.contains('rv')) return;
+        const i = Array.from(el.parentElement?.children ?? []).indexOf(el);
+        el.style.transitionDelay = `${(i % 5) * 70}ms`;
+        el.classList.add('rv');
+        if (el.getBoundingClientRect().top < vh * 0.92) el.classList.add('in');
+        else ro.observe(el);
+      });
+    }
+  </script>
+</body>
+</html>

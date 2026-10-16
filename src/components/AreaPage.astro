@@ -1,0 +1,61 @@
+---
+import Faq from './Faq.astro';
+import { axisMeta, type Area, byAxis, areaPath } from '../data/areas';
+import { related, postPath, fmtDate } from '../data/posts';
+import { site } from '../data/site';
+interface Props { area: Area }
+const { area } = Astro.props;
+const meta = axisMeta[area.axis];
+const siblings = byAxis(area.axis).filter((a) => a.slug !== area.slug);
+const posts = related(area.tags, 6);
+---
+<section class="area-hero">
+  <div class="wrap">
+    <div class="crumbs"><a href="/">홈</a><span>/</span><a href={meta.base}>{meta.name}</a><span>/</span><span>{area.name}</span></div>
+    <div class="gu" style="margin-top:18px">{meta.gu}</div>
+    <h1>{area.name}</h1>
+    <p class="lead">{area.lead}</p>
+  </div>
+</section>
+<div class={`wrap area-body ${area.axis}`}>
+  <div class="main">
+    <section>
+      <h2>이런 상황이라면</h2>
+      <ul class="situ">{area.situations.map((s) => <li>{s}</li>)}</ul>
+    </section>
+    <section>
+      <h2>절차와 순서</h2>
+      <ol class="steps">{area.steps.map((s) => <li><div><b>{s.t}</b><span>{s.d}</span></div></li>)}</ol>
+    </section>
+    <section>
+      <h2>첫 상담에 가져오시면 좋은 것</h2>
+      <ul class="docs">{area.docs.map((d) => <li>{d}</li>)}</ul>
+    </section>
+    <section>
+      <h2>자주 묻는 질문</h2>
+      <Faq items={area.faq} />
+    </section>
+    {posts.length > 0 && (
+      <section>
+        <h2>관련 글</h2>
+        <div class="list">
+          {posts.map((p) => <a href={postPath(p)}><time datetime={p.date}>{fmtDate(p.date)}</time><div><b>{p.title}</b>{p.excerpt && <span>{p.excerpt}</span>}</div></a>)}
+        </div>
+      </section>
+    )}
+  </div>
+  <aside class="side">
+    <div class="card">
+      <div class="k">상담 예약</div>
+      <div class="big">{site.phone}</div>
+      <p>{site.hours} · 변호사 직통. {site.reply}.</p>
+      <a class="btn btn-seal" href={`/contact?area=${encodeURIComponent(area.name)}`}>온라인 상담 신청</a>
+    </div>
+    <div class="card">
+      <div class="k">{meta.name} · 다른 분야</div>
+      <ul style="list-style:none;padding:0;display:grid;gap:8px">
+        {siblings.map((a) => <li><a href={areaPath(a)} style="text-decoration:none;font-weight:500">{a.name}</a></li>)}
+      </ul>
+    </div>
+  </aside>
+</div>

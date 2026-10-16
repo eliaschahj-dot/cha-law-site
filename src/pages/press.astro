@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { press, pressOutlets, activities } from '../data/site';
+---
+<Base title="언론 · 활동" description="중앙일보, 법률신문, 톱클래스, 이데일리, 전자신문, 동아일보 등 언론 보도와 서울특별시장 표창, 강의·위원 활동 기록. 차형진 변호사.">
+  <section class="area-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">홈</a><span>/</span><span>언론 · 활동</span></div>
+      <div class="gu" style="margin-top:18px">언론 · 활동</div>
+      <h1>기록으로 남은 활동</h1>
+      <p class="lead">기사 전문은 저작권 때문에 싣지 않습니다. 제목과 매체, 날짜를 적고 원문으로 연결합니다.</p>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap">
+      <div class="press-row">{pressOutlets.map((o) => <span>{o}</span>)}</div>
+      <div class="list">
+        {press.map((p) => (
+          p.url ? (
+            <a href={p.url} target="_blank" rel="noopener"><time>{p.date}</time><div><b>{p.title}</b><span>{p.outlet}</span></div></a>
+          ) : (
+            <div style="display:grid;grid-template-columns:96px 1fr;gap:16px;padding:16px 0;border-top:1px solid var(--rule-2)"><time style="font-size:12.5px;color:var(--ink-3)">{p.date}</time><div><b style="font-weight:600">{p.title}</b><span style="display:block;font-size:13.5px;color:var(--ink-2)">{p.outlet} · 지면 기사</span></div></div>
+          )
+        ))}
+      </div>
+    </div>
+  </section>
+  <section class="sec band-paper">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="gu">활동</div>
+        <h2>표창 · 위원 · 강의</h2>
+      </div>
+      <div class="grid2">
+        {activities.map((a) => <div class="card"><div class="k">{a.k}</div><h3 style="font-size:18px">{a.v}</h3>{a.s && <p>{a.s}</p>}</div>)}
+      </div>
+    </div>
+  </section>
+  <CtaBand />
+</Base>

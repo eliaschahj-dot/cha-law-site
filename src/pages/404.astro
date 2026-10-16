@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="페이지를 찾을 수 없습니다" description="요청하신 페이지가 없습니다.">
+  <section class="sec">
+    <div class="wrap" style="display:grid;gap:16px;max-width:640px">
+      <div class="gu">404</div>
+      <h1 style="font-size:clamp(28px,4vw,44px)">이 주소에는 등기된 페이지가 없습니다</h1>
+      <p style="color:var(--ink-2)">주소가 바뀌었거나 잘못 입력되었을 수 있습니다. 아래에서 찾으시는 곳으로 이동하세요.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <a class="btn btn-ink" href="/">홈으로</a>
+        <a class="btn btn-ghost" href="/real-estate">부동산</a>
+        <a class="btn btn-ghost" href="/inheritance">상속</a>
+        <a class="btn btn-ghost" href="/columns">칼럼 · 꿀팁</a>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,20 @@
+{
+  "name": "cha-law-site",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1 --port 4321",
+    "build": "astro build",
+    "preview": "astro preview --host 127.0.0.1 --port 4321",
+    "start": "node server.js",
+    "posts": "python -I scripts/build_posts.py",
+    "import": "python -I -X utf8 scripts/import_archive.py"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.0",
+    "astro": "^5.0.0",
+    "express": "^4.21.0"
+  }
+}

@@ -1,0 +1,50 @@
+---
+import Base from '../layouts/Base.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { site } from '../data/site';
+---
+<Base title="상담 예약" description="24시간 안에 변호사가 직접 연락드립니다. 변호사 직통 070-4571-7668, 온라인 상담 신청서, 삼성동 사무실 오시는 길.">
+  <section class="area-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">홈</a><span>/</span><span>상담 예약</span></div>
+      <div class="gu" style="margin-top:18px">상담 예약</div>
+      <h1>24시간 안에 변호사가 직접 연락드립니다</h1>
+      <p class="lead">전화, 온라인 신청서, 카카오톡 중 편한 방법으로 상황을 먼저 들려주세요. 첫 상담에서 사건의 방향과 총 예상 비용을 숫자로 말씀드립니다.</p>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap contact">
+      <div>
+        <div class="ways" style="margin-top:0">
+          <a class="way" href={site.phoneHref}><span class="k">전화</span><span class="v">{site.phone}<small>{site.hours} · 변호사 직통</small></span></a>
+          <div class="way"><span class="k">카카오톡</span><span class="v">채널 '{site.kakaoName}'<small>개설 준비 중 · 사진과 계약서를 바로 보내실 수 있습니다</small></span></div>
+        </div>
+        <div class="office">
+          <b>{site.firm} · 삼성동</b>
+          <span>{site.address}</span>
+          <span>{site.transit} · {site.parking}</span>
+          <span>{site.hours} · {site.closed}</span>
+        </div>
+        <div class="card" style="margin-top:26px">
+          <div class="k">첫 상담 준비물</div>
+          <ul>
+            <li>계약서·유언장 등 문제가 된 서류 (사진도 괜찮습니다)</li>
+            <li>등기사항전부증명서 (있다면)</li>
+            <li>상대방과 주고받은 문자·통화 기록</li>
+            <li>지금까지의 경과를 시간순으로 적은 메모 한 장</li>
+          </ul>
+        </div>
+      </div>
+      <ContactForm />
+    </div>
+  </section>
+  <script>
+    // /contact?area=… 로 들어오면 분야를 미리 고른다
+    const area = new URLSearchParams(location.search).get('area');
+    const sel = document.getElementById('f-area') as HTMLSelectElement | null;
+    if (area && sel) {
+      const opt = Array.from(sel.options).find((o) => o.text.replace(/\s/g, '').includes(area.replace(/\s/g, '').split('·')[0]));
+      if (opt) sel.value = opt.value;
+    }
+  </script>
+</Base>

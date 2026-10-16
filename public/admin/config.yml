@@ -34,7 +34,9 @@ collections:
     format: frontmatter
     slug: "{{year}}{{month}}{{day}}-{{slug}}"
     summary: "{{date}} · {{section}} · {{title}}"
-    sortable_fields: [date, title, section]
+    sortable_fields:
+      fields: [date, title, section]
+      default: { field: date, direction: Descending }
     view_filters:
       - { label: 상속, field: section, pattern: 상속 }
       - { label: 부동산, field: section, pattern: 부동산 }

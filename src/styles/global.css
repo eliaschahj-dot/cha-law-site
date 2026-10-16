@@ -520,7 +520,7 @@ html.anim .ledger tbody tr:nth-child(4) { animation-delay: 1.7s; }
 @keyframes rowIn { to { opacity: 1; transform: none; } }
 html.anim .ledger tbody tr.on, html.ledger-done .ledger tbody tr { opacity: 1; transform: none; animation: none; }
 html.anim .stamp.press { animation-delay: 2.3s; }
-html.ledger-done .stamp { opacity: .9; transform: rotate(-12deg); animation: none; }
+html.ledger-done .stamp, html.anim.ledger-done .stamp.press { opacity: .9; transform: rotate(-12deg); animation: none; }
 /* 카드 위쪽 인주 선이 그어진다 */
 .card, .area-card, .principle, .press { position: relative; }
 .card::before, .area-card::before, .principle::before, .press::before { content: ""; position: absolute; top: -1px; left: 0; width: 0; height: 3px; background: var(--seal); transition: width .5s cubic-bezier(.2,.7,.2,1); }

@@ -1,29 +1,31 @@
 ---
 import Base from '../../layouts/Base.astro';
 import CtaBand from '../../components/CtaBand.astro';
-import { getPublicColumns, sections, postPath, fmtDate } from '../../data/posts';
+import { getPublicColumns, sections, visibleSections, postPath, fmtDate } from '../../data/posts';
 const cols = await getPublicColumns();
-const latest = cols.slice(0, 40);
+const visibleNames = visibleSections.map((s) => s.name);
+const main = cols.filter((p) => visibleNames.includes(p.section));
+const latest = main.slice(0, 40);
 const counts = Object.fromEntries(sections.map((s) => [s.slug, cols.filter((p) => p.section === s.name).length]));
-const firstYear = cols.length ? cols[cols.length - 1].date.slice(0, 4) : '2023';
+const firstYear = main.length ? main[main.length - 1].date.slice(0, 4) : '2024';
 ---
-<Base title="칼럼 · 꿀팁" description={`부동산과 상속에 관해 ${firstYear}년부터 매일 써 온 법률 칼럼과 계약 꿀팁 ${cols.length}편. 유류분, 상속재산분할, 전세보증금, 분양계약, 명도, 가압류까지.`}>
+<Base title="상속 칼럼" description={`상속에 관해 ${firstYear}년부터 써 온 법률 칼럼 ${main.length}편. 상속분쟁, 유류분, 상속포기·한정승인, 성년후견, 유언, 상속등기, 상속세.`}>
   <section class="area-hero">
     <div class="wrap">
-      <div class="crumbs"><a href="/">홈</a><span>/</span><span>칼럼 · 꿀팁</span></div>
-      <div class="gu" style="margin-top:18px">칼럼 · 꿀팁</div>
-      <h1>같은 질문에 답해 온 기록</h1>
-      <p class="lead">{firstYear}년 12월부터 거의 매일 한 편씩 써 온 글입니다. 상속 {counts.inheritance}편, 부동산 {counts['real-estate']}편, 분쟁 절차 {counts.procedure}편, 계약 꿀팁 {counts.tips}편.</p>
+      <div class="crumbs"><a href="/">홈</a><span>/</span><span>칼럼</span></div>
+      <div class="gu" style="margin-top:18px">칼럼</div>
+      <h1>상속, 같은 질문에 답해 온 기록</h1>
+      <p class="lead">상담실에서 받은 질문에 답해 온 글입니다. 상속 {counts.inheritance}편, 상속 분쟁에서 함께 쓰는 절차 {counts.procedure}편.</p>
     </div>
   </section>
   <section class="sec">
     <div class="wrap">
       <div class="filters">
         <a href="/columns" aria-current="page">전체</a>
-        {sections.map((s) => <a href={`/columns/topic/${s.slug}`}>{s.label} <span style="opacity:.6">{counts[s.slug]}</span></a>)}
+        {visibleSections.map((s) => <a href={`/columns/topic/${s.slug}`}>{s.label} <span style="opacity:.6">{counts[s.slug]}</span></a>)}
       </div>
       <div class="grid2" style="margin-bottom:28px">
-        {sections.map((s) => <a class="card" href={`/columns/topic/${s.slug}`} style="text-decoration:none"><div class="k">{s.label}</div><p>{s.desc}</p><p style="color:var(--seal);font-weight:600;font-size:13px">{counts[s.slug]}편 보기 →</p></a>)}
+        {visibleSections.map((s) => <a class="card" href={`/columns/topic/${s.slug}`} style="text-decoration:none"><div class="k">{s.label}</div><p>{s.desc}</p><p style="color:var(--seal);font-weight:600;font-size:13px">{counts[s.slug]}편 보기 →</p></a>)}
       </div>
       <h2 style="font-size:22px;margin:30px 0 10px">최근 글</h2>
       <div class="list">
@@ -34,6 +36,7 @@ const firstYear = cols.length ? cols[cols.length - 1].date.slice(0, 4) : '2023';
           </a>
         ))}
       </div>
+      {counts.tips > 0 && <p class="src" style="margin-top:22px">상속 부동산을 다룰 때 함께 보는 <a href="/columns/topic/tips">등기부·계약 체크리스트 글 {counts.tips}편</a>은 따로 모아 두었습니다.</p>}
     </div>
   </section>
   <CtaBand />

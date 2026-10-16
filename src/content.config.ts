@@ -34,6 +34,7 @@ const areas = defineCollection({
     docs: z.array(z.string()),
     faq: z.array(z.object({ q: z.string(), a: z.string() })),
     tags: z.array(z.string()).default([]),
+    deadlines: z.array(z.object({ k: z.string(), v: z.string() })).default([]),
   }),
 });
 

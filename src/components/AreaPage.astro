@@ -1,24 +1,38 @@
 ---
 import Faq from './Faq.astro';
-import { axisMeta, type Area, byAxis, areaPath } from '../data/areas';
-import { getPublicColumns, related, postPath, fmtDate } from '../data/posts';
+import { axisMeta, type Area, areas, areaPath } from '../data/areas';
+import { getPublicColumns, related, postPath, fmtDate, tagPath } from '../data/posts';
 import { site } from '../data/site';
 interface Props { area: Area }
 const { area } = Astro.props;
-const meta = axisMeta[area.axis];
-const siblings = byAxis(area.axis).filter((a) => a.slug !== area.slug);
-const posts = related(await getPublicColumns(), area.tags, 6);
+const meta = axisMeta.in;
+const siblings = areas.filter((a) => a.slug !== area.slug);
+const cols = await getPublicColumns();
+const posts = related(cols, area.tags, 8);
+const tagCounts = area.tags.map((t) => ({ t, n: cols.filter((p) => p.tags.includes(t)).length })).filter((x) => x.n > 0);
 ---
 <section class="area-hero">
   <div class="wrap">
-    <div class="crumbs"><a href="/">홈</a><span>/</span><a href={meta.base}>{meta.name}</a><span>/</span><span>{area.name}</span></div>
-    <div class="gu" style="margin-top:18px">{meta.gu}</div>
+    <div class="crumbs"><a href="/">홈</a><span>/</span><a href={meta.hub}>상속 업무 분야</a><span>/</span><span>{area.name}</span></div>
+    <div class="gu" style="margin-top:18px">{meta.gu} <small>{area.short}</small></div>
     <h1>{area.name}</h1>
     <p class="lead">{area.lead}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:26px">
+      <a class="btn btn-seal" href={`/contact?area=${encodeURIComponent(area.name)}`}>{area.name} 상담 신청</a>
+      <a class="btn btn-ghost" href={site.phoneHref}>변호사 직통 {site.phone}</a>
+    </div>
   </div>
 </section>
 <div class={`wrap area-body ${area.axis}`}>
   <div class="main">
+    {area.deadlines && area.deadlines.length > 0 && (
+      <section>
+        <h2>먼저 확인할 기한과 기준</h2>
+        <div class="grid3">
+          {area.deadlines.map((d) => <div class="card"><div class="k">{d.k}</div><p style="color:var(--ink);font-weight:600;font-size:15.5px">{d.v}</p></div>)}
+        </div>
+      </section>
+    )}
     <section>
       <h2>이런 상황이라면</h2>
       <ul class="situ">{area.situations.map((s) => <li>{s}</li>)}</ul>
@@ -37,10 +51,15 @@ const posts = related(await getPublicColumns(), area.tags, 6);
     </section>
     {posts.length > 0 && (
       <section>
-        <h2>관련 글</h2>
+        <h2>{area.name} 관련 글</h2>
         <div class="list">
-          {posts.map((p) => <a href={postPath(p)}><time datetime={p.date}>{fmtDate(p.date)}</time><div><b>{p.title}</b>{p.excerpt && <span>{p.excerpt}</span>}</div></a>)}
+          {posts.map((p) => <a href={postPath(p)}><time datetime={p.date}>{fmtDate(p.date)}</time><div><b>{p.title}</b><span class="chip">{p.section}</span>{p.excerpt && <span>{p.excerpt}</span>}</div></a>)}
         </div>
+        {tagCounts.length > 0 && (
+          <p style="margin-top:18px;display:flex;flex-wrap:wrap;gap:8px">
+            {tagCounts.map((x) => <a class="btn btn-paper btn-sm" href={tagPath(x.t)}>#{x.t} 글 {x.n}편 모두 보기</a>)}
+          </p>
+        )}
       </section>
     )}
   </div>
@@ -52,7 +71,7 @@ const posts = related(await getPublicColumns(), area.tags, 6);
       <a class="btn btn-seal" href={`/contact?area=${encodeURIComponent(area.name)}`}>온라인 상담 신청</a>
     </div>
     <div class="card">
-      <div class="k">{meta.name} · 다른 분야</div>
+      <div class="k">상속 · 다른 분야</div>
       <ul style="list-style:none;padding:0;display:grid;gap:8px">
         {siblings.map((a) => <li><a href={areaPath(a)} style="text-decoration:none;font-weight:500">{a.name}</a></li>)}
       </ul>

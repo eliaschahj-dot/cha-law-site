@@ -2,7 +2,7 @@
 import { site } from '../data/site';
 interface Props { area?: string }
 const { area } = Astro.props;
-const areas = ['전세보증금 · 임대차', '분양 · 매매 계약', '재개발 · 재건축 · 명도', '공사대금 · 하자', '유류분 · 상속재산분할', '유언 · 성년후견', '상속세 · 증여 설계', '상속포기 · 한정승인', '기타'];
+const areas = ['상속분쟁 · 상속재산분할', '유류분', '상속포기 · 한정승인', '성년후견인 · 재산관리', '유언장 · 유언 효력', '상속등기 · 명의신탁', '상속세 · 증여 설계', '일반 민사 (대여금·손해배상 등)', '부동산 (매매·임대차·분양)', '형사', '가사 (이혼·양육 등)', '기타'];
 ---
 <form class="consult" id="consult" method="post" action="/api/contact" novalidate>
   <div class="row">

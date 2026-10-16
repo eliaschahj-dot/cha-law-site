@@ -1,0 +1,38 @@
+---
+import Base from '../../../layouts/Base.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { getPublicColumns, postPath, fmtDate, type Post } from '../../../data/posts';
+import { areas, areaPath } from '../../../data/areas';
+
+export async function getStaticPaths() {
+  const cols = await getPublicColumns();
+  const tags = new Map<string, Post[]>();
+  for (const p of cols) for (const t of p.tags) tags.set(t, [...(tags.get(t) ?? []), p]);
+  return [...tags.entries()].map(([tag, list]) => ({ params: { tag }, props: { tag, list } }));
+}
+const { tag, list } = Astro.props as { tag: string; list: Post[] };
+const linked = areas.filter((a) => a.tags.includes(tag));
+---
+<Base title={`#${tag} 칼럼`} description={`${tag}에 관한 칼럼 ${list.length}편. 상속 전문 변호사 차형진.`}>
+  <section class="area-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">홈</a><span>/</span><a href="/columns">칼럼</a><span>/</span><span>#{tag}</span></div>
+      <div class="gu" style="margin-top:18px">태그</div>
+      <h1>#{tag}</h1>
+      <p class="lead">{tag}에 관해 써 온 글 {list.length}편입니다.{linked.length > 0 && <span> 관련 업무 분야: {linked.map((a) => <a href={areaPath(a)} style="font-weight:600">{a.name}</a>)}</span>}</p>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap">
+      <div class="list">
+        {list.map((p) => (
+          <a href={postPath(p)}>
+            <time datetime={p.date}>{fmtDate(p.date)}</time>
+            <div><b>{p.title}</b><span class="chip">{p.section}</span>{p.excerpt && <span>{p.excerpt}</span>}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+  <CtaBand />
+</Base>

@@ -183,6 +183,9 @@ html.anim .rv.in { opacity: 1; transform: none; }
 .hero .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
 .hero .direct { margin-top: 18px; font-size: 14px; color: var(--ink-3); }
 .hero .direct b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+.kw { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.kw a { font-size: 13px; font-weight: 600; text-decoration: none; padding: 7px 13px; border: 1px solid var(--rule); border-radius: 999px; background: var(--card); color: var(--ink-2); transition: border-color .2s, color .2s, transform .2s; }
+.kw a:hover { border-color: var(--seal); color: var(--seal); transform: translateY(-1px); }
 .vertical {
   position: absolute; right: max(14px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%);
   writing-mode: vertical-rl; font-family: var(--display); font-size: 13px; letter-spacing: .4em; color: var(--ink-3);

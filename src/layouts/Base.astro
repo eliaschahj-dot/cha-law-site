@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { site, nav } from '../data/site';
+import { site, nav, footerNav } from '../data/site';
 
 interface Props {
   title: string;
@@ -25,7 +25,7 @@ const orgLd = {
   telephone: site.phone,
   address: { '@type': 'PostalAddress', streetAddress: '테헤란로103길 10 길훈빌딩 2층', addressLocality: '강남구', addressRegion: '서울', addressCountry: 'KR' },
   areaServed: 'KR',
-  knowsAbout: ['부동산 분쟁', '전세보증금 반환', '분양계약', '명도소송', '재개발·재건축', '유류분', '상속재산분할', '유언', '성년후견', '상속세'],
+  knowsAbout: ['상속분쟁', '상속재산분할', '기여분', '유류분 반환', '상속포기', '한정승인', '성년후견', '유언', '상속등기', '명의신탁', '상속세'],
   openingHours: ['Mo-Fr 10:00-18:00', 'Sa 10:00-14:00'],
 };
 const ldItems = [orgLd, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
@@ -93,7 +93,7 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
       </div>
       <div class="links">
         {nav.map((n) => <a href={n.href}>{n.label}</a>)}
-        <a href="/contact">상담 예약</a>
+        {footerNav.map((n) => <a href={n.href}>{n.label}</a>)}
         <a href={site.blog} target="_blank" rel="noopener">네이버 블로그</a>
         <a href="https://beyullaw.com" target="_blank" rel="noopener">법무법인 베율</a>
         <a href="/privacy">개인정보처리방침</a>

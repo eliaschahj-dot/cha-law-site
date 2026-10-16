@@ -7,4 +7,22 @@ export default defineConfig({
   integrations: [sitemap()],
   build: { format: 'directory' },
   trailingSlash: 'ignore',
+  // 2026.10.16 상속 단일 전문으로 개편: 옛 주소는 새 랜딩 페이지로 보낸다
+  redirects: {
+    '/inheritance/division': '/dispute',
+    '/inheritance/debt': '/renunciation',
+    '/inheritance/legal-reserve': '/legal-reserve',
+    '/inheritance/guardianship': '/guardianship',
+    '/inheritance/will': '/will',
+    '/inheritance/registration': '/registration',
+    '/inheritance/tax': '/tax',
+    '/real-estate': '/',
+    '/real-estate/deposit': '/',
+    '/real-estate/presale': '/',
+    '/real-estate/sale': '/',
+    '/real-estate/lease': '/',
+    '/real-estate/redevelopment': '/',
+    '/real-estate/construction': '/',
+    '/columns/topic/real-estate': '/columns',
+  },
 });

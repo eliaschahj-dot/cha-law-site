@@ -1,7 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import CtaBand from '../../../components/CtaBand.astro';
-import { getPublicColumns, sections, postPath, fmtDate, type Post } from '../../../data/posts';
+import { getPublicColumns, sections, visibleSections, postPath, fmtDate, type Post } from '../../../data/posts';
 
 export async function getStaticPaths() {
   const cols = await getPublicColumns();
@@ -9,21 +9,22 @@ export async function getStaticPaths() {
   return sections.map((s) => ({ params: { section: s.slug }, props: { s, list: cols.filter((p) => p.section === s.name), counts } }));
 }
 const { s, list, counts } = Astro.props as { s: (typeof sections)[number]; list: Post[]; counts: Record<string, number> };
+const filterSections = sections.filter((x) => !x.hidden || x.slug === s.slug);
 ---
 <Base title={s.label} description={`${s.desc}. 차형진 변호사의 ${s.label} ${list.length}편.`}>
   <section class="area-hero">
     <div class="wrap">
-      <div class="crumbs"><a href="/">홈</a><span>/</span><a href="/columns">칼럼 · 꿀팁</a><span>/</span><span>{s.label}</span></div>
+      <div class="crumbs"><a href="/">홈</a><span>/</span><a href="/columns">칼럼</a><span>/</span><span>{s.label}</span></div>
       <div class="gu" style="margin-top:18px">{s.label}</div>
-      <h1>{s.name === '꿀팁' ? '계약 전에 확인할 것들' : `${s.name} 칼럼`}</h1>
-      <p class="lead">{s.desc}. 모두 {list.length}편.</p>
+      <h1>{s.name === '꿀팁' ? '등기부와 계약, 확인할 것들' : `${s.name} 칼럼`}</h1>
+      <p class="lead">{s.desc}. 모두 {list.length}편.{s.hidden && ' 상속 부동산을 다룰 때 참고하시라고 따로 모아 둔 글입니다.'}</p>
     </div>
   </section>
   <section class="sec">
     <div class="wrap">
       <div class="filters">
         <a href="/columns">전체</a>
-        {sections.map((x) => <a href={`/columns/topic/${x.slug}`} aria-current={x.slug === s.slug ? 'page' : undefined}>{x.label} <span style="opacity:.6">{counts[x.slug]}</span></a>)}
+        {filterSections.map((x) => <a href={`/columns/topic/${x.slug}`} aria-current={x.slug === s.slug ? 'page' : undefined}>{x.label} <span style="opacity:.6">{counts[x.slug]}</span></a>)}
       </div>
       <div class="list">
         {list.map((p) => (

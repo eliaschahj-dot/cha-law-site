@@ -6,10 +6,10 @@ import fs from 'node:fs';
 const hasPhoto = fs.existsSync(new URL('../../public/profile.jpg', import.meta.url));
 const ld = {
   '@context': 'https://schema.org', '@type': 'Person', name: '차형진', jobTitle: '변호사', worksFor: { '@type': 'Organization', name: site.firm },
-  alumniOf: ['한동대학교', '카이스트 경영대학원'], knowsAbout: ['부동산', '상속', '성년후견', '전세사기'], url: site.url + '/about',
+  alumniOf: ['한동대학교', '카이스트 경영대학원'], knowsAbout: ['상속', '유류분', '성년후견', '유언'], url: site.url + '/about',
 };
 ---
-<Base title="변호사 소개" description="한동대 건축학·법학 복수전공, 카이스트 사회적기업가 MBA. 서울시 공익변호사, 서울특별시장 표창, 대한변협 성년후견회 전문위원. 법무법인 베율 파트너 변호사 차형진." jsonLd={ld}>
+<Base title="변호사 소개" description="상속 전문 변호사 차형진. 한동대 건축학·법학 복수전공, 카이스트 사회적기업가 MBA. 서울시 공익변호사, 서울특별시장 표창, 대한변협 성년후견회 전문위원. 법무법인 베율 파트너." jsonLd={ld}>
   <section class="area-hero">
     <div class="wrap">
       <div class="crumbs"><a href="/">홈</a><span>/</span><span>변호사 소개</span></div>
@@ -25,9 +25,9 @@ const ld = {
       <div>
         <div class="prose" style="color:var(--ink);font-size:17px">
           <p>{bio.intro}</p>
-          <p>건축학을 먼저 공부했기 때문에 도면과 시방서, 하자 보고서를 변호사가 직접 읽습니다. 분양·재개발·공사대금 사건에서 감정 결과를 그대로 받아들이지 않고 다시 따져 보는 이유입니다.</p>
+          <p>건축학을 먼저 공부했기 때문에 상속 재산의 대부분인 집과 땅을 도면과 등기부로 직접 읽습니다. 선산과 종중 임야, 재개발 구역에 걸린 상속 부동산처럼 부동산이 얽힌 상속에서 감정 결과를 그대로 받아들이지 않고 다시 따져 보는 이유입니다.</p>
           <p>2019년 로펌에서 만난 치매 할머니의 사연이 지금의 일하는 방식을 만들었습니다. 형제 한 명이 어머니 인감으로 아파트를 팔고, 다른 형제는 어머니를 데려갔습니다. 변호사라면 후견인 지정 방법을 안내하면 될 일이었지만, "미리 막을 수 있었다"는 생각이 떠나지 않았습니다. 그래서 치매 전에 뜻을 남기는 서비스와 계약 전 과정을 기록하는 화상 계약 서비스를 만드는 리걸테크 회사를 세웠고, 서울시 공익변호사로 활동하며 시민 법률 복지에 기여한 공로로 서울특별시장 표창을 받았습니다.</p>
-          <p>지금은 법무법인 베율의 파트너 변호사로, 변호사·세무사·회계사가 한 팀인 구조 안에서 부동산과 상속 사건을 맡습니다. 분쟁이 되기 전의 설계와 분쟁이 된 뒤의 해결을 같은 무게로 다룹니다.</p>
+          <p>지금은 법무법인 베율의 파트너 변호사로, 변호사·세무사·회계사가 한 팀인 구조 안에서 상속 사건을 맡습니다. 분쟁이 되기 전의 설계와 분쟁이 된 뒤의 해결을 같은 무게로 다룹니다.</p>
         </div>
         <div class="cv">
           <div><h4>학력</h4><ul>{bio.education.map((x) => <li>{x}</li>)}</ul></div>

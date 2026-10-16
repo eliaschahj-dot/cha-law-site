@@ -4,22 +4,22 @@ import Ledger from '../components/Ledger.astro';
 import Faq from '../components/Faq.astro';
 import ContactForm from '../components/ContactForm.astro';
 import { site, trust, bio, press, pressOutlets, faq } from '../data/site';
-import { byAxis, axisMeta, areaPath } from '../data/areas';
+import { areas, bySlugs, PLAN_SLUGS, DISPUTE_SLUGS, areaPath } from '../data/areas';
 import { getPublicColumns, postPath, fmtDate } from '../data/posts';
 import fs from 'node:fs';
 
 const hasPhoto = fs.existsSync(new URL('../../public/profile.jpg', import.meta.url));
-const re = byAxis('re');
-const inh = byAxis('in');
+const plan = bySlugs(PLAN_SLUGS);
+const dispute = bySlugs(DISPUTE_SLUGS);
 const picks = press.filter((p) => p.pick);
 const cols = await getPublicColumns();
-const latest = (name: string) => cols.find((p) => p.section === name && p.full && p.excerpt);
-const homePosts = [latest('상속'), latest('부동산'), latest('꿀팁')].filter(Boolean);
+const sangsok = cols.filter((p) => p.section === '상속');
+const homePosts = sangsok.filter((p) => p.full && p.excerpt).slice(0, 3);
 
 const rail = [
   { id: 'pyoje', label: '표제부' },
-  { id: 'gapgu', label: '갑구 · 분야' },
-  { id: 'eulgu', label: '을구 · 방식' },
+  { id: 'gapgu', label: '분야' },
+  { id: 'eulgu', label: '방식' },
   { id: 'about', label: '변호사' },
   { id: 'fees', label: '비용' },
   { id: 'columns', label: '칼럼' },
@@ -37,20 +37,23 @@ const faqLd = {
 
   <!-- 히어로 -->
   <section class="hero">
-    <div class="vertical" aria-hidden="true">부동산 · 상속 변호사 차형진</div>
+    <div class="vertical" aria-hidden="true">상속 전문 변호사 차형진</div>
     <div class="wrap">
       <div>
-        <div class="eyebrow rise">부동산 · 상속 전문 변호사 차형진</div>
-        <h1 class="rise rise-2" data-type>집은 사고파는 것이 아니라,<br />지키고 <em class="brush">물려주는<svg viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true"><path pathLength="100" d="M3 13 C 45 4, 110 19, 197 8" /></svg></em> 것입니다.</h1>
+        <div class="eyebrow rise">법무법인 베율 파트너 변호사</div>
+        <h1 class="rise rise-2" data-type><em class="brush">상속<svg viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true"><path pathLength="100" d="M3 13 C 45 4, 110 19, 197 8" /></svg></em> 전문 변호사<br />차형진</h1>
       </div>
       <div class="hero-grid">
         <div>
-          <p class="lead rise rise-3">전세보증금과 분양·매매 분쟁부터 유언·유류분·상속재산분할까지. 분쟁이 되기 전에 설계하고, 분쟁이 되면 끝까지 함께합니다. 상담도 재판도 변호사가 직접 합니다.</p>
+          <p class="lead rise rise-3">물려주기 전의 설계부터 물려받은 뒤의 분쟁까지, 상속만 봅니다. 유언·성년후견·상속세로 분쟁을 막고, 분쟁이 되면 상속재산분할·유류분·한정승인을 끝까지 맡습니다. 상담도 재판도 변호사가 직접 합니다.</p>
           <div class="cta rise rise-3">
             <a class="btn btn-seal" href="/contact">상담 예약하기</a>
             <a class="btn btn-ghost" href="#gapgu">어떤 일로 오셨나요?</a>
           </div>
           <p class="direct rise rise-3">변호사 직통 <b>{site.phone}</b> · {site.reply}</p>
+          <nav class="kw rise rise-3" aria-label="상속 분야 바로가기">
+            {areas.map((a) => <a href={areaPath(a)}>{a.name}</a>)}
+          </nav>
         </div>
         <Ledger />
       </div>
@@ -64,65 +67,83 @@ const faqLd = {
     </div>
   </section>
 
-  <!-- 갑구: 업무 분야 -->
+  <!-- 분야 -->
   <section class="sec" id="gapgu">
     <div class="wrap">
       <div class="sec-head">
-        <div class="gu">갑구 <small>업무 분야</small></div>
+        <div class="gu">분야 <small>물려주기 전 · 물려받은 뒤</small></div>
         <h2>어떤 일로 오셨나요?</h2>
-        <p>부동산 분쟁의 끝에는 상속이 있고, 상속 분쟁의 한가운데에는 부동산이 있습니다. 두 분야를 한 사람이 맡는 이유입니다. 순위를 눌러 상황을 확인해 보세요.</p>
+        <p>상속은 한 사람이 떠나기 전과 후, 두 번 찾아옵니다. 떠나기 전에는 설계가, 떠난 뒤에는 분쟁이 문제입니다. 순위를 눌러 상황을 확인해 보세요.</p>
       </div>
       <div class="axes">
-        {([['re', re], ['in', inh]] as const).map(([axis, list]) => (
-          <article class={`axis ${axis}`}>
-            <div class="axis-head">
-              <div class="n">{axisMeta[axis].gu}</div>
-              <h3>{axisMeta[axis].name}</h3>
-              <p>{axisMeta[axis].sub}</p>
-            </div>
-            <div class="rows">
-              {list.map((a, i) => (
-                <details>
-                  <summary><i>{i + 1}</i><span style="color:var(--ink);font-weight:600;font-size:15.5px">{a.name}</span><span>{a.short}</span></summary>
-                  <div class="body">
-                    <p>{a.lead}</p>
-                    <p>{a.situations[0]}. {a.situations[1]}.</p>
-                    <p><a href={areaPath(a)}>{a.name} 자세히 보기 →</a></p>
-                  </div>
-                </details>
-              ))}
-            </div>
-            <div class="axis-foot"><a class="btn btn-paper" href={axisMeta[axis].base}>{axisMeta[axis].name} 전체 보기</a></div>
-          </article>
-        ))}
+        <article class="axis re">
+          <div class="axis-head">
+            <div class="n">물려주기 전 · 설계</div>
+            <h3>분쟁이 되기 전에</h3>
+            <p>유언장 한 장, 후견 설계 한 번이 소송 몇 년을 줄입니다.</p>
+          </div>
+          <div class="rows">
+            {plan.map((a, i) => (
+              <details>
+                <summary><i>{i + 1}</i><span style="color:var(--ink);font-weight:600;font-size:15.5px">{a.name}</span><span>{a.short}</span></summary>
+                <div class="body">
+                  <p>{a.lead}</p>
+                  <p>{a.situations[0]}. {a.situations[1]}.</p>
+                  <p><a href={areaPath(a)}>{a.name} 자세히 보기 →</a></p>
+                </div>
+              </details>
+            ))}
+          </div>
+          <div class="axis-foot"><a class="btn btn-paper" href="/inheritance">상속 분야 전체 보기</a></div>
+        </article>
+        <article class="axis in">
+          <div class="axis-head">
+            <div class="n">물려받은 뒤 · 분쟁</div>
+            <h3>분쟁이 되었다면</h3>
+            <p>기한이 있는 일부터 순서대로, 끝까지 갑니다.</p>
+          </div>
+          <div class="rows">
+            {dispute.map((a, i) => (
+              <details>
+                <summary><i>{i + 1}</i><span style="color:var(--ink);font-weight:600;font-size:15.5px">{a.name}</span><span>{a.short}</span></summary>
+                <div class="body">
+                  <p>{a.lead}</p>
+                  <p>{a.situations[0]}. {a.situations[1]}.</p>
+                  <p><a href={areaPath(a)}>{a.name} 자세히 보기 →</a></p>
+                </div>
+              </details>
+            ))}
+          </div>
+          <div class="axis-foot"><a class="btn btn-paper" href="/contact">상속 분쟁 상담 신청</a></div>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- 을구: 일하는 방식 -->
+  <!-- 방식 -->
   <section class="sec band-ink" id="eulgu">
     <div class="wrap">
       <div class="sec-head">
-        <div class="gu">을구 <small>일하는 방식</small></div>
+        <div class="gu">방식 <small>일하는 방식</small></div>
         <h2>분쟁이 되기 전에, 그리고 분쟁이 된 뒤에</h2>
-        <p>변호사는 대개 일이 터진 뒤에 만납니다. 저는 일이 터지기 전의 설계를 같은 무게로 봅니다. 계약서 한 장, 유언장 한 장이 소송 몇 년을 줄입니다.</p>
+        <p>변호사는 대개 일이 터진 뒤에 만납니다. 저는 일이 터지기 전의 설계를 같은 무게로 봅니다. 유언장 한 장, 후견 설계 한 번이 가족의 몇 년을 바꿉니다.</p>
       </div>
       <div class="phases">
         <div class="phase">
           <h3><small>BEFORE</small>분쟁 전 설계</h3>
           <ul>
-            <li><b>계약서 검토 · 동행</b><span>매매·전세·분양 계약 전 특약과 권리관계 점검</span><i>특약 · 권리관계 · 등기부 확인</i></li>
-            <li><b>유언 · 사전 의향서</b><span>치매 전 재산 관리와 돌봄에 관한 뜻을 기록</span><i>유언장 · 임의후견 · 사전 의향서</i></li>
-            <li><b>성년후견 · 증여 설계</b><span>후견인 지정, 사전 증여와 상속세 구조</span><i>세무사 · 회계사와 한 팀</i></li>
+            <li><b>유언 · 사전 의향서</b><span>공정증서 유언으로 뜻을 분명히 남기고, 치매 전 재산 관리와 돌봄의 방향을 기록</span><i>유언장 · 임의후견 · 사전 의향서</i></li>
+            <li><b>성년후견 · 재산관리 설계</b><span>후견인 지정, 처분 허가가 필요한 재산의 정리</span><i>의사능력이 남아 있을 때</i></li>
+            <li><b>증여 · 상속세 설계</b><span>분할 방식에 따라 달라지는 세금을 미리 계산</span><i>세무사 · 회계사와 한 팀</i></li>
           </ul>
         </div>
         <div class="divider">그 사이에 변호사가 있습니다</div>
         <div class="phase">
           <h3><small>AFTER</small>분쟁 해결</h3>
           <ul>
-            <li><b>보전처분</b><span>가압류·가처분으로 먼저 재산을 묶습니다</span><i>속도가 결과를 바꿉니다</i></li>
-            <li><b>소송 · 조정</b><span>서면과 변론을 변호사가 직접 작성하고 출석합니다</span><i>사무장 상담 없음</i></li>
-            <li><b>집행 · 회수</b><span>판결 뒤 실제로 돈과 집을 돌려받을 때까지</span><i>끝까지</i></li>
+            <li><b>기한 지키기</b><span>상속포기·한정승인 3개월, 유류분 1년처럼 놓치면 끝나는 기한부터</span><i>첫 상담에서 날짜를 셉니다</i></li>
+            <li><b>심판 · 소송 · 조정</b><span>상속재산분할 심판, 유류분 반환 소송, 유언 효력 소송을 변호사가 직접 수행</span><i>사무장 상담 없음</i></li>
+            <li><b>등기 · 정산</b><span>결정이 난 뒤 상속등기와 대금 정산, 세금 신고까지</span><i>끝까지</i></li>
           </ul>
         </div>
       </div>
@@ -130,7 +151,7 @@ const faqLd = {
         <blockquote>"어머니 인감으로 몰래 아파트를 판 형제가 있었습니다. 변호사라면 후견인 지정 방법을 안내하면 될 일이었지만, 저는 미리 막을 방법을 만들고 싶었습니다."
           <cite>2019년, 로펌 근무 시절 만난 의뢰인 이야기 · 중앙일보 인터뷰(2024.7)에서</cite>
         </blockquote>
-        <p>그 사연이 리걸테크 회사를 직접 세운 출발점이 되었습니다. 치매 전에 내 뜻을 남기는 서비스와 계약의 전 과정을 기록하는 화상 계약 서비스는 모두 "분쟁이 되기 전에"라는 한 가지 생각에서 나왔습니다. 지금은 법무법인 베율에서 변호사·세무사·회계사가 한 팀으로 분쟁 해결과 절세, 재산 승계를 함께 다룹니다.</p>
+        <p>그 사연이 리걸테크 회사를 직접 세운 출발점이 되었습니다. 치매 전에 내 뜻을 남기는 서비스는 "분쟁이 되기 전에"라는 한 가지 생각에서 나왔습니다. 지금은 법무법인 베율에서 변호사·세무사·회계사가 한 팀으로 상속 분쟁의 해결과 절세, 재산 승계를 함께 다룹니다.</p>
       </div>
     </div>
   </section>
@@ -161,11 +182,11 @@ const faqLd = {
       <div class="sec-head">
         <div class="gu">비용 안내</div>
         <h2>비용은 상담에서 먼저 말씀드립니다</h2>
-        <p>부동산과 상속 분쟁은 남은 전부를 걸고 싸우는 일입니다. 비용 구조를 모른 채 시작하지 않도록, 첫 상담에서 총 예상 비용을 숫자로 드립니다.</p>
+        <p>상속 분쟁은 가족의 남은 관계를 걸고 싸우는 일입니다. 비용 구조를 모른 채 시작하지 않도록, 첫 상담에서 총 예상 비용을 숫자로 드립니다.</p>
       </div>
       <div class="principles">
         <div class="principle"><div class="num">원칙 하나</div><h3>총 예상 견적을 먼저</h3><p>사건의 종류와 난이도에 따라 예상되는 총비용과 기간을 상담 자리에서 제시합니다. 숨은 비용은 없습니다.</p></div>
-        <div class="principle"><div class="num">원칙 둘</div><h3>사건에 맞는 구조로</h3><p>대부분의 소송은 착수금과 성공보수로 구성된 일반 수임 계약으로, 자문과 일부 사건은 수행 시간을 기준으로 월 상한을 정한 시간제로 진행합니다. 어느 쪽이 맞는지 상담에서 정합니다.</p></div>
+        <div class="principle"><div class="num">원칙 둘</div><h3>사건에 맞는 구조로</h3><p>대부분의 심판·소송은 착수금과 성공보수로 구성된 일반 수임 계약으로, 유언·후견 설계와 자문은 수행 시간을 기준으로 월 상한을 정한 시간제로 진행합니다. 어느 쪽이 맞는지 상담에서 정합니다.</p></div>
         <div class="principle"><div class="num">원칙 셋</div><h3>변호사가 직접, 정해진 건수만</h3><p>상담과 서면, 변론을 변호사가 직접 합니다. 집중해서 다룰 수 있는 건수만 맡습니다.</p></div>
       </div>
       <p style="margin-top:22px"><a class="btn btn-ghost" href="/fees">비용 안내 자세히</a></p>
@@ -176,16 +197,16 @@ const faqLd = {
   <section class="sec" id="columns">
     <div class="wrap">
       <div class="sec-head">
-        <div class="gu">칼럼 · 꿀팁</div>
+        <div class="gu">칼럼</div>
         <h2>섣불리 결정하지 마세요. 글 세 개만 먼저 읽어보세요.</h2>
-        <p>같은 상황을 겪은 분들의 질문에 답해 온 기록 {cols.length}편입니다. 사례는 의뢰인 동의를 받아 익명으로 소개합니다.</p>
+        <p>상속에 관해 같은 질문에 답해 온 기록 {sangsok.length}편입니다. 사례는 의뢰인 동의를 받아 익명으로 소개합니다.</p>
       </div>
       <div class="posts">
         {homePosts.map((p) => (
-          <a class={`post ${p!.section === '상속' ? 'in' : ''}`} href={postPath(p!)}>
-            <span class="tag">{p!.section} · {fmtDate(p!.date)}</span>
-            <h3>{p!.title}</h3>
-            <p>{p!.excerpt}</p>
+          <a class="post in" href={postPath(p)}>
+            <span class="tag">{p.section} · {fmtDate(p.date)}</span>
+            <h3>{p.title}</h3>
+            <p>{p.excerpt}</p>
             <span class="read">읽기 →</span>
           </a>
         ))}
@@ -234,7 +255,7 @@ const faqLd = {
         <h2 style="margin-top:12px">24시간 안에 변호사가 직접 연락드립니다</h2>
         <div class="ways">
           <a class="way" href={site.phoneHref}><span class="k">전화</span><span class="v">{site.phone}<small>{site.hours} · 변호사 직통</small></span></a>
-          <div class="way"><span class="k">카카오톡</span><span class="v">채널 '{site.kakaoName}'<small>개설 준비 중 · 사진과 계약서를 바로 보내실 수 있습니다</small></span></div>
+          <div class="way"><span class="k">카카오톡</span><span class="v">채널 '{site.kakaoName}'<small>{site.kakaoUrl ? '사진과 서류를 바로 보내실 수 있습니다' : '개설 준비 중 · 사진과 서류를 바로 보내실 수 있습니다'}</small></span></div>
           <a class="way" href="/contact"><span class="k">온라인</span><span class="v">상담 신청서<small>상황을 적어 보내주시면 변호사가 검토 후 연락드립니다</small></span></a>
         </div>
         <div class="office">
@@ -243,6 +264,7 @@ const faqLd = {
           <span>{site.transit} · {site.parking}</span>
           <span>{site.hours} · {site.closed}</span>
         </div>
+        <p class="notice bronze" style="margin-top:22px">상속이 아닌 일반 민사·부동산·형사·가사 사건도 상담하고 수행합니다. 어느 분야인지 모르셔도 상황을 적어 주시면 변호사가 안내드립니다.</p>
       </div>
       <ContactForm />
     </div>

@@ -12,12 +12,21 @@ export const site = siteJson as {
 };
 
 export const nav = [
+  { href: '/dispute', label: '상속분쟁' },
+  { href: '/legal-reserve', label: '유류분' },
+  { href: '/renunciation', label: '상속포기' },
+  { href: '/guardianship', label: '성년후견인' },
+  { href: '/will', label: '유언' },
+  { href: '/columns', label: '칼럼' },
   { href: '/about', label: '변호사 소개' },
-  { href: '/real-estate', label: '부동산' },
-  { href: '/inheritance', label: '상속' },
-  { href: '/columns', label: '칼럼·꿀팁' },
-  { href: '/fees', label: '비용 안내' },
-  { href: '/press', label: '언론·활동' },
+  { href: '/fees', label: '비용' },
+];
+export const footerNav = [
+  { href: '/inheritance', label: '상속 분야 전체' },
+  { href: '/registration', label: '상속등기 · 명의신탁' },
+  { href: '/tax', label: '상속세 · 증여 설계' },
+  { href: '/press', label: '언론 · 활동' },
+  { href: '/contact', label: '상담 예약' },
 ];
 
 export const trust = trustJson.items as { k: string; v: string; s: string; n?: number; unit?: string }[];

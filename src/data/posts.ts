@@ -17,14 +17,22 @@ export interface Post {
   entry: CollectionEntry<'columns'>;
 }
 
-export const sections: { slug: string; name: string; label: string; desc: string }[] = [
-  { slug: 'inheritance', name: '상속', label: '칼럼 · 상속', desc: '유류분, 상속재산분할, 유언, 성년후견, 상속등기, 상속세, 한정승인' },
-  { slug: 'real-estate', name: '부동산', label: '칼럼 · 부동산', desc: '전세보증금, 분양계약, 매매, 명도, 재개발, 공사대금' },
-  { slug: 'procedure', name: '분쟁 절차', label: '칼럼 · 분쟁 절차', desc: '가압류·가처분, 지급명령, 내용증명, 강제집행, 소멸시효' },
-  { slug: 'tips', name: '꿀팁', label: '꿀팁 · 계약 체크리스트', desc: '전세·월세·매매 계약 전 확인할 것, 특약, 안전한 매물 고르기, 보증금 찾기' },
+/**
+ * 사이트에 공개하는 코너(2026.10.16 상속 단일 전문 개편).
+ * - 부동산 코너 글(147편)은 파일은 그대로 두고 공개하지 않는다.
+ * - 꿀팁 글은 삭제하지 않되 칼럼 목록 전면에는 내지 않고(hidden), 랜딩 페이지의 '관련 글'과 태그 페이지로만 이어진다.
+ */
+export const PUBLIC_SECTIONS = ['상속', '분쟁 절차', '꿀팁'];
+export const sections: { slug: string; name: string; label: string; desc: string; hidden?: boolean }[] = [
+  { slug: 'inheritance', name: '상속', label: '칼럼 · 상속', desc: '상속분쟁, 유류분, 상속포기·한정승인, 성년후견, 유언, 상속등기, 상속세' },
+  { slug: 'procedure', name: '분쟁 절차', label: '칼럼 · 분쟁 절차', desc: '가압류·가처분, 지급명령, 내용증명, 강제집행, 소멸시효처럼 상속 분쟁에서 함께 쓰는 절차' },
+  { slug: 'tips', name: '꿀팁', label: '꿀팁 · 계약 체크리스트', desc: '상속 부동산을 다룰 때 함께 보는 등기부 읽는 법, 계약 전 확인할 것', hidden: true },
 ];
+export const visibleSections = sections.filter((s) => !s.hidden);
+/** 태그 목록 페이지 주소 */
+export const tagPath = (tag: string) => `/columns/tag/${encodeURIComponent(tag)}`;
 export const sectionBySlug = (slug: string) => sections.find((s) => s.slug === slug);
-export const sectionSlug = (name: string) => sections.find((s) => s.name === name)?.slug ?? 'real-estate';
+export const sectionSlug = (name: string) => sections.find((s) => s.name === name)?.slug ?? 'inheritance';
 export const postPath = (p: Pick<Post, 'id'>) => `/columns/${p.id}`;
 export const fmtDate = (iso: string) => iso.replaceAll('-', '.');
 
@@ -40,7 +48,7 @@ export function getColumns(): Promise<Post[]> {
         const titleHits = reviewHits(d.title);
         titleHits.forEach((h) => hits.add(h));
         const review = [...hits];
-        const isPublic = d.public && d.section !== '비공개' && titleHits.length === 0;
+        const isPublic = d.public && PUBLIC_SECTIONS.includes(d.section) && titleHits.length === 0;
         return {
           id: entry.id,
           title: d.title,

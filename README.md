@@ -1,4 +1,11 @@
-# 차형진 변호사 | 부동산 · 상속 — 개인 홈페이지
+# 차형진 변호사 | 상속 전문 — 개인 홈페이지
+
+> 2026.10.16 컨셉 변경: 부동산 축을 빼고 **상속 단일 전문**으로 개편했습니다.
+> - 상단 메뉴 = 상속 키워드 랜딩 페이지: `/dispute`(상속분쟁) `/legal-reserve`(유류분) `/renunciation`(상속포기·한정승인) `/guardianship`(성년후견인) `/will`(유언) `/registration`(상속등기·명의신탁) `/tax`(상속세). 내용은 `src/content/areas/*.json`.
+> - 키워드별 기둥 칼럼 7편: `src/content/columns/guide-*.md` (source: site).
+> - 부동산 코너 칼럼 147편은 파일을 남기되 공개하지 않습니다(`src/data/posts.ts`의 `PUBLIC_SECTIONS`). 꿀팁 148편은 공개하되 목록 전면에는 내지 않고(`hidden`), 랜딩 페이지 '관련 글'과 태그 페이지(`/columns/tag/{태그}`)로만 이어집니다.
+> - 옛 주소(`/inheritance/*`, `/real-estate/*`, `/columns/topic/real-estate`)는 `astro.config.mjs`의 redirects로 새 주소로 보냅니다.
+> - 상담 페이지에는 상속 외 일반 민사·부동산·형사·가사 사건도 진행한다는 안내와 폼 선택지를 넣었습니다.
 
 Astro 정적 사이트. 홈페이지 자체가 한 장의 등기사항전부증명서처럼 읽히도록 설계했습니다
 (표제부 → 갑구(업무 분야) → 을구(일하는 방식), 왼쪽 '순위번호' 레일, 인주 도장).

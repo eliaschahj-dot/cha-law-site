@@ -48,7 +48,7 @@ collections:
     fields:
       - { label: 제목, name: title, widget: string }
       - { label: 날짜, name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
-      - { label: 코너, name: section, widget: select, options: [상속, 부동산, 분쟁 절차, 꿀팁, 비공개], default: 상속 }
+      - { label: 코너, name: section, widget: select, options: [상속, 분쟁 절차, 부동산, 꿀팁, 비공개], default: 상속 }
       - { label: 태그, name: tags, widget: list, required: false, hint: "유류분, 전세보증금 처럼 쉼표로 구분" }
       - { label: 요약 (목록에 보이는 두 줄), name: excerpt, widget: text, required: false }
       - { label: 공개, name: public, widget: boolean, default: true, hint: "끄면 사이트에서 사라집니다" }
@@ -61,7 +61,7 @@ collections:
       - { label: 본문, name: body, widget: markdown }
 
   - name: areas
-    label: 업무 분야 (13)
+    label: 상속 분야 (7)
     label_singular: 분야
     folder: src/content/areas
     create: false
@@ -73,7 +73,7 @@ collections:
     editor:
       preview: false
     fields:
-      - { label: 축, name: axis, widget: select, options: [{ label: 부동산, value: re }, { label: 상속, value: in }] }
+      - { label: 축, name: axis, widget: select, options: [{ label: 상속, value: in }] }
       - { label: 주소 조각, name: slug, widget: string, hint: "바꾸면 페이지 주소가 바뀝니다" }
       - { label: 이름, name: name, widget: string }
       - { label: 한 줄 설명, name: short, widget: string }
@@ -92,7 +92,14 @@ collections:
         fields:
           - { label: 질문, name: q, widget: string }
           - { label: 답변, name: a, widget: text }
-      - { label: 관련 글 태그, name: tags, widget: list, required: false }
+      - { label: 관련 글 태그, name: tags, widget: list, required: false, hint: "이 태그가 붙은 칼럼이 '관련 글'로 연결됩니다" }
+      - label: 먼저 확인할 기한과 기준
+        name: deadlines
+        widget: list
+        required: false
+        fields:
+          - { label: 항목, name: k, widget: string }
+          - { label: 내용, name: v, widget: string }
 
   - name: settings
     label: 사이트 설정

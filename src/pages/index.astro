@@ -40,7 +40,7 @@ const faqLd = {
     <div class="wrap">
       <div>
         <div class="eyebrow rise">부동산 · 상속 전문 변호사 차형진</div>
-        <h1 class="rise rise-2">집은 사고파는 것이 아니라,<br />지키고 <em>물려주는</em> 것입니다.</h1>
+        <h1 class="rise rise-2" data-type>집은 사고파는 것이 아니라,<br />지키고 <em class="brush">물려주는<svg viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true"><path pathLength="100" d="M3 13 C 45 4, 110 19, 197 8" /></svg></em> 것입니다.</h1>
       </div>
       <div class="hero-grid">
         <div>
@@ -59,7 +59,7 @@ const faqLd = {
   <!-- 표제부 -->
   <section class="pyoje" id="pyoje" aria-label="표제부">
     <div class="wrap">
-      {trust.map((t) => <div><span>{t.k}</span><b>{t.v}</b>{t.s}</div>)}
+      {trust.map((t) => <div><span>{t.k}</span><b>{t.v}{t.n !== undefined && <> <i data-count={t.n} style="font-style:normal;color:var(--seal)">{t.n}</i>{t.unit}</>}</b>{t.s}</div>)}
     </div>
   </section>
 

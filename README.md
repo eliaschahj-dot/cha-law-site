@@ -111,3 +111,9 @@ python -I -X utf8 scripts/import_archive.py --no-images # 본문만 다시
 - 미사용: "대한변협 등록"(등록 전), "전문 로펌", "전담센터", "무료 상담", 승소율·결과 보장, "최고·유일", 회사 상호·로고·서비스 링크.
 - 푸터에 광고 주체 변호사 성명 고정. 숫자(칼럼 430편, 블로그 누적 방문 15만)는 집계 기준을 함께 표기.
 - 변협 전문분야 등록(부동산 30건·상속 20건/최근 3년) 후 "대한변협 등록 부동산·상속 전문변호사"로 승격 가능.
+
+## 광고규정 검토 문장 수정안 (2026.10.16, 승인 대기)
+
+요약만 실린 131편의 172문장에 대한 수정안을 `data/review_rewrite.csv`(+ `review_rewrite_extra.csv` 27건)·`data/review_rewrite.md` 에 정리했습니다.
+승인 후 `python -I -X utf8 scripts/apply_rewrites.py --apply` → `npm run import` → `npm run build` → Render Manual Deploy 순서로 반영합니다.
+절차와 주의점(convert.py 재실행 시 덮어쓰임, 제목 2건 별도 수정)은 `data/review_rewrite_README.md` 를 보세요.

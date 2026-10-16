@@ -16,7 +16,9 @@ app.set('trust proxy', true);
 app.use(express.json({ limit: '64kb' }));
 app.use(express.urlencoded({ extended: false, limit: '64kb' }));
 
+const VERSION = (process.env.RENDER_GIT_COMMIT || 'dev').slice(0, 7);
 app.use((req, res, next) => {
+  res.setHeader('X-App-Version', VERSION);
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -62,9 +64,14 @@ app.post('/api/contact', async (req, res) => {
           text,
         }),
       });
-      if (!r.ok) return res.status(502).json({ ok: false, error: 'mail failed' });
-    } catch {
-      return res.status(502).json({ ok: false, error: 'mail failed' });
+      if (!r.ok) {
+        const body = await r.text().catch(() => '');
+        console.error(`[contact] resend ${r.status}: ${body.slice(0, 400)}`);
+        return res.status(502).json({ ok: false, error: `mail failed (${r.status})` });
+      }
+    } catch (e) {
+      console.error('[contact] resend request error:', e?.message || e);
+      return res.status(502).json({ ok: false, error: 'mail failed (network)' });
     }
   } else {
     console.log('[contact] (no mail key)\n' + text);

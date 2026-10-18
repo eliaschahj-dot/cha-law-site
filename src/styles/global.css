@@ -38,7 +38,8 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   word-break: keep-all;
-  overflow-wrap: anywhere;
+  /* anywhere 는 좁은 칸(표·그리드)에서 글자를 한 자씩 끊어 세로로 세운다. break-word 는 넘칠 때만 끊는다. */
+  overflow-wrap: break-word;
 }
 img, svg { max-width: 100%; display: block; }
 a { color: inherit; }
@@ -419,46 +420,6 @@ footer .links a { text-decoration: none; color: var(--ink-2); }
 footer .legal { grid-column: 1 / -1; border-top: 1px solid var(--rule); padding-top: 16px; font-size: 12px; color: var(--ink-3); line-height: 1.7; }
 @media (max-width: 860px) { footer .wrap { grid-template-columns: 1fr; } footer .links { justify-content: flex-start; } }
 
-/* ---------- 모바일 고정 CTA ---------- */
-.mobile-cta { display: none; }
-@media (max-width: 640px) {
-  body { font-size: 16.5px; line-height: 1.8; }
-  .topbar .wrap { height: 64px; }
-  .brand strong { font-size: 18px; }
-  .sec { padding-block: 56px; }
-  .sec-head { gap: 12px; margin-bottom: 28px; }
-  .sec-head p { font-size: 16px; }
-  .hero { padding-block: 40px 36px; }
-  .hero::before { opacity: .3; }
-  .hero h1 { font-size: clamp(32px, 9.6vw, 40px); }
-  .hero .cta .btn { flex: 1 1 100%; }
-  .pyoje div { font-size: 12.5px; padding: 14px 10px 12px 0; }
-  .axis-head h3 { font-size: 24px; }
-  .rows summary { font-size: 15px; }
-  .phase h3 { font-size: 21px; }
-  .story blockquote { font-size: 19px; }
-  .faq summary { font-size: 16px; padding: 16px 0; }
-  .prose { font-size: 16.5px; line-height: 1.9; }
-  .prose h2 { font-size: 21px; margin: 40px 0 14px; }
-  .area-hero h1 { font-size: 30px; }
-  .area-body { padding-block: 28px; }
-  .list a { padding: 14px 0; }
-  form.consult { padding: 20px; }
-  form.consult input, form.consult select, form.consult textarea { font-size: 16px; }
-  .ledger { padding: 20px 18px 18px; font-size: 12.5px; }
-  .ledger td, .ledger th { padding: 8px 4px; }
-  .stamp { width: 60px; height: 60px; font-size: 13px; right: 12px; top: 10px; }
-  .mobile-cta {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
-    padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
-    background: rgba(245,244,239,.97); border-top: 1px solid var(--rule);
-  }
-  .mobile-cta .btn { padding: 12px 10px; font-size: 14px; }
-  body { padding-bottom: 72px; }
-  .hero .hero-grid { grid-template-columns: 1fr; }
-  .ledger { justify-self: stretch; max-width: none; }
-}
-@media (max-width: 1000px) and (min-width: 641px) { .hero .hero-grid { grid-template-columns: 1fr; } .ledger { justify-self: start; } }
 
 /* ---------- 본문형 ---------- */
 .prose { max-width: 42em; color: var(--ink-2); font-size: 17.5px; line-height: 1.95; }
@@ -472,6 +433,15 @@ footer .legal { grid-column: 1 / -1; border-top: 1px solid var(--rule); padding-
 .prose blockquote { margin: 28px 0; padding: 16px 22px; border-left: 3px solid var(--seal); background: var(--card); }
 .prose blockquote p + p { margin-top: .6em; }
 .prose strong { color: var(--ink); font-weight: 600; }
+.prose a, .prose code { overflow-wrap: anywhere; }
+/* 본문 표: 데스크톱은 괘선 표, 모바일은 행마다 카드(아래 모바일 블록) */
+.tbl { margin: 26px 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.prose table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.6; background: var(--card); border: 1px solid var(--rule); word-break: keep-all; }
+.prose th, .prose td { border: 1px solid var(--rule-2); padding: 10px 12px; text-align: left; vertical-align: top; }
+.prose th { background: var(--paper-2); font-weight: 600; color: var(--ink); font-size: 14px; }
+.prose td { color: var(--ink-2); }
+.prose table b, .prose table strong { color: var(--ink); }
+.prose table.t-kv th:first-child, .prose table.t-kv td:first-child { width: 32%; font-weight: 600; color: var(--ink); }
 .notice { border-left: 3px solid var(--seal); background: var(--seal-soft); padding: 14px 18px; font-size: 14px; color: var(--ink-2); }
 .notice.bronze { border-color: var(--bronze); background: var(--bronze-soft); }
 
@@ -537,6 +507,174 @@ html.ledger-done .stamp, html.anim.ledger-done .stamp.press { opacity: .9; trans
 html.anim .phases .phase:first-child li.rv { transform: translateX(-24px); }
 html.anim .phases .phase:last-child li.rv { transform: translateX(24px); }
 html.anim .phases .phase li.rv.in { transform: none; }
+
+/* ---------- 모바일 (≤640px) ----------
+   원칙: 한 화면에 글자를 적게, 블록 사이를 넓게, 표는 행 단위 카드로.
+   .m-hide 를 단 보조 문장은 모바일에서 숨긴다. */
+.mobile-cta { display: none; }
+@media (max-width: 1000px) and (min-width: 641px) { .hero .hero-grid { grid-template-columns: 1fr; } .ledger { justify-self: start; } }
+@media (max-width: 640px) {
+  .m-hide { display: none !important; }
+  body { font-size: 16px; line-height: 1.75; padding-bottom: 76px; }
+  .wrap { padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
+  .btn { padding: 13px 18px; }
+  .cta-row { gap: 10px !important; }
+  .cta-row .btn { flex: 1 1 100%; }
+  .sec .wrap > p > .btn-ghost { width: 100%; }
+  .notice { font-size: 13.5px; padding: 12px 14px; }
+
+  /* 상단 */
+  .topbar .wrap { height: 62px; }
+  .brand strong { font-size: 17px; }
+  .brand span { font-size: 10px; }
+  .nav { top: 65px; }
+
+  /* 섹션 */
+  .sec { padding-block: 64px; }
+  .sec-head { gap: 12px; margin-bottom: 30px; }
+  .sec-head h2 { font-size: 26px; line-height: 1.3; }
+  .sec-head p { font-size: 15px; line-height: 1.7; }
+
+  /* 히어로 */
+  .hero { padding-block: 36px 40px; }
+  .hero::before { opacity: .3; }
+  .hero .wrap { gap: 26px; }
+  .hero .hero-grid { grid-template-columns: 1fr; gap: 34px; }
+  .hero h1 { font-size: clamp(34px, 10.4vw, 42px); line-height: 1.18; margin-top: 14px; }
+  .hero .lead { font-size: 16px; line-height: 1.75; padding-top: 14px; }
+  .hero .cta { margin-top: 22px; gap: 10px; }
+  .hero .cta .btn { flex: 1 1 100%; padding: 15px 18px; font-size: 15.5px; }
+  .kw { margin-top: 18px; gap: 8px; }
+  .kw a { font-size: 13px; padding: 8px 13px; }
+
+  /* 등기부 카드: 순위 열은 숨기고 숫자 칸은 줄바꿈 금지 */
+  .ledger { justify-self: stretch; max-width: none; padding: 20px 18px 18px; font-size: 13px; }
+  .ledger .title { font-size: 16px; padding-right: 68px; }
+  .ledger .label { padding: 12px 0 2px; font-size: 12.5px; }
+  .ledger th, .ledger td { padding: 9px 5px; }
+  .ledger th:first-child, .ledger td:first-child { display: none; }
+  .ledger th:nth-child(n+3), .ledger td:nth-child(n+3) { white-space: nowrap; }
+  .ledger td[colspan] { white-space: normal; }
+  .ledger .caption { font-size: 12px; }
+  .stamp { width: 58px; height: 58px; font-size: 13px; right: 12px; top: 10px; }
+
+  /* 표제부 */
+  .pyoje .wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pyoje div { font-size: 12.5px; padding: 16px 10px 14px 0; line-height: 1.5; }
+  .pyoje b { font-size: 14px; margin-bottom: 2px; }
+
+  /* 분야: 이름 한 줄, 설명은 그 아래 작게 */
+  .axes { gap: 22px; }
+  .axis-head { padding: 24px 20px 18px; }
+  .axis-head h3 { font-size: 23px; }
+  .axis-head p { font-size: 14px; }
+  .rows summary { grid-template-columns: 22px minmax(0, 1fr) 20px; align-items: start; row-gap: 2px; padding: 16px 20px; font-size: 15px; }
+  .rows summary i { grid-row: 1; padding-top: 2px; }
+  .rows summary span:nth-of-type(2) { grid-column: 2; grid-row: 2; font-size: 12.5px; line-height: 1.5; }
+  .rows summary::after { grid-column: 3; grid-row: 1; justify-self: end; }
+  .rows .body { padding: 0 20px 18px 42px; font-size: 14.5px; }
+  .axis-foot { padding: 16px 20px 22px; }
+  .axis-foot .btn { width: 100%; }
+
+  /* 방식 */
+  .phases { gap: 22px; }
+  .phase h3 { font-size: 21px; }
+  .phase ul { gap: 10px; margin-top: 14px; }
+  .phase li { padding: 14px 16px; }
+  .phase li span { font-size: 13.5px; }
+  .phase li i { display: none; }
+  .divider { font-size: 12px; }
+  .story { margin-top: 36px; padding-top: 28px; gap: 20px; }
+  .story blockquote { font-size: 18.5px; }
+
+  /* 소개 */
+  .profile { gap: 24px; }
+  .photo-img { max-width: 240px; }
+  .profile .quote { font-size: 18.5px; }
+  .profile .bio { font-size: 15px; }
+  .cv { margin-top: 20px; }
+  .cv ul { font-size: 13.5px; }
+
+  /* 카드·그리드 */
+  .grid2, .grid3, .principles { gap: 14px; }
+  .card { padding: 20px 18px; }
+  .card h3 { font-size: 18px; }
+  .card p, .card li { font-size: 14.5px; }
+  .principle { padding: 22px 20px; }
+  .principle h3 { font-size: 19px; }
+  .principle p { font-size: 14.5px; }
+  .posts { gap: 6px; }
+  .post { padding: 18px 0; }
+  .post h3 { font-size: 17.5px; }
+  .post p { font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .press-row { gap: 10px 20px; padding: 16px 0; margin-bottom: 22px; }
+  .press-row span { font-size: 15px; }
+  .press { padding: 20px 18px; }
+  .press p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .faq summary { font-size: 15.5px; padding: 16px 0; line-height: 1.5; }
+  .faq .a { font-size: 14.5px; padding-bottom: 20px; }
+
+  /* 분야 상세·칼럼 */
+  .area-hero { padding-block: 32px 0; }
+  .area-hero h1 { font-size: 29px; }
+  .area-hero .lead { font-size: 15.5px; line-height: 1.75; }
+  .area-body { padding-block: 32px; gap: 36px; }
+  .area-body .main { gap: 40px; }
+  .area-body h2 { font-size: 21px; }
+  .area-body .situ li { font-size: 14.5px; padding: 12px 14px; }
+  .steps li { grid-template-columns: 34px 1fr; gap: 10px; padding: 14px 0; }
+  .steps li::before { font-size: 16px; }
+  .steps span { font-size: 14px; }
+  .docs li { font-size: 13px; }
+  .list a { grid-template-columns: 1fr; gap: 4px; padding: 14px 0; }
+  .list b { font-size: 15px; }
+  .list span { font-size: 13px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .areas-grid { gap: 10px; }
+  .area-card { padding: 18px; }
+  .area-card h3 { font-size: 17px; }
+
+  /* 본문 */
+  .prose { font-size: 16px; line-height: 1.85; }
+  .prose h2 { font-size: 20px; margin: 36px 0 12px; padding-top: 14px; }
+  .prose h3 { font-size: 18px; margin: 28px 0 10px; }
+  .prose img { margin: 20px auto; }
+  .prose blockquote { padding: 12px 16px; margin: 20px 0; }
+
+  /* 본문 표 → 행 단위 카드 */
+  .tbl { overflow: visible; margin: 22px 0; }
+  .prose table, .prose thead, .prose tbody, .prose tr, .prose th, .prose td { display: block; width: 100%; }
+  .prose table { border: 0; background: transparent; font-size: 14.5px; line-height: 1.6; }
+  .prose tr { border: 1px solid var(--rule); border-left: 3px solid var(--bronze); background: var(--card); padding: 8px 14px; margin-bottom: 10px; }
+  .prose th, .prose td { border: 0; padding: 7px 0; background: transparent; }
+  .prose th + th, .prose td + td { border-top: 1px dashed var(--rule-2); }
+  .prose td:empty { display: none; }
+  .prose table.t-wide thead { display: none; }
+  .prose table.t-wide td[data-label]::before { content: attr(data-label); display: block; font-size: 11px; letter-spacing: .08em; color: var(--ink-3); font-weight: 600; margin-bottom: 2px; }
+  .prose table.t-kv th:first-child, .prose table.t-kv td:first-child { width: auto; background: transparent; }
+  .prose table.t-kv th + th, .prose table.t-kv td + td { border-top: 0; padding-top: 0; }
+
+  /* 상담 */
+  .contact { gap: 32px; }
+  .contact h2 { font-size: 25px; }
+  .ways { gap: 10px; margin-top: 20px; }
+  .way { grid-template-columns: 58px 1fr; gap: 10px; padding: 14px; }
+  .way .k { font-size: 11px; }
+  .way .v { font-size: 16px; }
+  .way .v small { font-size: 12.5px; }
+  .office { font-size: 13.5px; }
+  form.consult { padding: 20px 16px; gap: 14px; }
+  form.consult input, form.consult select, form.consult textarea { font-size: 16px; }
+
+  /* 바닥·고정 CTA */
+  footer { padding-block: 32px 40px; }
+  footer .links { gap: 8px 16px; }
+  .mobile-cta {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+    padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    background: rgba(245,244,239,.97); border-top: 1px solid var(--rule);
+  }
+  .mobile-cta .btn { padding: 13px 10px; font-size: 14.5px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

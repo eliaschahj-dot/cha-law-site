@@ -25,7 +25,7 @@ const ld = {
         <div class="crumbs"><a href="/">홈</a><span>/</span><a href="/columns">칼럼</a><span>/</span><a href={`/columns/topic/${sectionSlug(p.section)}`}>{sec?.label}</a></div>
         <div class="gu" style="margin-top:18px">{sec?.label} <small>{fmtDate(p.date)}</small></div>
         <h1 style="font-size:clamp(28px,4vw,46px)">{p.title}</h1>
-        <p class="lead" style="font-size:14px;color:var(--ink-2);margin-top:14px">글 · <b>부동산 · 상속 전문 변호사 차형진</b> (법무법인 베율) · 처음 게시 {fmtDate(p.date)}{p.source === 'naver' ? ' 네이버 블로그' : ''}{p.tags.length > 0 && <span style="color:var(--ink-3)"> · {p.tags.map((t) => `#${t}`).join(' ')}</span>}</p>
+        <p class="lead" style="font-size:14px;color:var(--ink-2);margin-top:14px">글 · <b>상속 전문 변호사 차형진</b> (법무법인 베율) · 처음 게시 {fmtDate(p.date)}{p.source === 'naver' ? ' 네이버 블로그' : ''}{p.tags.length > 0 && <span style="color:var(--ink-3)"> · {p.tags.map((t) => `#${t}`).join(' ')}</span>}</p>
       </div>
     </section>
     <div class="wrap area-body">
@@ -49,7 +49,7 @@ const ld = {
           <section>
             <h2>이 글과 관련된 업무 분야</h2>
             <div class="areas-grid">
-              {linkedAreas.map((a) => <a class="area-card" href={areaPath(a)}><span class="n">{a.axis === 're' ? '부동산' : '상속'}</span><h3>{a.name}</h3><p>{a.short}</p></a>)}
+              {linkedAreas.map((a) => <a class="area-card" href={areaPath(a)}><span class="n">상속</span><h3>{a.name}</h3><p>{a.short}</p></a>)}
             </div>
           </section>
         )}
@@ -66,7 +66,7 @@ const ld = {
         <div class="card">
           <div class="k">글쓴이</div>
           <h3 style="font-size:18px">차형진 변호사</h3>
-          <p>부동산 · 상속 전문 변호사. 법무법인 베율 파트너. 상담도 재판도 변호사가 직접 합니다.</p>
+          <p>상속 전문 변호사. 법무법인 베율 파트너. 상담도 재판도 변호사가 직접 합니다.</p>
           <a class="btn btn-seal" href="/contact">상담 신청</a>
         </div>
         {p.naverUrl && (

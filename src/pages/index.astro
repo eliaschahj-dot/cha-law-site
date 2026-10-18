@@ -45,12 +45,12 @@ const faqLd = {
       </div>
       <div class="hero-grid">
         <div>
-          <p class="lead rise rise-3">물려주기 전의 설계부터 물려받은 뒤의 분쟁까지, 상속만 봅니다. 유언·성년후견·상속세로 분쟁을 막고, 분쟁이 되면 상속재산분할·유류분·한정승인을 끝까지 맡습니다. 상담도 재판도 변호사가 직접 합니다.</p>
+          <p class="lead rise rise-3">물려주기 전의 설계부터 물려받은 뒤의 분쟁까지, 상속만 봅니다. <span class="m-hide">유언·성년후견·상속세로 분쟁을 막고, 분쟁이 되면 상속재산분할·유류분·한정승인을 끝까지 맡습니다. </span>상담도 재판도 변호사가 직접 합니다.</p>
           <div class="cta rise rise-3">
             <a class="btn btn-seal" href="/contact">상담 예약하기</a>
             <a class="btn btn-ghost" href="#gapgu">어떤 일로 오셨나요?</a>
           </div>
-          <p class="direct rise rise-3">변호사 직통 <b>{site.phone}</b> · {site.reply}</p>
+          <p class="direct rise rise-3 m-hide">변호사 직통 <b>{site.phone}</b> · {site.reply}</p>
           <nav class="kw rise rise-3" aria-label="상속 분야 바로가기">
             {areas.map((a) => <a href={areaPath(a)}>{a.name}</a>)}
           </nav>
@@ -73,7 +73,7 @@ const faqLd = {
       <div class="sec-head">
         <div class="gu">분야 <small>물려주기 전 · 물려받은 뒤</small></div>
         <h2>어떤 일로 오셨나요?</h2>
-        <p>상속은 한 사람이 떠나기 전과 후, 두 번 찾아옵니다. 떠나기 전에는 설계가, 떠난 뒤에는 분쟁이 문제입니다. 순위를 눌러 상황을 확인해 보세요.</p>
+        <p>상속은 한 사람이 떠나기 전과 후, 두 번 찾아옵니다. <span class="m-hide">떠나기 전에는 설계가, 떠난 뒤에는 분쟁이 문제입니다. </span>순위를 눌러 상황을 확인해 보세요.</p>
       </div>
       <div class="axes">
         <article class="axis re">
@@ -126,7 +126,7 @@ const faqLd = {
       <div class="sec-head">
         <div class="gu">방식 <small>일하는 방식</small></div>
         <h2>분쟁이 되기 전에, 그리고 분쟁이 된 뒤에</h2>
-        <p>변호사는 대개 일이 터진 뒤에 만납니다. 저는 일이 터지기 전의 설계를 같은 무게로 봅니다. 유언장 한 장, 후견 설계 한 번이 가족의 몇 년을 바꿉니다.</p>
+        <p class="m-hide">변호사는 대개 일이 터진 뒤에 만납니다. 저는 일이 터지기 전의 설계를 같은 무게로 봅니다. 유언장 한 장, 후견 설계 한 번이 가족의 몇 년을 바꿉니다.</p>
       </div>
       <div class="phases">
         <div class="phase">
@@ -151,7 +151,7 @@ const faqLd = {
         <blockquote>"어머니 인감으로 몰래 아파트를 판 형제가 있었습니다. 변호사라면 후견인 지정 방법을 안내하면 될 일이었지만, 저는 미리 막을 방법을 만들고 싶었습니다."
           <cite>2019년, 로펌 근무 시절 만난 의뢰인 이야기 · 중앙일보 인터뷰(2024.7)에서</cite>
         </blockquote>
-        <p>그 사연이 리걸테크 회사를 직접 세운 출발점이 되었습니다. 치매 전에 내 뜻을 남기는 서비스는 "분쟁이 되기 전에"라는 한 가지 생각에서 나왔습니다. 지금은 법무법인 베율에서 변호사·세무사·회계사가 한 팀으로 상속 분쟁의 해결과 절세, 재산 승계를 함께 다룹니다.</p>
+        <p class="m-hide">그 사연이 리걸테크 회사를 직접 세운 출발점이 되었습니다. 치매 전에 내 뜻을 남기는 서비스는 "분쟁이 되기 전에"라는 한 가지 생각에서 나왔습니다. 지금은 법무법인 베율에서 변호사·세무사·회계사가 한 팀으로 상속 분쟁의 해결과 절세, 재산 승계를 함께 다룹니다.</p>
       </div>
     </div>
   </section>
@@ -182,7 +182,7 @@ const faqLd = {
       <div class="sec-head">
         <div class="gu">비용 안내</div>
         <h2>비용은 상담에서 먼저 말씀드립니다</h2>
-        <p>상속 분쟁은 가족의 남은 관계를 걸고 싸우는 일입니다. 비용 구조를 모른 채 시작하지 않도록, 첫 상담에서 총 예상 비용을 숫자로 드립니다.</p>
+        <p class="m-hide">상속 분쟁은 가족의 남은 관계를 걸고 싸우는 일입니다. 비용 구조를 모른 채 시작하지 않도록, 첫 상담에서 총 예상 비용을 숫자로 드립니다.</p>
       </div>
       <div class="principles">
         <div class="principle"><div class="num">원칙 하나</div><h3>총 예상 견적을 먼저</h3><p>사건의 종류와 난이도에 따라 예상되는 총비용과 기간을 상담 자리에서 제시합니다. 숨은 비용은 없습니다.</p></div>
@@ -199,7 +199,7 @@ const faqLd = {
       <div class="sec-head">
         <div class="gu">칼럼</div>
         <h2>섣불리 결정하지 마세요. 글 세 개만 먼저 읽어보세요.</h2>
-        <p>상속에 관해 같은 질문에 답해 온 기록 {sangsok.length}편입니다. 사례는 의뢰인 동의를 받아 익명으로 소개합니다.</p>
+        <p class="m-hide">상속에 관해 같은 질문에 답해 온 기록 {sangsok.length}편입니다. 사례는 의뢰인 동의를 받아 익명으로 소개합니다.</p>
       </div>
       <div class="posts">
         {homePosts.map((p) => (

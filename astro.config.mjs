@@ -1,10 +1,12 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import rehypeTables from './src/lib/rehype-tables.mjs';
 
 // 도메인은 확정 전 임시값입니다. 구매한 도메인으로 바꾸면 canonical·sitemap·OG가 함께 바뀝니다.
 export default defineConfig({
   site: process.env.SITE_URL || 'https://chahyungjin.com',
   integrations: [sitemap()],
+  markdown: { rehypePlugins: [rehypeTables] },
   build: { format: 'directory' },
   trailingSlash: 'ignore',
   // 2026.10.16 상속 단일 전문으로 개편: 옛 주소는 새 랜딩 페이지로 보낸다

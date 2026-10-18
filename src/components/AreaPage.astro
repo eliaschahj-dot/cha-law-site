@@ -17,7 +17,7 @@ const tagCounts = area.tags.map((t) => ({ t, n: cols.filter((p) => p.tags.includ
     <div class="gu" style="margin-top:18px">{meta.gu} <small>{area.short}</small></div>
     <h1>{area.name}</h1>
     <p class="lead">{area.lead}</p>
-    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:26px">
+    <div class="cta-row" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:26px">
       <a class="btn btn-seal" href={`/contact?area=${encodeURIComponent(area.name)}`}>{area.name} 상담 신청</a>
       <a class="btn btn-ghost" href={site.phoneHref}>변호사 직통 {site.phone}</a>
     </div>

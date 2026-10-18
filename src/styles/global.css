@@ -299,7 +299,7 @@ html.anim .stamp.press { animation: press .55s cubic-bezier(.2,.9,.3,1.4) .9s ba
   background: linear-gradient(160deg, #E6E8EE, #D2D6E0); display: grid; place-items: center; color: var(--ink-3); font-size: 13px; text-align: center; padding: 20px;
 }
 .photo::after { content: ""; position: absolute; inset: 14px; border: 1px solid rgba(15,26,48,.18); }
-.photo-img { width: 100%; max-width: 440px; aspect-ratio: 4 / 5; object-fit: cover; object-position: center top; border: 1px solid var(--rule); box-shadow: 0 30px 70px -40px rgba(15,26,48,.5); background: #DADDE4; }
+.photo-img { width: 100%; max-width: 440px; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: center top; border: 1px solid var(--rule); box-shadow: 0 30px 70px -40px rgba(15,26,48,.5); background: #DADDE4; }
 @media (max-width: 860px) { .photo-img { max-width: 360px; } }
 .profile h2 { font-size: clamp(28px, 3.4vw, 40px); font-weight: 800; }
 .profile .quote { font-family: var(--display); font-size: clamp(20px, 2vw, 24px); line-height: 1.5; margin-top: 18px; font-weight: 500; }
@@ -674,6 +674,50 @@ html.anim .phases .phase li.rv.in { transform: none; }
     background: rgba(245,244,239,.97); border-top: 1px solid var(--rule);
   }
   .mobile-cta .btn { padding: 13px 10px; font-size: 14.5px; }
+
+  /* ---- 구글처럼: 모바일은 제목·한 줄·버튼만. 설명문·보조 목록은 데스크톱에서만 ---- */
+  .gu small { display: none; }
+  .sec { padding-block: 60px; }
+  .sec-head { margin-bottom: 26px; }
+  .hero { padding-block: 44px 48px; }
+  .hero .lead { border-top: 0; padding-top: 0; margin-top: 4px; font-size: 16.5px; color: var(--ink-2); }
+  .hero .cta { margin-top: 24px; }
+  .hero .hero-grid { gap: 0; }
+  .ledger { display: none; }                               /* 등기부 카드(표)는 데스크톱에서만 */
+  .pyoje .sub { display: none; }                           /* 표제부: 라벨+값만 */
+  .pyoje div { padding: 14px 10px 12px 0; }
+  .axis-head { padding: 22px 20px 14px; }
+  .axis-head p { display: none; }
+  .rows summary { padding: 15px 20px; row-gap: 0; align-items: center; }
+  .rows summary span:nth-of-type(2) { display: none; }     /* 분야 행: 이름만 */
+  .rows summary i { padding-top: 0; }
+  .phase li { padding: 13px 16px; }
+  .phase li span { display: none; }                        /* 방식 카드: 제목만 */
+  .story { margin-top: 30px; padding-top: 24px; }
+  .story blockquote { font-size: 17.5px; }
+  .story cite { font-size: 12px; }
+  .profile .bio, .cv { display: none; }                    /* 소개: 사진·이름·한 문장만 */
+  .photo-img { max-width: 200px; }
+  .principle p { display: none; }                          /* 비용: 원칙 제목만 */
+  .principle { padding: 18px 20px; gap: 6px; }
+  .post p { display: none; }                               /* 칼럼: 제목만 */
+  .post { padding: 16px 0; gap: 6px; }
+  .press p { display: none; }                              /* 언론: 제목만 */
+  .press { padding: 16px 18px; }
+  .press-row { display: none; }
+  .office { display: none; }                               /* 상담: 연락 방법 카드만 */
+  .way .v small { display: none; }
+  .way { padding: 15px 14px; }
+  .list span { display: none; }                            /* 글 목록: 제목·날짜만 */
+  .list .chip { display: none; }
+  .area-body .list a:nth-child(n+5) { display: none; }     /* 랜딩 관련 글은 4편만 */
+  .area-body .side .card:first-child { display: none; }    /* 랜딩 옆 상담 카드(하단 고정 버튼과 중복) */
+  .area-body .side { gap: 12px; }
+  article .area-body .side { display: none; }              /* 칼럼 옆 글쓴이·원문 카드 */
+  .areas-grid .area-card p { display: none; }
+  footer .links a { display: none; }
+  footer .links a[href="/privacy"], footer .links a[href^="https://beyullaw"], footer .links a[href^="https://blog.naver"] { display: inline; }
+  footer .legal { font-size: 11.5px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

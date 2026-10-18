@@ -45,10 +45,10 @@ const faqLd = {
       </div>
       <div class="hero-grid">
         <div>
-          <p class="lead rise rise-3">물려주기 전의 설계부터 물려받은 뒤의 분쟁까지, 상속만 봅니다. <span class="m-hide">유언·성년후견·상속세로 분쟁을 막고, 분쟁이 되면 상속재산분할·유류분·한정승인을 끝까지 맡습니다. </span>상담도 재판도 변호사가 직접 합니다.</p>
+          <p class="lead rise rise-3">물려주기 전의 설계부터 물려받은 뒤의 분쟁까지, 상속만 봅니다.<span class="m-hide"> 유언·성년후견·상속세로 분쟁을 막고, 분쟁이 되면 상속재산분할·유류분·한정승인을 끝까지 맡습니다. 상담도 재판도 변호사가 직접 합니다.</span></p>
           <div class="cta rise rise-3">
             <a class="btn btn-seal" href="/contact">상담 예약하기</a>
-            <a class="btn btn-ghost" href="#gapgu">어떤 일로 오셨나요?</a>
+            <a class="btn btn-ghost m-hide" href="#gapgu">어떤 일로 오셨나요?</a>
           </div>
           <p class="direct rise rise-3 m-hide">변호사 직통 <b>{site.phone}</b> · {site.reply}</p>
           <nav class="kw rise rise-3" aria-label="상속 분야 바로가기">
@@ -63,7 +63,7 @@ const faqLd = {
   <!-- 표제부 -->
   <section class="pyoje" id="pyoje" aria-label="표제부">
     <div class="wrap">
-      {trust.map((t) => <div><span>{t.k}</span><b>{t.v}{t.n !== undefined && <> <i data-count={t.n} style="font-style:normal;color:var(--seal)">{t.n}</i>{t.unit}</>}</b>{t.s}</div>)}
+      {trust.map((t) => <div><span>{t.k}</span><b>{t.v}{t.n !== undefined && <> <i data-count={t.n} style="font-style:normal;color:var(--seal)">{t.n}</i>{t.unit}</>}</b><small class="sub">{t.s}</small></div>)}
     </div>
   </section>
 
@@ -73,7 +73,7 @@ const faqLd = {
       <div class="sec-head">
         <div class="gu">분야 <small>물려주기 전 · 물려받은 뒤</small></div>
         <h2>어떤 일로 오셨나요?</h2>
-        <p>상속은 한 사람이 떠나기 전과 후, 두 번 찾아옵니다. <span class="m-hide">떠나기 전에는 설계가, 떠난 뒤에는 분쟁이 문제입니다. </span>순위를 눌러 상황을 확인해 보세요.</p>
+        <p class="m-hide">상속은 한 사람이 떠나기 전과 후, 두 번 찾아옵니다. 떠나기 전에는 설계가, 떠난 뒤에는 분쟁이 문제입니다. 순위를 눌러 상황을 확인해 보세요.</p>
       </div>
       <div class="axes">
         <article class="axis re">
@@ -266,7 +266,7 @@ const faqLd = {
         </div>
         <p class="notice bronze" style="margin-top:22px">상속이 아닌 일반 민사·부동산·형사·가사 사건도 상담하고 수행합니다. 어느 분야인지 모르셔도 상황을 적어 주시면 변호사가 안내드립니다.</p>
       </div>
-      <ContactForm />
+      <div class="m-hide"><ContactForm /></div>
     </div>
   </section>
 </Base>

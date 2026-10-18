@@ -23,6 +23,7 @@ const orgLd = {
   name: `${site.name} (${site.firm})`,
   url: origin,
   telephone: site.phone,
+  email: site.email,
   address: { '@type': 'PostalAddress', streetAddress: '테헤란로103길 10 길훈빌딩 2층', addressLocality: '강남구', addressRegion: '서울', addressCountry: 'KR' },
   areaServed: 'KR',
   knowsAbout: ['상속분쟁', '상속재산분할', '기여분', '유류분 반환', '상속포기', '한정승인', '성년후견', '유언', '상속등기', '명의신탁', '상속세'],
@@ -89,7 +90,7 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
     <div class="wrap">
       <div>
         <a class="brand" href="/"><span class="seal-mark" aria-hidden="true">차</span><span class="t"><strong>{site.name}</strong><span>{site.tagline} | {site.firm} {site.role}</span></span></a>
-        <p>{site.firm} · {site.address}<br />변호사 차형진 · {site.bar} 소속<br />변호사 직통 {site.phone} · {site.hours}</p>
+        <p>{site.firm} · {site.address}<br />변호사 차형진 · {site.bar} 소속<br />변호사 직통 {site.phone} · {site.email}<br />{site.hours}</p>
       </div>
       <div class="links">
         {nav.map((n) => <a href={n.href}>{n.label}</a>)}

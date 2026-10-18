@@ -7,7 +7,7 @@ import faqJson from '../content/site/faq.json';
 
 export const site = siteJson as {
   name: string; tagline: string; url: string; description: string; firm: string; role: string; bar: string;
-  phone: string; phoneHref: string; kakaoName: string; kakaoUrl: string; blog: string;
+  phone: string; phoneHref: string; email: string; emailHref: string; blog: string;
   address: string; transit: string; parking: string; hours: string; closed: string; reply: string;
 };
 

@@ -255,7 +255,7 @@ const faqLd = {
         <h2 style="margin-top:12px">24시간 안에 변호사가 직접 연락드립니다</h2>
         <div class="ways">
           <a class="way" href={site.phoneHref}><span class="k">전화</span><span class="v">{site.phone}<small>{site.hours} · 변호사 직통</small></span></a>
-          <div class="way"><span class="k">카카오톡</span><span class="v">채널 '{site.kakaoName}'<small>{site.kakaoUrl ? '사진과 서류를 바로 보내실 수 있습니다' : '개설 준비 중 · 사진과 서류를 바로 보내실 수 있습니다'}</small></span></div>
+          <a class="way" href={site.emailHref}><span class="k">이메일</span><span class="v">{site.email}<small>사진과 서류를 첨부해 보내시면 검토 후 연락드립니다</small></span></a>
           <a class="way" href="/contact"><span class="k">온라인</span><span class="v">상담 신청서<small>상황을 적어 보내주시면 변호사가 검토 후 연락드립니다</small></span></a>
         </div>
         <div class="office">

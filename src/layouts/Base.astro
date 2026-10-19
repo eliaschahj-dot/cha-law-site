@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { site, nav, footerNav } from '../data/site';
+import Mark from '../components/Mark.astro';
 
 interface Props {
   title: string;
@@ -65,8 +66,8 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
   <header class="topbar">
     <div class="wrap">
       <a class="brand" href="/" aria-label={`${site.name} 홈`}>
-        <span class="seal-mark" aria-hidden="true">차</span>
-        <span class="t"><strong>{site.name}</strong><span>{site.tagline} | {site.firm} {site.role}</span></span>
+        <Mark />
+        <span class="t"><strong>{site.name}</strong><span>{site.tagline} · {site.firm} {site.role}</span></span>
       </a>
       <nav class="nav" id="nav" aria-label="주 메뉴">
         {nav.map((n) => <a href={n.href} aria-current={isCurrent(n.href) ? 'page' : undefined}>{n.label}</a>)}
@@ -89,7 +90,7 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
   <footer>
     <div class="wrap">
       <div>
-        <a class="brand" href="/"><span class="seal-mark" aria-hidden="true">차</span><span class="t"><strong>{site.name}</strong><span>{site.tagline} | {site.firm} {site.role}</span></span></a>
+        <a class="brand" href="/"><Mark /><span class="t"><strong>{site.name}</strong><span>{site.tagline} · {site.firm} {site.role}</span></span></a>
         <p>{site.firm} · {site.address}<br />변호사 차형진 · {site.bar} 소속<br />변호사 직통 {site.phone} · {site.email}<br />{site.hours}</p>
       </div>
       <div class="links">
@@ -134,7 +135,6 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
       }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
       links.forEach((l) => { const s = document.getElementById(l.dataset.rail!); if (s) io.observe(s); });
     }
-    document.querySelectorAll('.stamp').forEach((s) => s.classList.add('press'));
 
     // 타이핑 효과: data-type 요소의 글자를 한 자씩 쓴다. 끝나면 붓 밑줄(.brush)을 긋는다.
     if (document.documentElement.classList.contains('anim')) {

@@ -1,0 +1,11 @@
+---
+/* 로고 마크: 'ㅊ'을 가는 선 세 획으로. 지붕(집을 물려주는 일)과 사람을 함께 닮았다. */
+interface Props { class?: string }
+const { class: cls = 'mark' } = Astro.props;
+---
+<svg class={cls} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+  <path d="M12 5.5h8" />
+  <path d="M5.5 11.5h21" />
+  <path d="M16 11.5 7 26.5" />
+  <path d="M16 11.5 25 26.5" />
+</svg>

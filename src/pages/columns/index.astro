@@ -25,7 +25,7 @@ const firstYear = main.length ? main[main.length - 1].date.slice(0, 4) : '2024';
         {visibleSections.map((s) => <a href={`/columns/topic/${s.slug}`}>{s.label} <span style="opacity:.6">{counts[s.slug]}</span></a>)}
       </div>
       <div class="grid2" style="margin-bottom:28px">
-        {visibleSections.map((s) => <a class="card" href={`/columns/topic/${s.slug}`} style="text-decoration:none"><div class="k">{s.label}</div><p>{s.desc}</p><p style="color:var(--seal);font-weight:600;font-size:13px">{counts[s.slug]}편 보기 →</p></a>)}
+        {visibleSections.map((s) => <a class="card" href={`/columns/topic/${s.slug}`} style="text-decoration:none"><div class="k">{s.label}</div><p>{s.desc}</p><p style="color:var(--accent);font-weight:600;font-size:13px">{counts[s.slug]}편 보기 →</p></a>)}
       </div>
       <h2 style="font-size:22px;margin:30px 0 10px">최근 글</h2>
       <div class="list">

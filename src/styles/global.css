@@ -139,6 +139,8 @@ html.anim .rv.in { opacity: 1; transform: none; }
 .nav a { font-size: 14px; font-weight: 500; color: var(--ink-2); text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; }
 .nav a:hover, .nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--seal); }
 .nav .btn { border-bottom: 0; }
+/* .nav a 의 글자색 규칙이 버튼의 흰 글자를 덮지 않도록 */
+.nav a.btn-seal, .nav a.btn-seal:hover { color: #fff; border-bottom: 0; }
 .nav-toggle {
   display: none; background: none; border: 1px solid var(--rule); border-radius: 3px;
   padding: 9px 12px; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer;

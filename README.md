@@ -97,6 +97,14 @@ public/                     robots.txt, favicon.svg, og.png
 - 온전·온트랙·온전함: 로고·링크·이용 권유 없음. 경력란에 "온전 주식회사 대표"만 사실로 기재.
 - theirlaw.org: 폐쇄 대상 (아래 절차).
 
+## 검색엔진 등록·SEO (2026.10.20)
+
+- **구글 서치 콘솔**: 계정 elias.cha.h.j@gmail.com, 속성 `https://www.lawyer-cha.com/`(URL 접두어). 소유 확인은 `public/google498bd14d332aac27.html`(지우지 말 것)과 `site.json`의 `googleVerify` 메타 두 가지. 사이트맵 `sitemap-index.xml` 제출 완료.
+- **네이버 서치어드바이저**: https://searchadvisor.naver.com → 웹마스터 도구 → 사이트 등록 `https://www.lawyer-cha.com` → 소유확인 'HTML 태그' 값을 `/admin` → 사이트 설정 → '네이버 사이트 소유확인 값'에 넣고 저장(2~3분 뒤 반영) → 소유확인 → 요청 › 사이트맵 제출 `https://www.lawyer-cha.com/sitemap-index.xml`, RSS 제출 `https://www.lawyer-cha.com/rss.xml`.
+- **파비콘**: `scripts/make_favicons.py`가 `favicon.ico`(16/32/48)·`favicon-16/32.png`·`apple-touch-icon.png`·`icon-192/512.png`·`site.webmanifest`를 만든다. 마크를 바꾸면 다시 실행.
+- **구조화 데이터**: 모든 페이지 Attorney, 홈 WebSite·FAQPage, 분야 페이지 FAQPage+BreadcrumbList, 칼럼 BlogPosting+BreadcrumbList, `/gangnam` LegalService, `/faq` FAQPage, `/glossary` DefinedTermSet.
+- **검색용 페이지**: 분야 9개(`src/content/areas/*.json`, 편집기에서 수정) + `/gangnam`(지역) + `/faq`(FAQ 모음, 분야 FAQ 자동 집계) + `/glossary`(용어 22개) + `/rss.xml`(전문 칼럼 50편).
+
 ## theirlaw.org 폐쇄 절차
 
 1. 새 도메인 오픈 전까지는 그대로 두되, "부동산 전문 로펌"·"무료 법률상담"·승소확률 문구를 먼저 내립니다.

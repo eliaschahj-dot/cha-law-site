@@ -10,7 +10,7 @@ export function getStaticPaths() {
 const { area } = Astro.props;
 const ld = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: area.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
 ---
-<Base title={`${area.name} 변호사`} description={`${area.lead} ${area.short}. 상속 전문 변호사 차형진이 직접 상담하고 수행합니다.`} jsonLd={ld}>
+<Base title={`${area.name} 변호사`} description={`${area.lead} ${area.short}. 상속 전문 변호사 차형진이 직접 상담하고 수행합니다.`} jsonLd={ld} breadcrumbs={[{ name: '홈', href: '/' }, { name: '상속 업무 분야', href: '/inheritance' }, { name: area.name }]}>
   <AreaPage area={area} />
   <CtaBand area={area.name} />
 </Base>

@@ -128,6 +128,8 @@ collections:
           - { label: 운영시간, name: hours, widget: string }
           - { label: 휴무, name: closed, widget: string }
           - { label: 회신 안내 문구, name: reply, widget: string }
+          - { label: 네이버 사이트 소유확인 값, name: naverVerify, widget: string, required: false, hint: "서치어드바이저 HTML 태그의 content 값" }
+          - { label: 구글 사이트 소유확인 값, name: googleVerify, widget: string, required: false, hint: "서치 콘솔 HTML 태그의 content 값" }
       - name: trust
         label: 표제부 (첫 화면 6칸)
         file: src/content/site/trust.json

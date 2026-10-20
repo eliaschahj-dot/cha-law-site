@@ -18,7 +18,7 @@ const ld = {
   author: { '@type': 'Person', name: '차형진', jobTitle: '변호사' }, inLanguage: 'ko',
 };
 ---
-<Base title={p.title} description={p.excerpt || `${p.title} — 차형진 변호사의 ${p.section} 칼럼 (${fmtDate(p.date)})`} jsonLd={ld}>
+<Base title={p.title} description={p.excerpt || `${p.title} — 차형진 변호사의 ${p.section} 칼럼 (${fmtDate(p.date)})`} jsonLd={ld} breadcrumbs={[{ name: '홈', href: '/' }, { name: '칼럼', href: '/columns' }, { name: sec?.label ?? p.section, href: `/columns/topic/${sectionSlug(p.section)}` }, { name: p.title }]}>
   <article>
     <section class="area-hero">
       <div class="wrap">

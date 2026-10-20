@@ -1,4 +1,4 @@
-// 상속 분야 7개(키워드 랜딩 페이지)는 src/content/areas/*.json 에 있고 /admin(편집기)에서 고칠 수 있다.
+// 상속 분야 9개(키워드 랜딩 페이지)는 src/content/areas/*.json 에 있고 /admin(편집기)에서 고칠 수 있다.
 export type Axis = 'in';
 export interface Area {
   axis: Axis; slug: string; name: string; short: string; lead: string;
@@ -11,10 +11,10 @@ export const axisMeta = {
 } as const;
 
 /** 상단 메뉴·홈 순서 */
-export const ORDER = ['dispute', 'legal-reserve', 'renunciation', 'guardianship', 'will', 'registration', 'tax'];
+export const ORDER = ['dispute', 'contribution', 'special-benefit', 'legal-reserve', 'renunciation', 'guardianship', 'will', 'registration', 'tax'];
 /** 홈 '분야' 섹션: 물려주기 전(설계) / 물려받은 뒤(분쟁) */
 export const PLAN_SLUGS = ['will', 'guardianship', 'tax'];
-export const DISPUTE_SLUGS = ['dispute', 'legal-reserve', 'renunciation', 'registration'];
+export const DISPUTE_SLUGS = ['dispute', 'contribution', 'special-benefit', 'legal-reserve', 'renunciation', 'registration'];
 
 const modules = import.meta.glob<{ default: Area }>('../content/areas/*.json', { eager: true });
 const loaded: Area[] = Object.values(modules).map((m) => m.default);

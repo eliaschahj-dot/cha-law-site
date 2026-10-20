@@ -1,0 +1,68 @@
+---
+/* 상속 용어 사전: 검색에서 용어로 들어오는 분을 위한 페이지. DefinedTermSet 구조화 데이터. */
+import Base from '../layouts/Base.astro';
+import CtaBand from '../components/CtaBand.astro';
+
+const terms: { id: string; t: string; d: string; href?: string; hrefName?: string }[] = [
+  { id: 'sangsok-gaesi', t: '상속개시', d: '사람이 사망한 때 상속이 시작됩니다. 상속포기·한정승인의 3개월, 상속세 신고의 6개월 같은 기한은 대부분 이 시점(또는 이를 안 날)부터 셉니다.' },
+  { id: 'beopjeong', t: '법정상속분', d: '유언이 없을 때 법이 정한 몫입니다. 배우자는 자녀 몫의 1.5배, 자녀들은 서로 같은 비율입니다. 배우자와 자녀 둘이면 3 : 2 : 2, 즉 3/7, 2/7, 2/7입니다.' },
+  { id: 'bunhal', t: '상속재산분할', d: '상속인들이 재산을 실제로 나누는 절차입니다. 협의가 되면 협의분할, 안 되면 가정법원에 심판을 청구합니다. 특별수익과 기여분을 반영해 각자의 구체적 상속분을 정합니다.', href: '/dispute', hrefName: '상속분쟁' },
+  { id: 'giyeobun', t: '기여분', d: '피상속인을 특별히 부양했거나 재산 유지·증가에 특별히 기여한 상속인에게 법정상속분보다 더 주는 몫입니다. 통상의 부양으로는 인정되지 않고, 기록으로 입증해야 합니다.', href: '/contribution', hrefName: '기여분' },
+  { id: 'teukbyeol', t: '특별수익', d: '상속인이 생전에 증여받았거나 유증받은 재산입니다. 상속분을 미리 받은 것으로 보아 분할 때 그만큼 공제합니다. 생활비·교육비 수준의 지원은 원칙적으로 특별수익이 아닙니다.', href: '/special-benefit', hrefName: '특별수익 · 생전증여' },
+  { id: 'yuryubun', t: '유류분', d: '유언이나 증여로 재산이 한쪽에 몰려도 배우자·자녀에게 보장되는 최소한의 몫입니다. 법정상속분의 절반입니다. 침해를 안 날부터 1년, 상속개시부터 10년 안에 반환을 청구해야 합니다.', href: '/legal-reserve', hrefName: '유류분' },
+  { id: 'yuryubun-banhwan', t: '유류분 반환 청구', d: '유류분에 미치지 못하는 상속인이 재산을 더 받은 사람에게 부족분을 돌려달라고 하는 청구입니다. 가정법원이 아니라 민사 소송으로 진행합니다.', href: '/legal-reserve', hrefName: '유류분' },
+  { id: 'pogi', t: '상속포기', d: '재산도 빚도 모두 받지 않겠다는 신고입니다. 상속이 시작된 것을 안 날부터 3개월 안에 가정법원에 해야 하며, 포기하면 다음 순위 가족에게 상속이 넘어갑니다.', href: '/renunciation', hrefName: '상속포기 · 한정승인' },
+  { id: 'hanjeong', t: '한정승인', d: '물려받은 재산 범위 안에서만 빚을 갚겠다는 신고입니다. 빚이 재산보다 많은지 불확실할 때 선택하며, 역시 3개월 안에 가정법원에 신고합니다.', href: '/renunciation', hrefName: '상속포기 · 한정승인' },
+  { id: 'teukbyeol-hanjeong', t: '특별한정승인', d: '3개월이 지난 뒤에 빚이 더 많다는 사실을 알게 된 경우, 그 사실을 안 날부터 3개월 안에 할 수 있는 한정승인입니다. 몰랐던 데 중대한 과실이 없어야 합니다.', href: '/renunciation', hrefName: '상속포기 · 한정승인' },
+  { id: 'dansun', t: '단순승인', d: '재산과 빚을 모두 그대로 물려받는 것입니다. 3개월 안에 아무 신고도 하지 않거나, 상속재산을 처분하면 단순승인한 것으로 봅니다.' },
+  { id: 'daeseup', t: '대습상속', d: '상속인이 될 자녀가 먼저 사망했거나 결격이면 그 자녀(손자녀)나 배우자가 대신 상속받는 것입니다. 손자녀가 유류분을 청구할 수 있는 근거이기도 합니다.' },
+  { id: 'yueon', t: '유언', d: '민법이 정한 5가지 방식(자필증서·공정증서·녹음·비밀증서·구수증서)만 효력이 있습니다. 자필 유언은 전문·날짜·주소·성명을 직접 쓰고 날인해야 하며 하나라도 빠지면 무효입니다.', href: '/will', hrefName: '유언' },
+  { id: 'gongjeung', t: '공정증서 유언', d: '공증인 앞에서 증인 2명과 함께 작성하는 유언입니다. 형식 흠결 위험이 가장 낮고 검인 절차 없이 바로 집행할 수 있어 분쟁 예방에 가장 안전합니다.', href: '/will', hrefName: '유언' },
+  { id: 'jiphaengja', t: '유언집행자', d: '유언 내용을 실제로 실행하는 사람입니다. 유언으로 지정할 수 있고, 없으면 상속인이 집행자가 되거나 법원이 선임합니다.' },
+  { id: 'yujeung', t: '유증', d: '유언으로 재산을 주는 것입니다. 상속인이 아닌 사람에게도 할 수 있으며, 유류분을 침해하면 반환 대상이 됩니다.' },
+  { id: 'hugyeon', t: '성년후견 · 한정후견 · 임의후견', d: '치매 등으로 판단 능력이 부족한 분을 위해 법원이 후견인을 정하는 제도입니다. 성년후견은 능력이 지속적으로 결여된 경우, 한정후견은 부족한 경우, 임의후견은 본인이 건강할 때 미리 계약으로 정해 두는 방식입니다.', href: '/guardianship', hrefName: '성년후견인' },
+  { id: 'deunggi', t: '상속등기', d: '부동산을 상속받은 뒤 명의를 상속인 앞으로 옮기는 등기입니다. 기한은 없지만 취득세는 상속개시가 속한 달의 말일부터 6개월 안에 신고·납부해야 합니다.', href: '/registration', hrefName: '상속등기 · 명의신탁' },
+  { id: 'myeongui', t: '명의신탁', d: '실제 주인과 등기 명의자가 다른 상태입니다. 부동산실명법상 원칙적으로 무효이며, 상속 과정에서 명의를 되찾거나 정리하는 분쟁이 자주 생깁니다.', href: '/registration', hrefName: '상속등기 · 명의신탁' },
+  { id: 'sangsokse', t: '상속세 · 증여세', d: '상속세는 상속개시가 속한 달의 말일부터 6개월 안에 신고합니다. 배우자공제·일괄공제 등 공제 구조에 따라 누가 얼마를 받느냐로 세금이 달라져, 분할 방식과 함께 설계합니다.', href: '/tax', hrefName: '상속세 · 증여 설계' },
+  { id: 'hoebok', t: '상속회복청구권', d: '상속인이 아닌 사람이 상속재산을 차지하고 있을 때 진짜 상속인이 되찾는 청구입니다. 침해를 안 날부터 3년, 침해행위가 있은 날부터 10년 안에 행사해야 합니다.' },
+  { id: 'gyeolgyeok', t: '상속결격', d: '피상속인이나 선순위 상속인을 해치거나 유언을 위조·파기한 사람은 법률상 당연히 상속인 자격을 잃습니다.' },
+];
+const ld = { '@context': 'https://schema.org', '@type': 'DefinedTermSet', name: '상속 용어 사전', hasDefinedTerm: terms.map((x) => ({ '@type': 'DefinedTerm', name: x.t, description: x.d })) };
+---
+<Base title="상속 용어 사전" description="법정상속분, 유류분, 기여분, 특별수익, 상속포기, 한정승인, 대습상속, 유언집행자, 성년후견, 상속등기, 상속세. 상속 분쟁에서 꼭 나오는 용어를 상속 전문 변호사 차형진이 쉽게 풀었습니다." jsonLd={ld} breadcrumbs={[{ name: '홈', href: '/' }, { name: '상속 용어 사전' }]}>
+  <section class="area-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">홈</a><span>/</span><span>상속 용어 사전</span></div>
+      <div class="gu" style="margin-top:18px">용어 사전 <small>{terms.length}개</small></div>
+      <h1>상속 분쟁에서 꼭 나오는 말</h1>
+      <p class="lead">서면과 판결문에 나오는 용어를 한 문단씩 풀었습니다. 용어마다 관련 분야 페이지로 이어집니다.</p>
+      <div class="docs" style="margin-top:22px">
+        {terms.map((x) => <li><a href={`#${x.id}`} style="text-decoration:none">{x.t}</a></li>)}
+      </div>
+    </div>
+  </section>
+  <div class="wrap area-body in">
+    <div class="main">
+      <div class="list">
+        {terms.map((x) => (
+          <a id={x.id} href={x.href ?? `#${x.id}`} style="grid-template-columns:1fr">
+            <div><b style="font-size:17px">{x.t}</b><span style="display:block;margin-top:6px;font-size:15px;line-height:1.75">{x.d}</span>{x.href && <span style="color:var(--accent);font-weight:700;margin-top:8px">{x.hrefName} 페이지로 →</span>}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+    <aside class="side">
+      <div class="card">
+        <div class="k">상담 예약</div>
+        <p>내 상황이 어느 용어에 해당하는지 모르셔도 괜찮습니다. 적어 주시면 변호사가 분류해 답합니다.</p>
+        <a class="btn btn-seal" href="/contact">온라인 상담 신청</a>
+      </div>
+      <div class="card">
+        <div class="k">자주 묻는 질문</div>
+        <p>기한과 비용에 관한 질문을 모아 두었습니다.</p>
+        <a href="/faq" style="font-weight:700">FAQ 모음 →</a>
+      </div>
+    </aside>
+  </div>
+  <CtaBand />
+</Base>

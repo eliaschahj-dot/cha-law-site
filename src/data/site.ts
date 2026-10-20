@@ -9,6 +9,7 @@ export const site = siteJson as {
   name: string; tagline: string; url: string; description: string; firm: string; role: string; bar: string;
   phone: string; phoneHref: string; email: string; emailHref: string; blog: string;
   address: string; transit: string; parking: string; hours: string; closed: string; reply: string;
+  naverVerify?: string; googleVerify?: string;
 };
 
 export const nav = [
@@ -25,6 +26,11 @@ export const footerNav = [
   { href: '/dispute', label: '상속분쟁' },
   { href: '/registration', label: '상속등기 · 명의신탁' },
   { href: '/tax', label: '상속세 · 증여 설계' },
+  { href: '/contribution', label: '기여분' },
+  { href: '/special-benefit', label: '특별수익 · 생전증여' },
+  { href: '/gangnam', label: '강남 상속변호사' },
+  { href: '/faq', label: '자주 묻는 질문' },
+  { href: '/glossary', label: '상속 용어 사전' },
   { href: '/press', label: '언론 · 활동' },
 ];
 

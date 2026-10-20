@@ -7,14 +7,16 @@ interface Props {
   title: string;
   description?: string;
   jsonLd?: object | object[];
+  breadcrumbs?: { name: string; href?: string }[];
+  rawTitle?: boolean;
 }
-const { title, description = site.description, jsonLd } = Astro.props;
+const { title, description = site.description, jsonLd, breadcrumbs, rawTitle } = Astro.props;
 const path = Astro.url.pathname;
 const origin = Astro.site?.href ?? site.url; // astro.config의 site (SITE_URL 환경변수) 우선
 const canonical = new URL(path, origin).href;
-const fullTitle = title === site.name ? `${site.name} | ${site.tagline}` : `${title} | ${site.name}`;
-const naverVerify = import.meta.env.PUBLIC_NAVER_SITE_VERIFICATION;
-const googleVerify = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
+const fullTitle = rawTitle ? title : title === site.name ? `${site.name} | ${site.tagline}` : `${title} | ${site.name}`;
+const naverVerify = site.naverVerify || import.meta.env.PUBLIC_NAVER_SITE_VERIFICATION;
+const googleVerify = site.googleVerify || import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 const ogImage = new URL('/og.png', origin).href;
 
 const orgLd = {
@@ -32,7 +34,9 @@ const orgLd = {
   award: '서울특별시장 표창(2023)',
   openingHours: ['Mo-Fr 10:00-18:00', 'Sa 10:00-14:00'],
 };
-const ldItems = [orgLd, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
+const siteLd = { '@context': 'https://schema.org', '@type': 'WebSite', name: `${site.name} | ${site.tagline}`, url: origin, inLanguage: 'ko' };
+const crumbLd = breadcrumbs && breadcrumbs.length > 0 ? { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumbs.map((b, i) => ({ '@type': 'ListItem', position: i + 1, name: b.name, ...(b.href ? { item: new URL(b.href, origin).href } : {}) })) } : null;
+const ldItems = [orgLd, ...(path === '/' ? [siteLd] : []), ...(crumbLd ? [crumbLd] : []), ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
 const isCurrent = (href: string) => path === href || (href !== '/' && path.startsWith(href + '/')) || path === href + '/';
 ---
 <!doctype html>
@@ -53,7 +57,15 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
   <meta name="twitter:card" content="summary_large_image" />
   {naverVerify && <meta name="naver-site-verification" content={naverVerify} />}
   {googleVerify && <meta name="google-site-verification" content={googleVerify} />}
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="alternate" type="application/rss+xml" title="차형진 변호사 상속 칼럼" href="/rss.xml" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <link rel="sitemap" href="/sitemap-index.xml" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />

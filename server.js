@@ -108,8 +108,7 @@ app.post('/api/contact', async (req, res) => {
     '',
     `접수: ${new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}`,
     `IP: ${req.ip}`,
-  ].filter((l) => l !== false && l !== undefined && l !== null && l !== '').join('
-');
+  ].filter((l) => l !== false && l !== undefined && l !== null && l !== '').join('\n');
 
   if (process.env.RESEND_API_KEY && process.env.CONTACT_TO) {
     try {

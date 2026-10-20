@@ -41,7 +41,7 @@ public/                     robots.txt, favicon.svg, og.png
 
 - 주소: https://cha-law-site.onrender.com (Blueprint `cha-law-site`, 웹 서비스 `srv-db8rif2jnfac73bk83n0`, Free 플랜, Singapore)
 - 2026.10.16 GitHub의 Render 앱에 이 저장소 접근을 추가해 **푸시 자동 배포**를 켰습니다(Auto-Deploy: On Commit). 확인: 커밋 07ea7ad 푸시 후 약 2분 만에 라이브 `X-App-Version` 헤더가 바뀌었습니다. 자동 배포가 멈추면 대시보드 → cha-law-site → Manual Deploy → Deploy latest commit.
-- 환경변수(2026.10.16 기준): `NODE_VERSION`, `SITE_URL`, `RESEND_API_KEY`, `CONTACT_TO`, `CONTACT_FROM`(아직 `onboarding@resend.dev`), `GITHUB_OAUTH_CLIENT_ID`, `GITHUB_OAUTH_CLIENT_SECRET`. 상담 폼 메일 수신과 `/admin` 로그인 모두 확인됨.
+- 환경변수(2026.10.16 기준): `NODE_VERSION`, `SITE_URL`, `RESEND_API_KEY`, `CONTACT_TO`, `CONTACT_FROM`(2026.10.20 Resend에서 lawyer-cha.com 인증 완료 → `차형진 변호사 홈페이지 <consult@lawyer-cha.com>`), `GITHUB_OAUTH_CLIENT_ID`, `GITHUB_OAUTH_CLIENT_SECRET`. 상담 폼 메일 수신과 `/admin` 로그인 모두 확인됨.
 
 `render.yaml`(Blueprint)이 들어 있습니다. `server.js`(Express)가 `dist/` 정적 파일과 `/api/contact`를 함께 서비스합니다.
 
@@ -56,7 +56,7 @@ public/                     robots.txt, favicon.svg, og.png
    - `SITE_URL` — 처음엔 `https://cha-law-site.onrender.com`, 도메인 연결 후 실제 주소 (canonical·sitemap·robots에 쓰임)
    - `RESEND_API_KEY` — resend.com 발급 키 (없으면 상담 신청이 서버 로그에만 남습니다)
    - `CONTACT_TO` — 상담 신청을 받을 이메일
-   - `CONTACT_FROM` — 인증된 도메인의 발신 주소 (예: `consult@chahyungjin.com`)
+   - `CONTACT_FROM` — 인증된 도메인의 발신 주소 (`차형진 변호사 홈페이지 <consult@lawyer-cha.com>`, Resend Domains에 lawyer-cha.com 인증됨·가비아 DNS에 DKIM/CNAME 2/DMARC 등록)
    - `PUBLIC_NAVER_SITE_VERIFICATION`, `PUBLIC_GOOGLE_SITE_VERIFICATION` — 소유 확인 메타 (빌드 시 적용)
 4. 무료 플랜은 15분 유휴 후 잠들어 첫 접속이 30초쯤 걸립니다. 오픈 전 **Starter** 플랜으로 올리거나, 정적 사이트(Static Site)로 바꾸고 폼만 별도 처리하세요.
 5. 도메인 연결: Render → Settings → Custom Domains에 도메인 추가 후 DNS(CNAME) 설정. 그 뒤 `SITE_URL`을 바꾸고 재배포.

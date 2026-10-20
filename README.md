@@ -97,6 +97,14 @@ public/                     robots.txt, favicon.svg, og.png
 - 온전·온트랙·온전함: 로고·링크·이용 권유 없음. 경력란에 "온전 주식회사 대표"만 사실로 기재.
 - theirlaw.org: 폐쇄 대상 (아래 절차).
 
+## 방문 통계 관리자 페이지 (2026.10.20)
+
+- 주소: `https://www.lawyer-cha.com/stats` — GitHub(eliaschahj-dot) 로그인으로만 열립니다(편집기와 같은 OAuth 앱). 허용 계정은 Render 환경변수 `STATS_GITHUB_USERS`(쉼표 구분)로 바꿉니다.
+- 보여주는 것: 기간(7·30·90일·1년)별 방문·방문자·페이지뷰·평균 체류·이탈률·상담 신청 수, 일별 그래프, 유입 경로(네이버 검색/블로그·구글·직접…), 진입 페이지, 많이 본 페이지와 평균 체류, 기기·브라우저·국가, 시간대, 최근 방문 60건의 페이지 흐름과 체류시간, 최근 상담 신청. `?format=json`으로 원자료.
+- 수집 방식: `src/layouts/Base.astro`의 인라인 스크립트가 페이지를 열 때 `/api/hit`(view)로, 화면을 벗어날 때(leave, 30초마다 갱신) 체류시간을 보냅니다. 브라우저가 만든 난수(localStorage `cv`=방문자, sessionStorage `cs`=세션)만 쓰고 **IP·이름은 저장하지 않습니다**. 로봇 UA, `/admin`·`/stats`, 통계 화면에 로그인한 브라우저(`notrack` 쿠키)는 제외.
+- 저장: `DATA_DIR/events-YYYY-MM.jsonl`(Render 영구 디스크 `/var/data`, 1GB, `render.yaml`의 `disk`). 집계는 `analytics.js`. 로컬 테스트: `DATA_DIR=./data-local STATS_OPEN=1 PORT=3999 node server.js` 후 http://localhost:3999/stats.
+- 개인정보처리방침에 통계 수집 항목·보유기간(1년)을 적었습니다. 1년 지난 월 파일은 디스크에서 지우면 됩니다.
+
 ## 검색엔진 등록·SEO (2026.10.20)
 
 - **구글 서치 콘솔**: 계정 elias.cha.h.j@gmail.com, 속성 `https://www.lawyer-cha.com/`(URL 접두어). 소유 확인은 `public/google498bd14d332aac27.html`(지우지 말 것)과 `site.json`의 `googleVerify` 메타 두 가지. 사이트맵 `sitemap-index.xml` 제출 완료.

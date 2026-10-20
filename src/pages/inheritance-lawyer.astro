@@ -1,0 +1,166 @@
+---
+/* 상속 전문 변호사 차형진 — 2026.10.20 마케터 시안(inheritance-lawyer.html). 옛 /about 은 이 주소로 넘어온다. */
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+import '../styles/marketer.css';
+
+const ld = {
+  '@context': 'https://schema.org', '@type': 'Person', name: '차형진', jobTitle: '변호사', worksFor: { '@type': 'Organization', name: site.firm },
+  alumniOf: ['한동대학교', '카이스트 경영대학원'], knowsAbout: ['상속', '유류분', '성년후견', '유언'], award: '서울특별시장 표창(2023)',
+};
+---
+<Base title="상속 전문 변호사 차형진" description="상속 전문 변호사 차형진. 변호사가 비효율일수록 의뢰인이 이기는 이유. 법무법인 베율 파트너, 서울특별시장 표창, 대한변호사협회 성년후견회 전문위원." jsonLd={ld}>
+<main class="mk ppage" id="p-lawyer">
+  <header class="lhero">
+    <div class="wrap">
+      <nav class="crumb" aria-label="현재 위치"><a href="/">홈</a><span>›</span><span>상속 전문 변호사</span></nav>
+      <div class="lgrid">
+        <div class="lphoto"><img src="/img/hero-lecture.webp" alt="상속 설계를 강연하는 차형진 변호사" width="1100" height="1375" /></div>
+        <div>
+          <div class="lrole">법무법인 베율 파트너 변호사 · 상속</div>
+          <div class="lname"><h1>차형진</h1><em>Cha Hyung-jin</em></div>
+          <div class="lchips">
+            <span class="hi">서울특별시장 표창</span>
+            <span>대한변호사협회 성년후견회 전문위원</span>
+            <span>KAIST 사회적기업가 MBA</span>
+            <span>건축학 · 법학 복수전공</span>
+          </div>
+          <div class="lquote">“상속 분쟁에서 의뢰인의 몫을<br />더 많이 받아내는 일만큼은 자신 있습니다.”<em>다만 이기는 것만큼, 그 끝에 무엇이 남는지도 함께 고민합니다.<br />그 이야기를 아래에 적었습니다.</em></div>
+          <div class="lmeta">
+            <div><span>변호사 직통</span><b>{site.phone}</b></div>
+            <div><span>사무소</span><b>{site.firm} · 선릉역 8번 출구</b></div>
+            <div><span>담당 분야</span><b>상속 · 유류분 · 후견 · 유언</b></div>
+          </div>
+          <div class="lcta">
+            <a class="btn btn-p" href="/contact">1:1 상속 상담 신청</a>
+            <a class="btn btn-s" href={site.phoneHref}>변호사에게 바로 전화</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <div class="shead mid">
+        <div class="eyebrow">차형진 변호사의 글</div>
+        <h2>변호사가 <em>비효율</em>일수록<br />의뢰인이 이기는 이유</h2>
+      </div>
+      <div class="essay" style="margin-top:52px">
+        <div class="pull top">
+          <p>“형진아, 너 정도 스펙이면 그냥 대형 로펌에서 편하게 큰 사건이나 맡지,</p>
+          <p>왜 사서 고생이야?”</p>
+          <cite>오랜만에 만난 법조계 동기들이 술잔을 기울이며 제게 묻곤 합니다.</cite>
+        </div>
+        <p style="margin-top:34px">대형 로펌의 탄탄대로를 걷는 동기들 눈에, 제가 걷는 길은 참 ‘비효율적’으로 보일 겁니다.</p>
+        <p>수익성 높은 기업 소송 대신, 치매 어르신을 돕는 서비스를 만들고 전세 사기 피해를 막는 계약서 검토에 시간을 쏟고 있으니까요.</p>
+        <p>틀린 말은 아닙니다. 경영학을 공부한 저 역시 효율의 가치를 누구보다 잘 압니다.</p>
+        <p class="em">하지만 저는 효율적인 계산기만으로는<br />절대 풀 수 없는 <em>사람의 인생이 걸린 문제</em>를 마주하고 있습니다.</p>
+        <p>제가 왜 대형 로펌의 화려한 조명 대신 여러분의 곁을 선택했는지, 끝까지 읽어보시고 제가 여러분의 파트너로 적합할지 직접 판단해 주셨으면 합니다.</p>
+
+        <div class="ehead"><span>하나</span>“소송합시다”라는 말,<br />사실 변호사에겐 가장 쉬운 말입니다</div>
+        <p>제 사무실을 찾는 분들은 대개 감정이 극에 달해 계십니다. “변호사님, 비용은 상관없으니 당장 소송 시작하죠.” 이렇게 말씀하시기도 합니다.</p>
+        <p>사실 변호사에게는 가장 유혹적인 순간입니다. 분노에 맞장구치며 소송을 시작하기만 하면, 큰 고민 없이 높은 수임료를 받을 수 있으니까요.</p>
+        <p>하지만 저는 그 순간 한 번 더 멈춰 섭니다. 소송은 짧아야 1년, 길면 몇 년이 걸립니다. 그 사이 일상은 멈추고 마음은 서서히 지쳐 갑니다.</p>
+        <p class="em">몇 년 뒤 이기더라도, 비용과 고통을 뺀 결과가<br /><em>상처뿐인 승리</em>라면 누구를 위한 소송일까요?</p>
+        <p>그래서 때로는 소송보다 빠르고 확실한 <b>합의나 협상안을 먼저 제안</b>합니다. 대부분 이 과정에서 소송보다 더 나은 결과가 나오기도 합니다.</p>
+        <p>제 수익이 줄어드는 비효율을 감내하더라도, 가장 적은 상처로 평온한 일상에 돌아가는 길을 찾는 것. 그것이 변호사로서 마땅히 가져야 할 양심이라 믿습니다.</p>
+
+        <div class="ehead"><span>둘</span>지금도 공익 법률상담과<br />강연 현장을 찾아다니는 이유</div>
+        <p>치매 등으로 정신이 온전치 못한 부모님 때문에 시작되는 가족 간 분쟁을 미리 막는 서비스, 전세 계약 전에 위험 요소를 걸러내는 서비스를 운영해 왔습니다.</p>
+        <p>변호사의 시각으로 조금만 미리 들여다보면 <b>충분히 막을 수 있는 비극이 너무 많기 때문</b>입니다.</p>
+        <div class="ephotos">
+          <img src="/img/field-01.webp" alt="재산 보호와 상속 설계 강연" width="520" height="390" loading="lazy" />
+          <img src="/img/field-03.webp" alt="상속 설계 강연에 모인 시민들" width="520" height="390" loading="lazy" />
+          <img src="/img/field-06.webp" alt="부스에서 계약서 상담 중인 차형진 변호사" width="520" height="390" loading="lazy" />
+        </div>
+        <p class="ecap">상속 설계 강연, 공익 법률상담, 소셜벤처 박람회 부스 현장</p>
+        <p class="em">이미 무너진 뒤 수습하는 것보다,<br />단 한 분이라도 <em>무너지기 전에 곁을 지키는 것.</em></p>
+        <p class="tight">그것이 제가 생각하는 변호사의 진짜 소명입니다.</p>
+
+        <div class="ehead"><span>셋</span>착수금이라는 문턱을 낮추고,<br />함께 걷는 길을 택했습니다</div>
+        <p>변호사를 만나고 싶어도 주저하게 되는 가장 큰 이유는, 결과도 알기 전에 요구받는 큰 착수금일 것입니다.</p>
+        <p>변호사에겐 안정적인 구조지만, 절실한 분들에겐 법의 보호를 포기하게 만드는 장벽이 됩니다.</p>
+        <p>그래서 사건에 따라 <b>실제로 고민하고 일한 시간만큼만 비용을 받는 ‘타임 차지’ 방식</b>을 열어 두었습니다. 지금 당장 모든 걸 걸지 않아도 되는 현실적인 선택지입니다.</p>
+        <p class="em">변호사와 의뢰인의 관계는<br />거래가 아니라 <em>동행</em>이어야 한다고 믿습니다.</p>
+        <div class="resgrid">
+          <div class="resc"><span>상담부터 재판까지</span><b>변호사가 직접</b><i>사무실을 거치지 않고 제가 읽고 답합니다</i></div>
+          <div class="resc"><span>소송 전에</span><b>합의안부터 검토</b><i>더 빠르고 확실한 길이 있다면 먼저 말씀드립니다</i></div>
+          <div class="resc"><span>분쟁이 되기 전에</span><b>예방 서비스 운영</b><i>치매 대비 ‘내 뜻 전달서’, 전세 계약 검토 서비스</i></div>
+          <div class="resc"><span>의뢰인의 비밀</span><b>판결문은 싣지 않습니다</b><i>누군가의 상처를 홍보에 쓰지 않습니다</i></div>
+        </div>
+        <div class="div"></div>
+        <div class="close">글을 마칩니다</div>
+        <p>누군가에게는 평생의 상처일 사건을 홍보 수단으로 삼고 싶지 않아, 이곳에 판결문을 나열하지 않습니다. 의뢰인의 명예와 비밀을 지키는 것이 변호사로서 지켜야 할 첫 번째 예의라고 생각합니다.</p>
+        <p>대신 저와 대화를 나누시는 과정에서, 제가 쌓아온 경험이 여러분의 고민에 어떤 답을 내놓는지 직접 느끼실 수 있을 거라 확신합니다.</p>
+        <p class="em">길게 쓰실 필요 없습니다.<br />사실 그대로, 정리된 만큼만 적어주세요.</p>
+        <p class="tight">제가 직접 읽고, 제가 판단하고, 제가 답하겠습니다.</p>
+        <div class="sign"><b>차형진</b><span>법무법인 베율 파트너 변호사</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tint">
+    <div class="wrap">
+      <div class="shead">
+        <div class="eyebrow">PROFILE</div>
+        <h2>차형진 변호사 <em>약력</em></h2>
+      </div>
+      <div class="cvgrid">
+        <div class="cvbox">
+          <h4>학력 · 경력</h4>
+          <ul>
+            <li><b>現</b> 법무법인 베율 파트너 변호사</li>
+            <li><b>現</b> 리걸테크 기업 온전 주식회사 대표</li>
+            <li><b>前</b> 온전 법률사무소 대표 변호사</li>
+            <li><b>前</b> 중원종합법률사무소 (부동산 분야)</li>
+            <li><b>前</b> 서울북부지방법원 국선변호인</li>
+          </ul>
+          <div class="grp">학력</div>
+          <ul>
+            <li>한동대학교 건축학 · 법학 복수전공</li>
+            <li>카이스트 경영대학원 사회적기업가 MBA</li>
+          </ul>
+        </div>
+        <div class="cvbox">
+          <h4>대외 활동</h4>
+          <ul>
+            <li>서울시 공익변호사 (2020~)</li>
+            <li>서울시 마을변호사</li>
+            <li>대한변호사협회 성년후견회 전문위원</li>
+            <li>대한변호사협회 미래청년위원</li>
+            <li>(사)한국상사법학회 정회원</li>
+          </ul>
+        </div>
+        <div class="cvbox">
+          <h4>수상 · 강의</h4>
+          <ul>
+            <li><b>서울특별시장 표창</b><br />시민 법률복지 향상 기여 (2023.12)</li>
+            <li>부동산 · 상속 설계 강의<br />고려대 등 대학 특강</li>
+            <li>2022 정보접근성 기술 국제협력 컨퍼런스 참여</li>
+            <li>KISTI 패밀리기업 지정 · 온전㈜ (2024)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="docs">
+        <figure><img src="/img/award-seoul.webp" alt="서울특별시장 표창장, 2023년 12월 18일" width="640" height="898" loading="lazy" /><figcaption>서울특별시장 표창 · 2023.12</figcaption></figure>
+        <figure><img src="/img/kisti.webp" alt="KISTI 패밀리기업 지정서, 온전 주식회사" width="560" height="816" loading="lazy" /><figcaption>KISTI 패밀리기업 지정 · 온전㈜</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="finalcta">
+    <div class="wrap">
+      <div class="in">
+        <div class="k">상담 예약</div>
+        <h2>지금 상황을 적어 주시면,<br /><em>변호사가 직접 답합니다.</em></h2>
+        <p>상속인 구성, 돌아가신 시기, 지금 걸려 있는 문제만 알려주셔도 충분합니다. 상담 자리에서 만난 변호사가 협상과 재판까지 그대로 들어갑니다.</p>
+        <div class="row">
+          <a class="btn btn-p" href="/contact">1:1 상속 상담 신청</a>
+          <a class="btn btn-s" href={site.phoneHref}>{site.phone}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+</Base>

@@ -35,6 +35,8 @@ functions/api/contact.js    Cloudflare Pages Function — 상담 폼 수신(Rese
 public/                     robots.txt, favicon.svg, og.png
 ```
 
+> **2026.10.20 마케터 시안 반영**: 홈(`src/pages/index.astro`)과 '상속 전문 변호사' 페이지(`src/pages/inheritance-lawyer.astro`, 옛 `/about`은 여기로 넘어감)를 마케터가 만든 `index.html`·`inheritance-lawyer.html` 그대로 옮겼습니다. 그 두 페이지의 CSS는 `src/styles/marketer.css`(`.mk` 래퍼 안에서만 적용), 전역 내비·푸터·버튼은 `global.css`로 옮겼고, 사진 12장은 `public/img/*.webp`입니다. 상담 신청서는 `src/components/ConsultForm.astro`(돌아가신 시기·상속인 구성·입장·관련 항목·상황·통화 가능 시간)이고 `server.js`의 `/api/contact`가 새 필드를 메일로 보냅니다. 문안은 변협 광고규정 검사(`scripts/content_tools.py`) 기준으로 '무료 법률상담'→'공익 법률상담', 서비스 상호 '온트랙' 언급만 바꿨습니다.
+
 ## 배포 (Render) — 2026.10.16 배포 완료
 
 - 주소: https://cha-law-site.onrender.com (Blueprint `cha-law-site`, 웹 서비스 `srv-db8rif2jnfac73bk83n0`, Free 플랜, Singapore)

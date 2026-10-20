@@ -7,9 +7,8 @@ interface Props {
   title: string;
   description?: string;
   jsonLd?: object | object[];
-  rail?: { id: string; label: string }[];
 }
-const { title, description = site.description, jsonLd, rail } = Astro.props;
+const { title, description = site.description, jsonLd } = Astro.props;
 const path = Astro.url.pathname;
 const origin = Astro.site?.href ?? site.url; // astro.config의 site (SITE_URL 환경변수) 우선
 const canonical = new URL(path, origin).href;
@@ -22,12 +21,15 @@ const orgLd = {
   '@context': 'https://schema.org',
   '@type': 'Attorney',
   name: `${site.name} (${site.firm})`,
+  jobTitle: site.role,
+  worksFor: { '@type': 'LegalService', name: site.firm },
   url: origin,
   telephone: site.phone,
   email: site.email,
   address: { '@type': 'PostalAddress', streetAddress: '테헤란로103길 10 길훈빌딩 2층', addressLocality: '강남구', addressRegion: '서울', addressCountry: 'KR' },
   areaServed: 'KR',
-  knowsAbout: ['상속분쟁', '상속재산분할', '기여분', '유류분 반환', '상속포기', '한정승인', '성년후견', '유언', '상속등기', '명의신탁', '상속세'],
+  knowsAbout: ['상속재산분할', '기여분', '유류분', '상속포기', '한정승인', '성년후견', '유언', '상속등기', '상속세'],
+  award: '서울특별시장 표창(2023)',
   openingHours: ['Mo-Fr 10:00-18:00', 'Sa 10:00-14:00'],
 };
 const ldItems = [orgLd, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
@@ -53,35 +55,31 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
   {googleVerify && <meta name="google-site-verification" content={googleVerify} />}
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="sitemap" href="/sitemap-index.xml" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
   <meta name="theme-color" content="#F5F4EF" />
   <script is:inline>if (document.visibilityState === 'visible' && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('anim');</script>
   {ldItems.map((ld) => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)}
 </head>
 <body>
-  <header class="topbar">
-    <div class="wrap">
+  <nav class="nav" aria-label="주요 메뉴">
+    <div class="navin">
       <a class="brand" href="/" aria-label={`${site.name} 홈`}>
         <Mark />
-        <span class="t"><strong>{site.name}</strong><span>{site.tagline} · {site.firm} {site.role}</span></span>
+        <b>차형진<span>변호사</span></b>
+        <i>상속 · {site.firm}</i>
       </a>
-      <nav class="nav" id="nav" aria-label="주 메뉴">
-        {nav.map((n) => <a href={n.href} aria-current={isCurrent(n.href) ? 'page' : undefined}>{n.label}</a>)}
-        <a class="btn btn-seal btn-sm" href="/contact">상담 예약</a>
-      </nav>
-      <button class="nav-toggle" type="button" aria-controls="nav" aria-expanded="false" id="nav-toggle">메뉴</button>
+      <div class="menu">
+        {nav.map((n) => <a href={n.href} class={isCurrent(n.href) ? 'cur' : undefined} aria-current={isCurrent(n.href) ? 'page' : undefined}>{n.label}</a>)}
+        <a class="on" href="/contact">상담 예약</a>
+      </div>
+      <a class="navtel" href={site.phoneHref}>{site.phone}</a>
     </div>
-  </header>
-
-  {rail && (
-    <nav class="rail" aria-label="구(區) 바로가기" id="rail">
-      {rail.map((r, i) => <a href={`#${r.id}`} data-rail={r.id}><b>{i + 1}</b><span>{r.label}</span></a>)}
-    </nav>
-  )}
+  </nav>
+  <div class="mobcta">
+    <a class="m1" href={site.phoneHref}>변호사 직통</a>
+    <a class="m2" href="/contact">상담 예약</a>
+  </div>
 
   <main id="top">
     <slot />
@@ -89,101 +87,31 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
 
   <footer>
     <div class="wrap">
-      <div>
-        <a class="brand" href="/"><Mark /><span class="t"><strong>{site.name}</strong><span>{site.tagline} · {site.firm} {site.role}</span></span></a>
-        <p>{site.firm} · {site.address}<br />변호사 차형진 · {site.bar} 소속<br />변호사 직통 {site.phone} · {site.email}<br />{site.hours}</p>
-      </div>
-      <div class="links">
+      <div class="fbar"></div>
+      <div class="fmenu">
         {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+        <a href="/contact">상담 예약</a>
         {footerNav.map((n) => <a href={n.href}>{n.label}</a>)}
         <a href={site.blog} target="_blank" rel="noopener">네이버 블로그</a>
         <a href="https://beyullaw.com" target="_blank" rel="noopener">법무법인 베율</a>
         <a href="/privacy">개인정보처리방침</a>
       </div>
-      <div class="legal">
-        광고 주체: 변호사 차형진 ({site.firm} · {site.bar}) · 이 홈페이지의 내용은 일반적인 법률 정보이며 개별 사건에 대한 법률 자문이 아닙니다. 사건의 결과는 사안에 따라 다를 수 있습니다. © 2026 차형진 변호사
+      <div class="finfo">
+        <b>{site.firm}</b> · 파트너 변호사 차형진<br />
+        {site.address} ({site.transit})<br />
+        변호사 직통 {site.phone} · {site.email}<br />
+        {site.hours} · {site.closed}
+      </div>
+      <div class="disc">
+        광고 주체: 변호사 차형진 ({site.firm} · {site.bar}) · 이 페이지의 내용은 상속에 관한 일반적인 정보이며, 개별 사건에 대한 법률 자문이 아닙니다. 사건마다 사실관계와 증거, 상속인 사이의 관계에 따라 판단과 결과가 달라질 수 있으며 특정한 결과를 약속하거나 보장하지 않습니다. 기한과 비율은 민법 등 현행 법령을 기준으로 정리했습니다. 상담 내용은 변호사법에 따라 비밀이 유지됩니다. © 2026 차형진 변호사
       </div>
     </div>
   </footer>
 
-  <div class="mobile-cta">
-    <a class="btn btn-ink" href={site.phoneHref}>전화 {site.phone}</a>
-    <a class="btn btn-seal" href="/contact">상담 신청</a>
-  </div>
-
   <script>
-    const toggle = document.getElementById('nav-toggle');
-    const nav = document.getElementById('nav');
-    toggle?.addEventListener('click', () => {
-      const open = nav!.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', String(open));
-      toggle.textContent = open ? '닫기' : '메뉴';
-    });
-    nav?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => { nav.classList.remove('open'); toggle?.setAttribute('aria-expanded', 'false'); if (toggle) toggle.textContent = '메뉴'; }));
-
-    const rail = document.getElementById('rail');
-    if (rail && 'IntersectionObserver' in window) {
-      const links = Array.from(rail.querySelectorAll('a[data-rail]')) as HTMLAnchorElement[];
-      const map = new Map(links.map((l) => [l.dataset.rail!, l]));
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            links.forEach((l) => l.classList.remove('on'));
-            map.get((e.target as HTMLElement).id)?.classList.add('on');
-          }
-        });
-      }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
-      links.forEach((l) => { const s = document.getElementById(l.dataset.rail!); if (s) io.observe(s); });
-    }
-
-    // 타이핑 효과: data-type 요소의 글자를 한 자씩 쓴다. 끝나면 붓 밑줄(.brush)을 긋는다.
-    if (document.documentElement.classList.contains('anim')) {
-      document.querySelectorAll<HTMLElement>('[data-type]').forEach((el) => {
-        el.setAttribute('aria-label', el.textContent?.trim() ?? '');
-        const texts: Text[] = [];
-        const walk = (n: Node) => n.childNodes.forEach((c) => {
-          if (c.nodeType === 3) texts.push(c as Text);
-          else if (c.nodeType === 1 && !['BR', 'svg', 'SVG'].includes((c as Element).tagName)) walk(c);
-        });
-        walk(el);
-        const chars: HTMLElement[] = [];
-        texts.forEach((t) => {
-          const frag = document.createDocumentFragment();
-          for (const ch of t.textContent ?? '') {
-            const s = document.createElement('span'); s.className = 'ch'; s.textContent = ch; frag.appendChild(s); chars.push(s);
-          }
-          t.replaceWith(frag);
-        });
-        const caret = document.createElement('span'); caret.className = 'caret'; caret.setAttribute('aria-hidden', 'true'); el.appendChild(caret);
-        el.classList.add('tw');
-        const step = 42;
-        chars.forEach((s, i) => setTimeout(() => s.classList.add('on'), 120 + i * step));
-        const finish = () => { el.classList.add('done'); el.querySelectorAll('.brush').forEach((b) => b.classList.add('draw')); };
-        setTimeout(finish, 120 + chars.length * step + 250);
-        setTimeout(finish, 6000); // 어떤 경우에도 6초 뒤에는 전부 보이게
-      });
-      // 등기부 행·도장: 애니메이션이 누락돼도 3초 뒤에는 보이게
-      setTimeout(() => { document.querySelectorAll('.ledger tbody tr').forEach((r) => r.classList.add('on')); document.documentElement.classList.add('ledger-done'); }, 3200);
-      // 히어로 등장(.rise): 1.6초 뒤 최종 상태로 고정
-      setTimeout(() => document.querySelectorAll('.rise').forEach((e) => e.classList.add('settled')), 1600);
-      // 숫자 카운트업: data-count
-      if ('IntersectionObserver' in window) {
-        const cio = new IntersectionObserver((es) => {
-          es.forEach((e) => {
-            if (!e.isIntersecting) return;
-            cio.unobserve(e.target);
-            const el = e.target as HTMLElement; const target = Number(el.dataset.count); const t0 = performance.now(); const dur = 1400;
-            const tick = (t: number) => { const p = Math.min(1, (t - t0) / dur); el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))).toLocaleString('ko-KR'); if (p < 1) requestAnimationFrame(tick); };
-            requestAnimationFrame(tick);
-          });
-        }, { threshold: 0.5 });
-        document.querySelectorAll('[data-count]').forEach((el) => cio.observe(el));
-      }
-    }
-
     // 스크롤 등장 효과: 화면에 들어오는 블록을 순서대로 띄운다 (html.anim 이 없으면 CSS가 적용되지 않아 그대로 보인다)
     if (document.documentElement.classList.contains('anim') && 'IntersectionObserver' in window) {
-      const sel = '.sec-head, .axis, .phase, .divider, .story, .profile > *, .principle, .post, .press, .faq, .contact > *, .pyoje .wrap > div, .area-card, .card, .steps li, .situ li, .list > a, .press-row, .filters, .grid2 > *, .grid3 > *, .area-hero .wrap > *';
+      const sel = '.sec-head, .shead, .principle, .press, .faq, .contact > *, .area-card, .card, .steps li, .situ li, .list > a, .filters, .grid2 > *, .grid3 > *, .area-hero .wrap > *, .case, .read, .fee, .kgroup, .cred, .declgrid > *, .a-card, .cvbox, .resc, .formwrap, .contact2 > *';
       const els = Array.from(document.querySelectorAll(sel)) as HTMLElement[];
       const vh = window.innerHeight;
       const show = (el: HTMLElement) => { if (el.classList.contains('in')) return; el.classList.add('in'); setTimeout(() => el.classList.add('settled'), 1400); };

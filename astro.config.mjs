@@ -11,6 +11,7 @@ export default defineConfig({
   trailingSlash: 'ignore',
   // 2026.10.16 상속 단일 전문으로 개편: 옛 주소는 새 랜딩 페이지로 보낸다
   redirects: {
+    '/about': '/inheritance-lawyer',
     '/inheritance/division': '/dispute',
     '/inheritance/debt': '/renunciation',
     '/inheritance/legal-reserve': '/legal-reserve',

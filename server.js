@@ -78,25 +78,38 @@ app.get('/robots.txt', (req, res) => {
 app.post('/api/contact', async (req, res) => {
   const d = req.body || {};
   if (d.company) return res.json({ ok: true }); // 허니팟
-  const name = String(d.name || '').trim();
-  const phone = String(d.phone || '').trim();
-  const message = String(d.message || '').trim();
-  const area = String(d.area || '').trim();
-  const source = String(d.source || '').trim();
-  if (!name || !phone || !message || !d.agree) return res.status(400).json({ ok: false, error: 'missing fields' });
+  const s = (v) => (Array.isArray(v) ? v.map((x) => String(x).trim()).filter(Boolean).join(', ') : String(v || '').trim());
+  const name = s(d.name);
+  const phone = s(d.phone);
+  const message = s(d.story || d.message); // 2026.10.20 시안: story(상황). 옛 폼은 message
+  const area = s(d.area);
+  const source = s(d.source);
+  const whenDied = s(d.when_died);
+  const heirs = s(d.heirs);
+  const side = s(d.side);
+  const topic = s(d.topic);
+  const calltime = s(d.calltime);
+  if (!name || !phone || !d.agree) return res.status(400).json({ ok: false, error: 'missing fields' });
   if (message.length > 4000) return res.status(400).json({ ok: false, error: 'too long' });
 
+  const label = [side, topic, area].filter(Boolean).join(' · ') || '분야 미선택';
   const text = [
-    `[상담 신청] ${area || '분야 미선택'}`,
+    `[상담 신청] ${label}`,
     `성함: ${name}`,
     `연락처: ${phone}`,
-    `유입 경로: ${source}`,
+    whenDied && `돌아가신 시기: ${whenDied}`,
+    heirs && `상속인 구성: ${heirs}`,
+    side && `입장: ${side}`,
+    topic && `관련: ${topic}`,
+    calltime && `통화 가능 시간: ${calltime}`,
+    source && `유입 경로: ${source}`,
     '',
-    message,
+    message || '(상황 설명 없음)',
     '',
     `접수: ${new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}`,
     `IP: ${req.ip}`,
-  ].join('\n');
+  ].filter((l) => l !== false && l !== undefined && l !== null && l !== '').join('
+');
 
   if (process.env.RESEND_API_KEY && process.env.CONTACT_TO) {
     try {
@@ -106,7 +119,7 @@ app.post('/api/contact', async (req, res) => {
         body: JSON.stringify({
           from: process.env.CONTACT_FROM || 'onboarding@resend.dev',
           to: [process.env.CONTACT_TO],
-          subject: `[홈페이지 상담] ${name} · ${area}`,
+          subject: `[홈페이지 상담] ${name} · ${label}`,
           text,
         }),
       });

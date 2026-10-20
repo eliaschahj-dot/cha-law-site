@@ -71,6 +71,24 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
   <meta name="theme-color" content="#F5F4EF" />
   <script is:inline>if (document.visibilityState === 'visible' && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('anim');</script>
+  <script is:inline>
+  // 방문 통계(자체 수집): 경로·유입·기기·체류시간만 보낸다. 이름·IP 저장 없음. /stats 에 로그인한 브라우저(notrack 쿠키)는 제외.
+  (function(){try{
+    if(/(^|; )notrack=1/.test(document.cookie)||/^\/(admin|stats)/.test(location.pathname))return;
+    var rnd=function(){return Math.random().toString(36).slice(2,10)+Date.now().toString(36)};
+    var vid=localStorage.getItem('cv')||rnd();localStorage.setItem('cv',vid);
+    var sid=sessionStorage.getItem('cs')||rnd();sessionStorage.setItem('cs',sid);
+    var id=rnd();window.__hit={sid:sid,vid:vid};
+    var send=function(o){var b=JSON.stringify(o);if(navigator.sendBeacon){navigator.sendBeacon('/api/hit',new Blob([b],{type:'text/plain'}))}else{fetch('/api/hit',{method:'POST',headers:{'Content-Type':'application/json'},body:b,keepalive:true}).catch(function(){})}};
+    send({type:'view',id:id,sid:sid,vid:vid,path:location.pathname,ref:document.referrer||'',title:document.title,w:screen.width,q:location.search.slice(0,120)});
+    var active=0,last=Date.now(),vis=document.visibilityState==='visible',sent=0;
+    var tick=function(){if(vis)active+=Date.now()-last;last=Date.now()};
+    var leave=function(){tick();var d=Math.round(active/1000);if(d>sent){sent=d;send({type:'leave',id:id,sid:sid,dur:d})}};
+    document.addEventListener('visibilitychange',function(){tick();vis=document.visibilityState==='visible';if(!vis)leave()});
+    addEventListener('pagehide',leave);
+    setInterval(function(){if(vis)leave()},30000);
+  }catch(e){}})();
+  </script>
   {ldItems.map((ld) => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)}
 </head>
 <body>

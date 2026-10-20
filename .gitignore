@@ -6,3 +6,5 @@ data/rewrite_backup/
 .env
 .env.*
 .DS_Store
+# 로컬 방문 통계 기록
+data-local/

@@ -83,6 +83,7 @@ const topics = [['분할', '상속재산분할'], ['유류분', '유류분'], ['
     const data: Record<string, unknown> = Object.fromEntries(fd.entries());
     data.topic = fd.getAll('topic');
     data.agree = agree;
+    const h = (window as any).__hit; if (h) { data.sid = h.sid; data.vid = h.vid; }
     btn.disabled = true; btn.textContent = '보내는 중…';
     try {
       const r = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });

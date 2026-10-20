@@ -2,7 +2,7 @@ services:
   - type: web
     name: cha-law-site
     runtime: node
-    plan: free            # 무료: 15분 유휴 시 잠듦(첫 접속 지연). 오픈 후 starter 권장
+    plan: starter         # 2026.10.20 유료 전환(0.5 CPU·512MB)
     region: singapore
     buildCommand: npm ci && npm run build
     startCommand: node server.js
@@ -11,10 +11,16 @@ services:
       - key: NODE_VERSION
         value: "20"
       - key: SITE_URL
-        value: https://cha-law-site.onrender.com   # 도메인 연결 후 실제 주소로
+        value: https://www.lawyer-cha.com
       - key: RESEND_API_KEY
         sync: false
       - key: CONTACT_TO
         sync: false
       - key: CONTACT_FROM
         sync: false
+      - key: DATA_DIR            # 방문 통계 기록 위치 = 아래 디스크 마운트 경로
+        value: /var/data
+    disk:
+      name: data
+      mountPath: /var/data
+      sizeGB: 1

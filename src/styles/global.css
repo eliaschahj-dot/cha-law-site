@@ -5,13 +5,13 @@
    나머지 페이지(칼럼·분야·비용·상담 등)의 구성요소가 있다.
    ------------------------------------------------------------------ */
 :root {
-  --paper: #F5F4EF; --paper-2: #ECEBE4; --card: #FFFFFF;
-  --bg1: #F5F4EF; --bg2: #F0EFE9; --bg3: #E8E7E0;
+  --paper: #F7F8FA; --paper-2: #EDEFF3; --card: #FFFFFF;
+  --bg1: #FFFFFF; --bg2: #F8F9FB; --bg3: #EEF1F5;
   --ink: #0F1A30; --ink-2: #44506A; --ink-3: #7E879A; --ink2: var(--ink-2); --ink3: var(--ink-3);
   --rule: #CFD3DC; --rule-2: #E2E4EA; --paperline: #E2E4EA;
   --line: rgba(15,26,48,.13); --box: rgba(27,75,143,.07); --shadow: 15,26,48;
   --accent: #1B4B8F; --accent2: #153D77; --accent-2: var(--accent2);
-  --brass: #9A7F52; --brass-soft: #F1ECE1; --brass-lt: #CDB68A;
+  --brass: #9A7F52; --brass-soft: #F6F1E6; --brass-lt: #CDB68A;
   --deep: #0F1A30; --seal: var(--accent); --seal-soft: #E7EEF9; --bronze: var(--brass); --bronze-soft: var(--brass-soft);
   --focus: #9DB4E8;
   --body: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;

@@ -35,7 +35,7 @@ functions/api/contact.js    Cloudflare Pages Function — 상담 폼 수신(Rese
 public/                     robots.txt, favicon.svg, og.png
 ```
 
-> **2026.10.20 디자인 테마**: 글은 시안 그대로 두고 `src/styles/theme.css`가 생김새를 입힙니다(제목 Noto Serif KR, 종이 질감, 카드·버튼·푸터, 아이콘 일러스트 `src/components/Icon.astro`, 히어로 장식, 사진 액자·폴라로이드, 등장·선 그리기·도장 애니메이션). 색·질감을 바꾸려면 theme.css만 고치면 됩니다.
+> **2026.10.20 디자인 테마**: 글은 시안 그대로 두고 `src/styles/theme.css`가 생김새를 입힙니다(제목 Noto Serif KR, 밝은 흰빛 바탕(종이 질감은 같은 날 제거), 카드·버튼·푸터, 아이콘 일러스트 `src/components/Icon.astro`, 히어로 장식, 사진 액자·폴라로이드, 등장·선 그리기·도장 애니메이션). 색·질감을 바꾸려면 theme.css만 고치면 됩니다.
 
 > **2026.10.20 마케터 시안 반영**: 홈(`src/pages/index.astro`)과 '상속 전문 변호사' 페이지(`src/pages/inheritance-lawyer.astro`, 옛 `/about`은 여기로 넘어감)를 마케터가 만든 `index.html`·`inheritance-lawyer.html` 그대로 옮겼습니다. 그 두 페이지의 CSS는 `src/styles/marketer.css`(`.mk` 래퍼 안에서만 적용), 전역 내비·푸터·버튼은 `global.css`로 옮겼고, 사진 12장은 `public/img/*.webp`입니다. 상담 신청서는 `src/components/ConsultForm.astro`(돌아가신 시기·상속인 구성·입장·관련 항목·상황·통화 가능 시간)이고 `server.js`의 `/api/contact`가 새 필드를 메일로 보냅니다. 문안은 변협 광고규정 검사(`scripts/content_tools.py`) 기준으로 '무료 법률상담'→'공익 법률상담', 서비스 상호 '온트랙' 언급만 바꿨습니다.
 

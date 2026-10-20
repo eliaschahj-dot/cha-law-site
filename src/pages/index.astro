@@ -4,38 +4,40 @@
 import Base from '../layouts/Base.astro';
 import ConsultForm from '../components/ConsultForm.astro';
 import { site } from '../data/site';
+import Icon from '../components/Icon.astro';
+import Mark from '../components/Mark.astro';
 import '../styles/marketer.css';
 
-const creds = [
-  ['표창', '서울특별시장 표창', '2023.12'],
-  ['공익', '서울시 공익변호사', '2020년부터'],
-  ['위원', '변협 성년후견회 전문위원', '대한변호사협회'],
-  ['소속', '법무법인 베율 파트너', '세무사·회계사와 한 팀'],
-  ['학력', 'KAIST 사회적기업가 MBA', '건축학·법학 복수전공'],
-  ['기록', '상속 칼럼 120편 이상', '직접 쓰고 직접 답합니다'],
+const creds: [string, string, string, string][] = [
+  ['표창', '서울특별시장 표창', '2023.12', 'award'],
+  ['공익', '서울시 공익변호사', '2020년부터', 'public'],
+  ['위원', '변협 성년후견회 전문위원', '대한변호사협회', 'committee'],
+  ['소속', '법무법인 베율 파트너', '세무사·회계사와 한 팀', 'firm'],
+  ['학력', 'KAIST 사회적기업가 MBA', '건축학·법학 복수전공', 'education'],
+  ['기록', '상속 칼럼 120편 이상', '직접 쓰고 직접 답합니다', 'pen'],
 ];
 
 const cases = [
-  { cat: '청구 · 상속재산 찾기', stamp: '숨은 증여까지 찾아냅니다', stampSub: '나눌 파이부터 키웁니다', k: '먼저 청구하는 쪽', chip: '사실조회 · 감정', h: '다른 형제가 미리 받아 간 재산이 있다면', from: '눈에 보이는<br />예금·부동산만 계산', to: '과거 증여까지 더해<br />상속재산 확정', desc: '상속재산 분할은 나눌 파이가 얼마인지 확정하는 데서 시작합니다. 예금, 보험금, 부동산뿐 아니라 다른 형제가 미리 받아 간 증여 재산까지 금융기관과 관공서 사실조회로 찾아냅니다. 하나만 빠져도 내 몫이 달라집니다.' },
-  { cat: '청구 · 기여분', stamp: '모셔온 세월을 증명합니다', stampSub: '기여분 인정', k: '먼저 청구하는 쪽', chip: '특별한 부양 입증', h: '부모님을 오랜 시간 홀로 모셔왔다면', from: '“내가 10년 간병했다”<br />말 한마디', to: '요양병원 기록·카드 내역·<br />간병 일지로 재구성', desc: '기여분은 감정이 아니라 논리로 인정받습니다. 법원은 그 부양이 ‘특별한’ 것이었는지를 엄격하게 따집니다. 객관적인 기록을 법리의 언어로 다시 세워 기여한 만큼의 몫을 받아냅니다.' },
-  { cat: '청구 · 유류분', stamp: '유류분을 돌려받습니다', stampSub: '한 사람에게 다 갔을 때', k: '먼저 청구하는 쪽', chip: '유류분 반환 청구', h: '유언으로 재산이 한 형제에게 전부 갔다면', from: '남긴 뜻대로라면<br />내 몫은 0원', to: '법정상속분의 절반까지<br />반환 청구', desc: '유언이나 생전 증여로 재산이 한쪽에 몰려도, 자녀와 배우자는 법정상속분의 절반을 유류분으로 돌려받을 수 있습니다. 안 날부터 1년, 상속이 시작된 날부터 10년이라는 기한이 있어 서둘러야 합니다.' },
-  { no: true, cat: '방어 · 특별수익', stamp: '내 몫을 지켜냅니다', stampSub: '특별수익 공격을 받을 때', k: '소장을 받은 쪽', chip: '특별수익 방어', h: '“너, 예전에 돈 받아 갔잖아” 소장이 왔다면', from: '학비·전세 자금·생활비<br />모두 미리 받은 상속분?', to: '부양 차원의<br />지원이었음을 입증', desc: '상대방이 과거에 받은 돈을 전부 특별수익이라 주장하며 내 몫을 깎으려 할 때입니다. 단순한 생활비나 부양 차원의 지원이었음을 입증해, 깎일 뻔한 상속분을 그대로 지켜냅니다.' },
-  { no: true, cat: '방어 · 기여분 반박', stamp: '부풀린 기여도를 걷어냅니다', stampSub: '과도한 기여분 주장', k: '소장을 받은 쪽', chip: '기여분 반박', h: '“내가 다 모셨으니 내 몫이다” 주장이 나왔다면', from: '있지도 않은<br />기여도 주장', to: '‘특별’하지 않았음을<br />조목조목 반박', desc: '다른 형제가 기여를 부풀려 상속재산 대부분을 가져가려 할 때입니다. 그 기여가 법이 말하는 특별한 부양이 아니었음을 하나씩 짚어, 정당한 내 몫을 되찾습니다.' },
-  { cat: '분할 이후 · 등기·세금', stamp: '새는 돈까지 챙깁니다', stampSub: '받은 뒤의 손실을 막습니다', k: '분할을 마친 뒤', chip: '상속세 · 상속등기', h: '받고 나서 세금으로 새지 않도록', from: '분할 따로,<br />세금 따로', to: '나누는 방법부터<br />세금까지 함께 설계', desc: '같은 재산도 누가 얼마를 받느냐에 따라 상속세가 달라집니다. 법무법인 베율의 세무사·회계사와 한 팀으로 분할 방식과 신고, 상속등기까지 끝까지 챙겨 실제로 손에 남는 몫을 키웁니다.' },
+  { icon: 'search-doc', cat: '청구 · 상속재산 찾기', stamp: '숨은 증여까지 찾아냅니다', stampSub: '나눌 파이부터 키웁니다', k: '먼저 청구하는 쪽', chip: '사실조회 · 감정', h: '다른 형제가 미리 받아 간 재산이 있다면', from: '눈에 보이는<br />예금·부동산만 계산', to: '과거 증여까지 더해<br />상속재산 확정', desc: '상속재산 분할은 나눌 파이가 얼마인지 확정하는 데서 시작합니다. 예금, 보험금, 부동산뿐 아니라 다른 형제가 미리 받아 간 증여 재산까지 금융기관과 관공서 사실조회로 찾아냅니다. 하나만 빠져도 내 몫이 달라집니다.' },
+  { icon: 'heart', cat: '청구 · 기여분', stamp: '모셔온 세월을 증명합니다', stampSub: '기여분 인정', k: '먼저 청구하는 쪽', chip: '특별한 부양 입증', h: '부모님을 오랜 시간 홀로 모셔왔다면', from: '“내가 10년 간병했다”<br />말 한마디', to: '요양병원 기록·카드 내역·<br />간병 일지로 재구성', desc: '기여분은 감정이 아니라 논리로 인정받습니다. 법원은 그 부양이 ‘특별한’ 것이었는지를 엄격하게 따집니다. 객관적인 기록을 법리의 언어로 다시 세워 기여한 만큼의 몫을 받아냅니다.' },
+  { icon: 'scale', cat: '청구 · 유류분', stamp: '유류분을 돌려받습니다', stampSub: '한 사람에게 다 갔을 때', k: '먼저 청구하는 쪽', chip: '유류분 반환 청구', h: '유언으로 재산이 한 형제에게 전부 갔다면', from: '남긴 뜻대로라면<br />내 몫은 0원', to: '법정상속분의 절반까지<br />반환 청구', desc: '유언이나 생전 증여로 재산이 한쪽에 몰려도, 자녀와 배우자는 법정상속분의 절반을 유류분으로 돌려받을 수 있습니다. 안 날부터 1년, 상속이 시작된 날부터 10년이라는 기한이 있어 서둘러야 합니다.' },
+  { no: true, icon: 'shield', cat: '방어 · 특별수익', stamp: '내 몫을 지켜냅니다', stampSub: '특별수익 공격을 받을 때', k: '소장을 받은 쪽', chip: '특별수익 방어', h: '“너, 예전에 돈 받아 갔잖아” 소장이 왔다면', from: '학비·전세 자금·생활비<br />모두 미리 받은 상속분?', to: '부양 차원의<br />지원이었음을 입증', desc: '상대방이 과거에 받은 돈을 전부 특별수익이라 주장하며 내 몫을 깎으려 할 때입니다. 단순한 생활비나 부양 차원의 지원이었음을 입증해, 깎일 뻔한 상속분을 그대로 지켜냅니다.' },
+  { no: true, icon: 'list-x', cat: '방어 · 기여분 반박', stamp: '부풀린 기여도를 걷어냅니다', stampSub: '과도한 기여분 주장', k: '소장을 받은 쪽', chip: '기여분 반박', h: '“내가 다 모셨으니 내 몫이다” 주장이 나왔다면', from: '있지도 않은<br />기여도 주장', to: '‘특별’하지 않았음을<br />조목조목 반박', desc: '다른 형제가 기여를 부풀려 상속재산 대부분을 가져가려 할 때입니다. 그 기여가 법이 말하는 특별한 부양이 아니었음을 하나씩 짚어, 정당한 내 몫을 되찾습니다.' },
+  { icon: 'coins-home', cat: '분할 이후 · 등기·세금', stamp: '새는 돈까지 챙깁니다', stampSub: '받은 뒤의 손실을 막습니다', k: '분할을 마친 뒤', chip: '상속세 · 상속등기', h: '받고 나서 세금으로 새지 않도록', from: '분할 따로,<br />세금 따로', to: '나누는 방법부터<br />세금까지 함께 설계', desc: '같은 재산도 누가 얼마를 받느냐에 따라 상속세가 달라집니다. 법무법인 베율의 세무사·회계사와 한 팀으로 분할 방식과 신고, 상속등기까지 끝까지 챙겨 실제로 손에 남는 몫을 키웁니다.' },
 ];
 
 // 맡는 일: 떠나기 전(설계) / 떠난 뒤(분쟁). page = 상세 랜딩 페이지, topic = 상담 신청서 미리 선택
 const pre = [
-  { id: 'k-will', b: '유언', d: '자필 유언은 전문·날짜·주소·성명·날인 중 하나만 빠져도 무효가 될 수 있습니다. 형식부터 바로 세웁니다.', li: ['특정 자녀에게 더 남기고 싶을 때', '자필 유언장을 써 두었는데 효력이 걱정될 때'], chip: ['자필 유언 필수 요건', '5가지'], page: '/will', topic: '유언', name: '유언' },
-  { id: 'k-guardianship', b: '성년후견', d: '부모님이 치매 진단을 받으셨다면, 재산이 몰래 처분되기 전에 후견인 지정과 재산관리를 설계합니다.', li: ['부모님이 치매 진단을 받으셨을 때', '형제가 부모님 재산을 마음대로 쓰는 것 같을 때'], chip: ['후견의 종류', '4가지'], page: '/guardianship', topic: '후견', name: '성년후견' },
-  { id: 'k-inheritance-tax', b: '상속세 · 증여 설계', d: '같은 재산도 누가 얼마를 받느냐에 따라 세금이 달라집니다. 베율의 세무사·회계사와 한자리에서 봅니다.', li: ['상속세가 얼마나 나올지 모를 때', '미리 증여해 두는 것이 나을지 고민될 때'], chip: ['상속세 신고 기한', '6개월'], page: '/tax', topic: '세금', name: '상속세 · 증여 설계' },
-  { id: 'k-my-wishes', b: '내 뜻 전달서', d: '치매나 사고에 대비해 돌봄과 재산관리에 대한 뜻을 미리 문서로 남겨 가족 간 다툼의 불씨를 없앱니다.', li: ['부모님이 아직 건강하실 때 대비하고 싶을 때', '형제 사이에 돌봄·재산 문제로 갈등이 예상될 때'], chip: ['작성 시기', '지금'], page: '/guardianship', topic: '후견', name: '내 뜻 전달서' },
+  { id: 'k-will', icon: 'will', b: '유언', d: '자필 유언은 전문·날짜·주소·성명·날인 중 하나만 빠져도 무효가 될 수 있습니다. 형식부터 바로 세웁니다.', li: ['특정 자녀에게 더 남기고 싶을 때', '자필 유언장을 써 두었는데 효력이 걱정될 때'], chip: ['자필 유언 필수 요건', '5가지'], page: '/will', topic: '유언', name: '유언' },
+  { id: 'k-guardianship', icon: 'guardian', b: '성년후견', d: '부모님이 치매 진단을 받으셨다면, 재산이 몰래 처분되기 전에 후견인 지정과 재산관리를 설계합니다.', li: ['부모님이 치매 진단을 받으셨을 때', '형제가 부모님 재산을 마음대로 쓰는 것 같을 때'], chip: ['후견의 종류', '4가지'], page: '/guardianship', topic: '후견', name: '성년후견' },
+  { id: 'k-inheritance-tax', icon: 'calc', b: '상속세 · 증여 설계', d: '같은 재산도 누가 얼마를 받느냐에 따라 세금이 달라집니다. 베율의 세무사·회계사와 한자리에서 봅니다.', li: ['상속세가 얼마나 나올지 모를 때', '미리 증여해 두는 것이 나을지 고민될 때'], chip: ['상속세 신고 기한', '6개월'], page: '/tax', topic: '세금', name: '상속세 · 증여 설계' },
+  { id: 'k-my-wishes', icon: 'letter', b: '내 뜻 전달서', d: '치매나 사고에 대비해 돌봄과 재산관리에 대한 뜻을 미리 문서로 남겨 가족 간 다툼의 불씨를 없앱니다.', li: ['부모님이 아직 건강하실 때 대비하고 싶을 때', '형제 사이에 돌봄·재산 문제로 갈등이 예상될 때'], chip: ['작성 시기', '지금'], page: '/guardianship', topic: '후견', name: '내 뜻 전달서' },
 ];
 const post = [
-  { id: 'k-inheritance-division', b: '상속재산분할', d: '협의가 되지 않으면 심판으로 갑니다. 미리 받아 간 증여와 기여분까지 반영해 나눌 몫을 다시 계산합니다.', li: ['형제끼리 나누는 비율이 합의되지 않을 때', '누군가 생전에 재산을 미리 받아 갔을 때'], chip: ['정해진 청구 기한', '없음'], page: '/dispute', topic: '분할', name: '상속재산분할' },
-  { id: 'k-yuryubun', b: '유류분', d: '유언으로 한 사람에게 전부 남겨도, 자녀와 배우자는 법정상속분의 절반까지 돌려받을 수 있습니다.', li: ['유언으로 재산이 한 형제에게 전부 갔을 때', '생전에 특정 자녀에게 아파트를 증여했을 때'], chip: ['반환 청구 기한', '1년'], page: '/legal-reserve', topic: '유류분', name: '유류분' },
-  { id: 'k-renunciation', b: '상속포기 · 한정승인', d: '빚이 더 많은 상속은 상속이 시작된 것을 안 날부터 3개월 안에 결정해야 합니다.', li: ['돌아가신 분의 빚이 재산보다 많을 때', '재산과 빚 규모를 아직 모를 때'], chip: ['신고 기한', '3개월'], page: '/renunciation', topic: '포기', name: '상속포기 · 한정승인' },
-  { id: 'k-registration', b: '상속등기 · 명의신탁', d: '부동산이 얽힌 상속은 등기와 명의 문제까지 정리해야 끝납니다. 건축을 함께 공부해 도면까지 읽습니다.', li: ['상속받은 부동산 명의를 정리해야 할 때', '실제 주인과 등기 명의가 다른 부동산이 있을 때'], chip: ['취득세 신고 기한', '6개월'], page: '/registration', topic: '분할', name: '상속등기 · 명의신탁' },
+  { id: 'k-inheritance-division', icon: 'pie', b: '상속재산분할', d: '협의가 되지 않으면 심판으로 갑니다. 미리 받아 간 증여와 기여분까지 반영해 나눌 몫을 다시 계산합니다.', li: ['형제끼리 나누는 비율이 합의되지 않을 때', '누군가 생전에 재산을 미리 받아 갔을 때'], chip: ['정해진 청구 기한', '없음'], page: '/dispute', topic: '분할', name: '상속재산분할' },
+  { id: 'k-yuryubun', icon: 'scale', b: '유류분', d: '유언으로 한 사람에게 전부 남겨도, 자녀와 배우자는 법정상속분의 절반까지 돌려받을 수 있습니다.', li: ['유언으로 재산이 한 형제에게 전부 갔을 때', '생전에 특정 자녀에게 아파트를 증여했을 때'], chip: ['반환 청구 기한', '1년'], page: '/legal-reserve', topic: '유류분', name: '유류분' },
+  { id: 'k-renunciation', icon: 'clock', b: '상속포기 · 한정승인', d: '빚이 더 많은 상속은 상속이 시작된 것을 안 날부터 3개월 안에 결정해야 합니다.', li: ['돌아가신 분의 빚이 재산보다 많을 때', '재산과 빚 규모를 아직 모를 때'], chip: ['신고 기한', '3개월'], page: '/renunciation', topic: '포기', name: '상속포기 · 한정승인' },
+  { id: 'k-registration', icon: 'home-key', b: '상속등기 · 명의신탁', d: '부동산이 얽힌 상속은 등기와 명의 문제까지 정리해야 끝납니다. 건축을 함께 공부해 도면까지 읽습니다.', li: ['상속받은 부동산 명의를 정리해야 할 때', '실제 주인과 등기 명의가 다른 부동산이 있을 때'], chip: ['취득세 신고 기한', '6개월'], page: '/registration', topic: '분할', name: '상속등기 · 명의신탁' },
 ];
 
 const reads = [
@@ -64,13 +66,14 @@ const shots = [
   ['/img/field-07.webp', '강연장 전경'],
   ['/img/field-08.webp', '소셜밸류커넥트 부스 현장'],
 ];
-const paperLines = ['t', 'l m', 'l', 'l s', 'gap', 'l', 'l m', 'l s', 'gap', 'l m', 'l'];
 ---
 <Base title="상속 변호사 차형진 | 상속 분쟁, 더 많이 받아내는 일만큼은 자신 있습니다" rawTitle description="상속 분쟁, 더 많이 받아내는 일만큼은 자신 있습니다. 상속 사건만 맡는 차형진 변호사(법무법인 베율 파트너). 상속재산분할·유류분·상속포기·성년후견·유언까지 변호사가 직접 상담하고 수행합니다." jsonLd={faqLd}>
 <div class="mk">
 
   <!-- 1 HERO -->
   <header class="hero" id="hero">
+    <svg class="ornament" viewBox="0 0 640 520" aria-hidden="true"><g class="ink"><circle cx="470" cy="170" r="150"/><circle cx="470" cy="170" r="210"/><circle cx="470" cy="170" r="270"/></g><path d="M120 420 L320 250 L520 420"/><path d="M170 380v120h300V380"/><path d="M320 250v-60"/><path d="M240 190h160"/><circle cx="320" cy="170" r="14"/><circle cx="240" cy="150" r="12"/><circle cx="400" cy="150" r="12"/><path d="M240 162v28M400 162v28"/><path d="M300 500v-70h40v70"/></svg>
+    <div class="wm"><Mark /></div>
     <div class="wrap">
       <div class="herogrid">
         <div>
@@ -92,7 +95,7 @@ const paperLines = ['t', 'l m', 'l', 'l s', 'gap', 'l', 'l m', 'l s', 'gap', 'l 
     <div class="creds">
       <div class="wrap">
         <div class="credrow">
-          {creds.map(([k, v, s]) => <div class="cred"><small>{k}</small><b>{v}</b><span>{s}</span></div>)}
+          {creds.map(([k, v, s, ic]) => <div class="cred"><Icon name={ic} /><small>{k}</small><b>{k === '기록' ? <>상속 칼럼 <i data-count="120">120</i>편 이상</> : v}</b><span>{s}</span></div>)}
         </div>
       </div>
     </div>
@@ -131,7 +134,7 @@ const paperLines = ['t', 'l m', 'l', 'l s', 'gap', 'l', 'l m', 'l s', 'gap', 'l 
           <article class={`case${c.no ? ' no' : ''}`}>
             <div class="casetop">
               <span class="cat">{c.cat}</span>
-              <div class="paper">{paperLines.map((cls) => <div class={cls}></div>)}</div>
+              <div class="art"><Icon name={c.icon} /></div>
               <div class={`stamp2${c.no ? ' no' : ''}`}><b>{c.stamp}</b><span>{c.stampSub}</span></div>
             </div>
             <div class="casebody">
@@ -167,7 +170,7 @@ const paperLines = ['t', 'l m', 'l', 'l s', 'gap', 'l', 'l m', 'l s', 'gap', 'l 
           <div class="klist">
             {pre.map((k) => (
               <div class="kitem" id={k.id}>
-                <button class="kbtn" type="button" aria-expanded="false"><span class="kt"><b>{k.b}</b><span>{k.d}</span></span><span class="kgo" aria-hidden="true">+</span></button>
+                <button class="kbtn" type="button" aria-expanded="false"><span class="kico"><Icon name={k.icon} /></span><span class="kt"><b>{k.b}</b><span>{k.d}</span></span><span class="kgo" aria-hidden="true">+</span></button>
                 <div class="kacc">
                   <ul>{k.li.map((x) => <li>{x}</li>)}</ul>
                   <div class="kchip">{k.chip[0]} <b>{k.chip[1]}</b></div>
@@ -186,7 +189,7 @@ const paperLines = ['t', 'l m', 'l', 'l s', 'gap', 'l', 'l m', 'l s', 'gap', 'l 
           <div class="klist">
             {post.map((k) => (
               <div class="kitem" id={k.id}>
-                <button class="kbtn" type="button" aria-expanded="false"><span class="kt"><b>{k.b}</b><span>{k.d}</span></span><span class="kgo" aria-hidden="true">+</span></button>
+                <button class="kbtn" type="button" aria-expanded="false"><span class="kico"><Icon name={k.icon} /></span><span class="kt"><b>{k.b}</b><span>{k.d}</span></span><span class="kgo" aria-hidden="true">+</span></button>
                 <div class="kacc">
                   <ul>{k.li.map((x) => <li>{x}</li>)}</ul>
                   <div class="kchip">{k.chip[0]} <b>{k.chip[1]}</b></div>
@@ -297,9 +300,9 @@ const paperLines = ['t', 'l m', 'l', 'l s', 'gap', 'l', 'l m', 'l s', 'gap', 'l 
         <p class="sub">결과도 알기 전에 요구받는 큰 착수금 때문에 법의 도움을 포기하는 일은 없어야 한다고 생각합니다. 비용 구조를 모른 채 시작하지 않도록 <strong>첫 상담에서 총 예상 비용을 숫자로 드립니다.</strong></p>
       </div>
       <div class="fees">
-        <div class="fee"><small>원칙 하나</small><h3>총 예상 견적을 먼저</h3><p>사건의 종류와 난이도에 따라 예상되는 총비용과 기간을 상담 자리에서 제시합니다. 숨은 비용은 없습니다.</p></div>
-        <div class="fee"><small>원칙 둘</small><h3>사건에 맞는 구조로</h3><p>심판·소송은 착수금과 성공보수로 구성된 일반 수임 계약으로, 유언·후견 설계와 자문은 실제 일한 시간만큼 받는 시간제로 월 상한을 정해 진행합니다.</p></div>
-        <div class="fee"><small>원칙 셋</small><h3>변호사가 직접, 정해진 건수만</h3><p>상담과 서면, 변론을 변호사가 직접 합니다. 한 사건 한 사건 집중해서 다룰 수 있는 건수만 맡습니다.</p></div>
+        <div class="fee"><div class="fico"><Icon name="calc" /></div><small>원칙 하나</small><h3>총 예상 견적을 먼저</h3><p>사건의 종류와 난이도에 따라 예상되는 총비용과 기간을 상담 자리에서 제시합니다. 숨은 비용은 없습니다.</p></div>
+        <div class="fee"><div class="fico"><Icon name="pie" /></div><small>원칙 둘</small><h3>사건에 맞는 구조로</h3><p>심판·소송은 착수금과 성공보수로 구성된 일반 수임 계약으로, 유언·후견 설계와 자문은 실제 일한 시간만큼 받는 시간제로 월 상한을 정해 진행합니다.</p></div>
+        <div class="fee"><div class="fico"><Icon name="pen" /></div><small>원칙 셋</small><h3>변호사가 직접, 정해진 건수만</h3><p>상담과 서면, 변론을 변호사가 직접 합니다. 한 사건 한 사건 집중해서 다룰 수 있는 건수만 맡습니다.</p></div>
       </div>
       <div class="secfoot"><a class="btn btn-o" href="/fees">비용 안내 자세히 →</a></div>
     </div>

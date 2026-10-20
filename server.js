@@ -1,11 +1,12 @@
 /**
  * Render(Web Service)용 서버: dist/ 정적 파일 + /api/contact 상담 폼 수신 + /api/hit 방문 기록 + /stats 방문 통계.
- * 환경변수: PORT(Render 자동), SITE_URL, RESEND_API_KEY, CONTACT_TO, CONTACT_FROM, DATA_DIR(영구 디스크), STATS_GITHUB_USERS(통계 열람 허용 GitHub 아이디, 쉼표 구분), STATS_OPEN=1(로컬 테스트용 로그인 생략)
+ * 환경변수: PORT(Render 자동), SITE_URL, RESEND_API_KEY, CONTACT_TO, CONTACT_FROM, DATA_DIR(영구 디스크), STATS_PASSWORD(통계 화면 비밀번호), STATS_OPEN=1(로컬 테스트용 로그인 생략)
  */
 import express from 'express';
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import crypto from 'node:crypto';
 import { DATA_DIR, ensureDir, record, parseUA, readEvents, aggregate, renderStats, makeSession, readSession, parseCookies } from './analytics.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -58,7 +59,6 @@ app.get('/callback', async (req, res) => {
 </script><p>${status === 'success' ? '로그인되었습니다. 이 창은 닫아도 됩니다.' : '로그인에 실패했습니다.'}</p>`);
   if (!code || !state || !oauthStates.has(String(state))) return page('error', { error: 'invalid state' });
   oauthStates.delete(String(state));
-  if (String(state).startsWith('stats:')) return statsCallback(req, res, String(code));
   try {
     const r = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
@@ -142,9 +142,14 @@ app.post('/api/contact', async (req, res) => {
 
 // ---- 방문 기록·통계 ----
 ensureDir();
-const STATS_USERS = (process.env.STATS_GITHUB_USERS || 'eliaschahj-dot').split(',').map((x) => x.trim().toLowerCase()).filter(Boolean);
-const STATS_SECRET = process.env.STATS_SECRET || OAUTH_SECRET || Math.random().toString(36);
+// 통계 화면 로그인: 비밀번호 하나(Render 환경변수 STATS_PASSWORD). 비밀번호를 아는 사람은 누구나 열 수 있다.
+const STATS_PASSWORD = process.env.STATS_PASSWORD || '';
+const STATS_SECRET = process.env.STATS_SECRET || (STATS_PASSWORD ? crypto.createHash('sha256').update('stats:' + STATS_PASSWORD).digest('hex') : Math.random().toString(36));
 const statsUser = (req) => readSession(parseCookies(req.headers.cookie)['stats_session'], STATS_SECRET);
+const loginFails = new Map(); // ip → { n, t }
+const loginPage = (msg = '') => `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>방문 통계 로그인</title>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#F5F4EF;font:15px/1.6 Pretendard,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:#0F1A30}form{background:#fff;border:1px solid rgba(15,26,48,.12);border-radius:16px;padding:32px 30px;width:min(92vw,360px);box-shadow:0 24px 48px -30px rgba(15,26,48,.35)}h1{font-size:18px;margin:0 0 6px}p{margin:0 0 18px;color:#7E879A;font-size:13px}input{width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:12px 14px;border:1px solid rgba(15,26,48,.2);border-radius:10px}button{width:100%;margin-top:12px;font:inherit;font-weight:800;font-size:15px;padding:13px;border:0;border-radius:10px;background:#1B4B8F;color:#fff;cursor:pointer}.err{color:#B42318;font-size:13px;margin:10px 0 0}</style></head>
+<body><form method="post" action="/stats/login"><h1>방문 통계</h1><p>비밀번호를 입력하세요.</p><input type="password" name="password" autocomplete="current-password" autofocus required /><button type="submit">열기</button>${msg ? `<div class="err">${msg}</div>` : ''}</form></body></html>`;
 
 app.post('/api/hit', (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
@@ -175,47 +180,39 @@ app.get('/stats', async (req, res) => {
   const days = [7, 30, 90, 365].includes(Number(req.query.days)) ? Number(req.query.days) : 30;
   const agg = aggregate(await readEvents(days), days);
   if (req.query.format === 'json') return res.json(agg);
-  res.type('html').send(renderStats(agg, { user: user || '', siteUrl: SITE_URL.replace(/^https?:\/\//, '') }));
+  res.type('html').send(renderStats(agg, { user: user ? '로그인됨' : '', siteUrl: SITE_URL.replace(/^https?:\/\//, '') }));
 });
 
 app.get('/stats/login', (req, res) => {
-  if (!OAUTH_ID || !OAUTH_SECRET) return res.status(500).type('text/plain').send('GitHub OAuth 환경변수가 없습니다.');
-  const state = 'stats:' + Math.random().toString(36).slice(2) + Date.now().toString(36);
-  oauthStates.set(state, Date.now());
-  const url = new URL('https://github.com/login/oauth/authorize');
-  url.searchParams.set('client_id', OAUTH_ID);
-  url.searchParams.set('redirect_uri', `${SITE_URL}/callback`);
-  url.searchParams.set('scope', 'read:user');
-  url.searchParams.set('state', state);
-  res.redirect(url.href);
+  res.setHeader('Cache-Control', 'no-store');
+  if (!STATS_PASSWORD) return res.status(500).type('html').send(loginPage('Render 환경변수 STATS_PASSWORD 가 아직 설정되지 않았습니다.'));
+  if (statsUser(req)) return res.redirect('/stats');
+  res.type('html').send(loginPage());
+});
+
+app.post('/stats/login', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  if (!STATS_PASSWORD) return res.status(500).type('html').send(loginPage('Render 환경변수 STATS_PASSWORD 가 아직 설정되지 않았습니다.'));
+  const ip = req.ip || '';
+  const f = loginFails.get(ip);
+  if (f && f.n >= 10 && Date.now() - f.t < 15 * 60 * 1000) return res.status(429).type('html').send(loginPage('시도가 너무 많습니다. 15분 뒤에 다시 시도하세요.'));
+  const given = Buffer.from(String((req.body && req.body.password) || ''));
+  const want = Buffer.from(STATS_PASSWORD);
+  const ok = given.length === want.length && crypto.timingSafeEqual(given, want);
+  if (!ok) { loginFails.set(ip, { n: (f && Date.now() - f.t < 15 * 60 * 1000 ? f.n : 0) + 1, t: Date.now() }); return res.status(401).type('html').send(loginPage('비밀번호가 맞지 않습니다.')); }
+  loginFails.delete(ip);
+  const secure = SITE_URL.startsWith('https') ? '; Secure' : '';
+  res.setHeader('Set-Cookie', [
+    `stats_session=${makeSession('pw', STATS_SECRET)}; Path=/; Max-Age=${30 * 86400}; HttpOnly; SameSite=Lax${secure}`,
+    `notrack=1; Path=/; Max-Age=${365 * 86400}; SameSite=Lax${secure}`, // 이 브라우저의 방문은 통계에서 제외
+  ]);
+  res.redirect('/stats');
 });
 
 app.get('/stats/logout', (req, res) => {
   res.setHeader('Set-Cookie', ['stats_session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax', 'notrack=; Path=/; Max-Age=0; SameSite=Lax']);
   res.redirect('/');
 });
-
-async function statsCallback(req, res, code) {
-  try {
-    const r = await fetch('https://github.com/login/oauth/access_token', {
-      method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client_id: OAUTH_ID, client_secret: OAUTH_SECRET, code, redirect_uri: `${SITE_URL}/callback` }),
-    });
-    const j = await r.json();
-    if (!j.access_token) throw new Error('no token');
-    const u = await fetch('https://api.github.com/user', { headers: { Authorization: `Bearer ${j.access_token}`, 'User-Agent': 'cha-law-site' } }).then((x) => x.json());
-    const login = String(u.login || '').toLowerCase();
-    if (!STATS_USERS.includes(login)) return res.status(403).type('html').send(`<!doctype html><meta charset="utf-8"><p>${login || '알 수 없는 계정'} 계정은 통계 열람 권한이 없습니다. (허용: ${STATS_USERS.join(', ')})</p>`);
-    const secure = SITE_URL.startsWith('https') ? '; Secure' : '';
-    res.setHeader('Set-Cookie', [
-      `stats_session=${makeSession(login, STATS_SECRET)}; Path=/; Max-Age=${30 * 86400}; HttpOnly; SameSite=Lax${secure}`,
-      `notrack=1; Path=/; Max-Age=${365 * 86400}; SameSite=Lax${secure}`, // 이 브라우저의 방문은 통계에서 제외
-    ]);
-    res.redirect('/stats');
-  } catch (e) {
-    res.status(500).type('text/plain').send('로그인 처리에 실패했습니다: ' + (e?.message || e));
-  }
-}
 
 app.use(express.static(DIST, {
   extensions: ['html'],

@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import '../styles/theme.css';
 import { site, nav, footerNav } from '../data/site';
 import Mark from '../components/Mark.astro';
 
@@ -67,6 +68,9 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <link rel="sitemap" href="/sitemap-index.xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;800&display=swap" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
   <meta name="theme-color" content="#F5F4EF" />
@@ -141,7 +145,7 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
   <script>
     // 스크롤 등장 효과: 화면에 들어오는 블록을 순서대로 띄운다 (html.anim 이 없으면 CSS가 적용되지 않아 그대로 보인다)
     if (document.documentElement.classList.contains('anim') && 'IntersectionObserver' in window) {
-      const sel = '.sec-head, .shead, .principle, .press, .faq, .contact > *, .area-card, .card, .steps li, .situ li, .list > a, .filters, .grid2 > *, .grid3 > *, .area-hero .wrap > *, .case, .read, .fee, .kgroup, .cred, .declgrid > *, .a-card, .cvbox, .resc, .formwrap, .contact2 > *';
+      const sel = '.sec-head, .shead, .principle, .press, .faq, .contact > *, .area-card, .card, .steps li, .situ li, .list > a, .filters, .grid2 > *, .grid3 > *, .area-hero .wrap > *, .case, .read, .fee, .kgroup, .declgrid > *, .a-card, .cvbox, .resc, .formwrap, .contact2 > *, .goal, .filmgrid > *, .pull, .ehead, .mk .hero';
       const els = Array.from(document.querySelectorAll(sel)) as HTMLElement[];
       const vh = window.innerHeight;
       const show = (el: HTMLElement) => { if (el.classList.contains('in')) return; el.classList.add('in'); setTimeout(() => el.classList.add('settled'), 1400); };
@@ -160,6 +164,17 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
       const sweep = () => els.forEach((el) => { if (el.getBoundingClientRect().top < window.innerHeight) show(el); });
       setTimeout(sweep, 2500);
       window.addEventListener('scroll', sweep, { passive: true });
+      // 숫자 세기: data-count
+      const cio = new IntersectionObserver((es) => {
+        es.forEach((e) => {
+          if (!e.isIntersecting) return;
+          cio.unobserve(e.target);
+          const el = e.target as HTMLElement; const target = Number(el.dataset.count); const t0 = performance.now(); const dur = 1400;
+          const tick = (t: number) => { const p = Math.min(1, (t - t0) / dur); el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))).toLocaleString('ko-KR'); if (p < 1) requestAnimationFrame(tick); };
+          requestAnimationFrame(tick);
+        });
+      }, { threshold: 0.5 });
+      document.querySelectorAll('[data-count]').forEach((el) => cio.observe(el));
     }
   </script>
 </body>

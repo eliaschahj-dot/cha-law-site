@@ -182,7 +182,7 @@ svg.chart{width:100%;height:150px;display:block}svg.chart rect{fill:var(--accent
 .flow span{white-space:nowrap}.flow em{font-style:normal;color:var(--accent);font-weight:700;font-size:12px}.flow i{color:var(--ink3);margin:0 6px;font-style:normal}.flow a{color:var(--ink);text-decoration:none}code{font-size:12px;background:#EEF0F4;padding:1px 5px;border-radius:3px}
 .note{font-size:12.5px;color:var(--ink3);margin-top:8px}footer{font-size:12px;color:var(--ink3);margin-top:20px}footer a{color:var(--ink2)}
 </style></head><body><div class="wrap">
-<header><h1>방문 통계 <small>${esc(siteUrl)} · 최근 ${days}일 · 한국 시간</small></h1><div class="tabs">${tabs}<a href="/stats?days=${days}&format=json">JSON</a>${user ? `<a href="/stats/logout">로그아웃(${esc(user)})</a>` : ''}</div></header>
+<header><h1>방문 통계 <small>${esc(siteUrl)} · 최근 ${days}일 · 한국 시간</small></h1><div class="tabs">${tabs}<a href="/stats?days=${days}&format=json">JSON</a>${user ? `<a href="/stats/logout">로그아웃</a>` : ''}</div></header>
 <div class="kpis">
 <div class="kpi"><small>방문(세션)</small><b>${T.sessions.toLocaleString('ko-KR')}</b><span>같은 사람이 30분 넘게 비우면 새 방문</span></div>
 <div class="kpi"><small>방문자</small><b>${T.visitors.toLocaleString('ko-KR')}</b><span>재방문자 ${T.returningVisitors}명</span></div>

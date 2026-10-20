@@ -35,6 +35,8 @@ functions/api/contact.js    Cloudflare Pages Function — 상담 폼 수신(Rese
 public/                     robots.txt, favicon.svg, og.png
 ```
 
+> **2026.10.20 디자인 테마**: 글은 시안 그대로 두고 `src/styles/theme.css`가 생김새를 입힙니다(제목 Noto Serif KR, 종이 질감, 카드·버튼·푸터, 아이콘 일러스트 `src/components/Icon.astro`, 히어로 장식, 사진 액자·폴라로이드, 등장·선 그리기·도장 애니메이션). 색·질감을 바꾸려면 theme.css만 고치면 됩니다.
+
 > **2026.10.20 마케터 시안 반영**: 홈(`src/pages/index.astro`)과 '상속 전문 변호사' 페이지(`src/pages/inheritance-lawyer.astro`, 옛 `/about`은 여기로 넘어감)를 마케터가 만든 `index.html`·`inheritance-lawyer.html` 그대로 옮겼습니다. 그 두 페이지의 CSS는 `src/styles/marketer.css`(`.mk` 래퍼 안에서만 적용), 전역 내비·푸터·버튼은 `global.css`로 옮겼고, 사진 12장은 `public/img/*.webp`입니다. 상담 신청서는 `src/components/ConsultForm.astro`(돌아가신 시기·상속인 구성·입장·관련 항목·상황·통화 가능 시간)이고 `server.js`의 `/api/contact`가 새 필드를 메일로 보냅니다. 문안은 변협 광고규정 검사(`scripts/content_tools.py`) 기준으로 '무료 법률상담'→'공익 법률상담', 서비스 상호 '온트랙' 언급만 바꿨습니다.
 
 ## 배포 (Render) — 2026.10.16 배포 완료
@@ -99,7 +101,7 @@ public/                     robots.txt, favicon.svg, og.png
 
 ## 방문 통계 관리자 페이지 (2026.10.20)
 
-- 주소: `https://www.lawyer-cha.com/stats` — GitHub(eliaschahj-dot) 로그인으로만 열립니다(편집기와 같은 OAuth 앱). 허용 계정은 Render 환경변수 `STATS_GITHUB_USERS`(쉼표 구분)로 바꿉니다.
+- 주소: `https://www.lawyer-cha.com/stats` — 비밀번호 하나로 엽니다. 비밀번호는 Render → Environment → `STATS_PASSWORD`에 넣습니다(값을 바꾸면 기존 로그인은 모두 풀립니다). 틀린 시도 10회면 15분 잠금. 글 편집기 `/admin`은 GitHub에 저장하는 구조라 GitHub 로그인을 그대로 씁니다.
 - 보여주는 것: 기간(7·30·90일·1년)별 방문·방문자·페이지뷰·평균 체류·이탈률·상담 신청 수, 일별 그래프, 유입 경로(네이버 검색/블로그·구글·직접…), 진입 페이지, 많이 본 페이지와 평균 체류, 기기·브라우저·국가, 시간대, 최근 방문 60건의 페이지 흐름과 체류시간, 최근 상담 신청. `?format=json`으로 원자료.
 - 수집 방식: `src/layouts/Base.astro`의 인라인 스크립트가 페이지를 열 때 `/api/hit`(view)로, 화면을 벗어날 때(leave, 30초마다 갱신) 체류시간을 보냅니다. 브라우저가 만든 난수(localStorage `cv`=방문자, sessionStorage `cs`=세션)만 쓰고 **IP·이름은 저장하지 않습니다**. 로봇 UA, `/admin`·`/stats`, 통계 화면에 로그인한 브라우저(`notrack` 쿠키)는 제외.
 - 저장: `DATA_DIR/events-YYYY-MM.jsonl`(Render 영구 디스크 `/var/data`, 1GB, `render.yaml`의 `disk`). 집계는 `analytics.js`. 로컬 테스트: `DATA_DIR=./data-local STATS_OPEN=1 PORT=3999 node server.js` 후 http://localhost:3999/stats.

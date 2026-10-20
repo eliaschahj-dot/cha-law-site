@@ -15,7 +15,7 @@
   --deep: #0F1A30; --seal: var(--accent); --seal-soft: #E7EEF9; --bronze: var(--brass); --bronze-soft: var(--brass-soft);
   --focus: #9DB4E8;
   --body: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
-  --display: var(--body);
+  --display: 'Noto Serif KR', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif;
   --wrap: 1180px; --maxw: 1180px; --nav: 66px; --gap: 20px;
   color-scheme: light;
 }

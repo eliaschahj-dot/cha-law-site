@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, 'dist');
-const SITE_URL = (process.env.SITE_URL || 'https://chahyungjin.com').replace(/\/$/, '');
+const SITE_URL = (process.env.SITE_URL || 'https://www.lawyer-cha.com').replace(/\/$/, '');
 const app = express();
 app.disable('x-powered-by');
 app.set('trust proxy', true);

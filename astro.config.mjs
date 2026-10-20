@@ -2,9 +2,9 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import rehypeTables from './src/lib/rehype-tables.mjs';
 
-// 도메인은 확정 전 임시값입니다. 구매한 도메인으로 바꾸면 canonical·sitemap·OG가 함께 바뀝니다.
+// 2026.10.20 가비아에서 lawyer-cha.com 구매. Render SITE_URL 환경변수가 우선한다.
 export default defineConfig({
-  site: process.env.SITE_URL || 'https://chahyungjin.com',
+  site: process.env.SITE_URL || 'https://www.lawyer-cha.com',
   integrations: [sitemap()],
   markdown: { rehypePlugins: [rehypeTables] },
   build: { format: 'directory' },

@@ -81,7 +81,7 @@ public/                     robots.txt, favicon.svg, og.png
 
 | 항목 | 현재 값 | 위치 |
 |---|---|---|
-| 도메인 | 미구매. 후보 `chahyungjin.com` / `hjcha.com` / `chalawyer.com` — 셋 다 .com·.co.kr·.kr 등록 가능(가비아, 2026.10.16 확인; .com 연 19,800원·.kr 16,500원 행사가) | `astro.config.mjs` 기본값, `public/admin/config.yml`, Render `SITE_URL` |
+| 도메인 | **https://www.lawyer-cha.com** (가비아 구매 2026.10.20, Render Custom Domain 연결) | `astro.config.mjs` 기본값, `public/admin/config.yml`, Render `SITE_URL` |
 | 직통 전화 | 070-4571-7668 (블로그 공개 번호) | `src/data/site.ts` `phone` |
 | 프로필 사진 | 회색 플레이스홀더 (4:5) | `index.astro`, `about.astro` `.photo` |
 | 상담료 안내 문구 | "예약 시 안내" | `src/data/site.ts` `feeFaq` |

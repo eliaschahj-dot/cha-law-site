@@ -4,7 +4,7 @@ backend:
   name: github
   repo: eliaschahj-dot/cha-law-site
   branch: main
-  base_url: https://cha-law-site.onrender.com   # 도메인 연결 후 실제 주소로 (SITE_URL 과 같게)
+  base_url: https://www.lawyer-cha.com   # 도메인 연결 후 실제 주소로 (SITE_URL 과 같게)
   auth_endpoint: auth
   commit_messages:
     create: "글 추가: {{slug}}"
@@ -14,8 +14,8 @@ backend:
     deleteMedia: "이미지 삭제: {{path}}"
 
 locale: ko
-site_url: https://cha-law-site.onrender.com
-display_url: https://cha-law-site.onrender.com
+site_url: https://www.lawyer-cha.com
+display_url: https://www.lawyer-cha.com
 logo_url: /favicon.svg
 media_folder: public/uploads
 public_folder: /uploads

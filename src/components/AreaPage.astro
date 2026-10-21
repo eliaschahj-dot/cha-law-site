@@ -3,12 +3,14 @@ import Faq from './Faq.astro';
 import { axisMeta, type Area, areas, areaPath } from '../data/areas';
 import { getPublicColumns, related, postPath, fmtDate, tagPath } from '../data/posts';
 import { site } from '../data/site';
+import { areaSeo } from '../data/seo';
 interface Props { area: Area }
 const { area } = Astro.props;
 const meta = axisMeta.in;
 const siblings = areas.filter((a) => a.slug !== area.slug);
 const cols = await getPublicColumns();
 const posts = related(cols, area.tags, 8);
+const seo = areaSeo[area.slug];
 const tagCounts = area.tags.map((t) => ({ t, n: cols.filter((p) => p.tags.includes(t)).length })).filter((x) => x.n > 0);
 ---
 <section class="area-hero">
@@ -37,6 +39,13 @@ const tagCounts = area.tags.map((t) => ({ t, n: cols.filter((p) => p.tags.includ
       <h2>이런 상황이라면</h2>
       <ul class="situ">{area.situations.map((s) => <li>{s}</li>)}</ul>
     </section>
+    {seo && seo.blocks.map((b) => (
+      <section>
+        <h2>{b.h}</h2>
+        {b.p.map((t) => <p>{t}</p>)}
+        {b.list && b.list.length > 0 && <ul class="situ">{b.list.map((i) => <li>{i}</li>)}</ul>}
+      </section>
+    ))}
     <section>
       <h2>절차와 순서</h2>
       <ol class="steps">{area.steps.map((s) => <li><div><b>{s.t}</b><span>{s.d}</span></div></li>)}</ol>

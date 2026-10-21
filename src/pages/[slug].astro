@@ -3,14 +3,16 @@ import Base from '../layouts/Base.astro';
 import AreaPage from '../components/AreaPage.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { areas } from '../data/areas';
+import { areaSeo } from '../data/seo';
 
 export function getStaticPaths() {
   return areas.map((area) => ({ params: { slug: area.slug }, props: { area } }));
 }
 const { area } = Astro.props;
+const seo = areaSeo[area.slug];
 const ld = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: area.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
 ---
-<Base title={`${area.name} 변호사`} description={`${area.lead} ${area.short}. 상속 전문 변호사 차형진이 직접 상담하고 수행합니다.`} jsonLd={ld} breadcrumbs={[{ name: '홈', href: '/' }, { name: '상속 업무 분야', href: '/inheritance' }, { name: area.name }]}>
+<Base title={seo?.title ?? `${area.name} 변호사`} rawTitle={!!seo} description={seo?.desc ?? `${area.lead} ${area.short}. 상속 전문 변호사 차형진이 직접 상담하고 수행합니다.`} jsonLd={ld} breadcrumbs={[{ name: '홈', href: '/' }, { name: '상속 업무 분야', href: '/inheritance' }, { name: area.name }]}>
   <AreaPage area={area} />
   <CtaBand area={area.name} />
 </Base>

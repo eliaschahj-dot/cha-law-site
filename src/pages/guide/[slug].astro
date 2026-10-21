@@ -1,0 +1,16 @@
+---
+/* 절차 안내: /guide/{slug}. 원본 src/content/guides/*.json (kind: guide) */
+import Base from '../../layouts/Base.astro';
+import GuidePage from '../../components/GuidePage.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { procedureGuides, guideLd, type Guide } from '../../data/guides';
+
+export function getStaticPaths() {
+  return procedureGuides.map((g) => ({ params: { slug: g.slug }, props: { g } }));
+}
+const { g } = Astro.props as { g: Guide };
+---
+<Base title={g.seoTitle ?? g.title} rawTitle={!!g.seoTitle} description={g.desc} jsonLd={guideLd(g)} breadcrumbs={[{ name: '홈', href: '/' }, { name: '상속 절차 안내', href: '/guide' }, { name: g.title }]}>
+  <GuidePage g={g} />
+  <CtaBand />
+</Base>

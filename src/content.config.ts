@@ -38,4 +38,25 @@ const areas = defineCollection({
   }),
 });
 
-export const collections = { columns, areas };
+// 안내 페이지(절차 가이드·상황별 안내): src/content/guides/{slug}.json
+const guides = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/guides' }),
+  schema: z.object({
+    slug: z.string(),
+    kind: z.enum(['guide', 'situation']),
+    updated: z.string(),
+    title: z.string(),
+    seoTitle: z.string().optional(),
+    desc: z.string(),
+    eyebrow: z.string(),
+    lead: z.string(),
+    keywords: z.array(z.string()).default([]),
+    areas: z.array(z.string()).default([]),
+    tags: z.array(z.string()).default([]),
+    deadlines: z.array(z.object({ k: z.string(), v: z.string() })).default([]),
+    sections: z.array(z.object({ h: z.string(), p: z.array(z.string()), list: z.array(z.string()).optional() })),
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
+  }),
+});
+
+export const collections = { columns, areas, guides };

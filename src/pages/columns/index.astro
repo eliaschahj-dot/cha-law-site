@@ -1,13 +1,15 @@
 ---
 import Base from '../../layouts/Base.astro';
 import CtaBand from '../../components/CtaBand.astro';
-import { getPublicColumns, sections, visibleSections, postPath, fmtDate } from '../../data/posts';
+import { getPublicColumns, sections, visibleSections, postPath, fmtDate, tagPath } from '../../data/posts';
+import { tagSeo, TAG_ORDER } from '../../data/seo';
 const cols = await getPublicColumns();
 const visibleNames = visibleSections.map((s) => s.name);
 const main = cols.filter((p) => visibleNames.includes(p.section));
 const latest = main.slice(0, 40);
 const counts = Object.fromEntries(sections.map((s) => [s.slug, cols.filter((p) => p.section === s.name).length]));
 const firstYear = main.length ? main[main.length - 1].date.slice(0, 4) : '2024';
+const tagCounts = TAG_ORDER.map((t) => ({ t, n: cols.filter((p) => p.tags.includes(t)).length })).filter((x) => x.n > 0);
 ---
 <Base title="상속 칼럼" description={`상속에 관해 ${firstYear}년부터 써 온 법률 칼럼 ${main.length}편. 상속분쟁, 유류분, 상속포기·한정승인, 성년후견, 유언, 상속등기, 상속세.`}>
   <section class="area-hero">
@@ -27,6 +29,11 @@ const firstYear = main.length ? main[main.length - 1].date.slice(0, 4) : '2024';
       <div class="grid2" style="margin-bottom:28px">
         {visibleSections.map((s) => <a class="card" href={`/columns/topic/${s.slug}`} style="text-decoration:none"><div class="k">{s.label}</div><p>{s.desc}</p><p style="color:var(--accent);font-weight:600;font-size:13px">{counts[s.slug]}편 보기 →</p></a>)}
       </div>
+      <h2 style="font-size:22px;margin:30px 0 10px">주제별로 모아 보기</h2>
+      <p style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px">
+        {tagCounts.map((x) => <a class="btn btn-paper btn-sm" href={tagPath(x.t)} title={tagSeo[x.t]?.title}>{x.t} <span style="opacity:.6">{x.n}</span></a>)}
+        <a class="btn btn-paper btn-sm" href="/columns/tag">전체 주제 →</a>
+      </p>
       <h2 style="font-size:22px;margin:30px 0 10px">최근 글</h2>
       <div class="list">
         {latest.map((p) => (

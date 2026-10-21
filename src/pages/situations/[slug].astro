@@ -1,0 +1,16 @@
+---
+/* 상황별 안내: /situations/{slug}. 원본 src/content/guides/*.json (kind: situation) */
+import Base from '../../layouts/Base.astro';
+import GuidePage from '../../components/GuidePage.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { situationGuides, guideLd, type Guide } from '../../data/guides';
+
+export function getStaticPaths() {
+  return situationGuides.map((g) => ({ params: { slug: g.slug }, props: { g } }));
+}
+const { g } = Astro.props as { g: Guide };
+---
+<Base title={g.seoTitle ?? g.title} rawTitle={!!g.seoTitle} description={g.desc} jsonLd={guideLd(g)} breadcrumbs={[{ name: '홈', href: '/' }, { name: '이런 상황이라면', href: '/situations' }, { name: g.title }]}>
+  <GuidePage g={g} />
+  <CtaBand />
+</Base>

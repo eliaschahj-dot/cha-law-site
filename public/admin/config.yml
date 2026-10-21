@@ -101,6 +101,53 @@ collections:
           - { label: 항목, name: k, widget: string }
           - { label: 내용, name: v, widget: string }
 
+  - name: guides
+    label: 안내 페이지 (절차·상황별)
+    label_singular: 안내
+    folder: src/content/guides
+    create: true
+    delete: false
+    extension: json
+    format: json
+    slug: "{{slug}}"
+    identifier_field: slug
+    summary: "{{kind}} · {{title}}"
+    editor:
+      preview: false
+    fields:
+      - { label: 주소 조각, name: slug, widget: string, hint: "/guide/{slug} 또는 /situations/{slug}" }
+      - { label: 종류, name: kind, widget: select, options: [{ label: 절차 안내(/guide), value: guide }, { label: 상황별 안내(/situations), value: situation }] }
+      - { label: 기준일, name: updated, widget: string, hint: "YYYY-MM-DD" }
+      - { label: 제목, name: title, widget: string }
+      - { label: 검색용 제목, name: seoTitle, widget: string, required: false, hint: "브라우저 탭·검색 결과 제목. 비우면 제목을 씁니다" }
+      - { label: 검색용 설명, name: desc, widget: text }
+      - { label: 머리말, name: eyebrow, widget: string, hint: "예: 절차 안내 / 이런 상황이라면" }
+      - { label: 첫 문장, name: lead, widget: text }
+      - { label: 검색어, name: keywords, widget: list, required: false }
+      - { label: 관련 분야(주소 조각), name: areas, widget: list, required: false, hint: "예: legal-reserve, renunciation" }
+      - { label: 관련 글 태그, name: tags, widget: list, required: false }
+      - label: 먼저 확인할 기한과 기준
+        name: deadlines
+        widget: list
+        required: false
+        fields:
+          - { label: 항목, name: k, widget: string }
+          - { label: 내용, name: v, widget: string }
+      - label: 본문 단락
+        name: sections
+        widget: list
+        fields:
+          - { label: 소제목, name: h, widget: string }
+          - { label: 문단, name: p, widget: list, field: { label: 문단, name: text, widget: text } }
+          - { label: 목록, name: list, widget: list, required: false }
+      - label: 자주 묻는 질문
+        name: faq
+        widget: list
+        required: false
+        fields:
+          - { label: 질문, name: q, widget: string }
+          - { label: 답변, name: a, widget: text }
+
   - name: settings
     label: 사이트 설정
     editor:

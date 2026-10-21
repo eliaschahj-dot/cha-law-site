@@ -3,6 +3,7 @@ import Base from '../../../layouts/Base.astro';
 import CtaBand from '../../../components/CtaBand.astro';
 import { getPublicColumns, postPath, fmtDate, type Post } from '../../../data/posts';
 import { areas, areaPath } from '../../../data/areas';
+import { tagSeo } from '../../../data/seo';
 
 export async function getStaticPaths() {
   const cols = await getPublicColumns();
@@ -12,14 +13,17 @@ export async function getStaticPaths() {
 }
 const { tag, list } = Astro.props as { tag: string; list: Post[] };
 const linked = areas.filter((a) => a.tags.includes(tag));
+const seo = tagSeo[tag];
+const title = seo?.title ?? `${tag} 칼럼 모음`;
+const desc = seo?.desc ?? `${tag}에 관해 차형진 변호사가 써 온 글 ${list.length}편.`;
 ---
-<Base title={`#${tag} 칼럼`} description={`${tag}에 관한 칼럼 ${list.length}편. 상속 전문 변호사 차형진.`}>
+<Base title={`${title} ${list.length}편`} description={`${desc} 상속 전문 변호사 차형진.`} breadcrumbs={[{ name: '홈', href: '/' }, { name: '칼럼', href: '/columns' }, { name: '주제별 모음', href: '/columns/tag' }, { name: tag }]}>
   <section class="area-hero">
     <div class="wrap">
-      <div class="crumbs"><a href="/">홈</a><span>/</span><a href="/columns">칼럼</a><span>/</span><span>#{tag}</span></div>
-      <div class="gu" style="margin-top:18px">태그</div>
-      <h1>#{tag}</h1>
-      <p class="lead">{tag}에 관해 써 온 글 {list.length}편입니다.{linked.length > 0 && <span> 관련 업무 분야: {linked.map((a) => <a href={areaPath(a)} style="font-weight:600">{a.name}</a>)}</span>}</p>
+      <div class="crumbs"><a href="/">홈</a><span>/</span><a href="/columns">칼럼</a><span>/</span><a href="/columns/tag">주제별 모음</a><span>/</span><span>#{tag}</span></div>
+      <div class="gu" style="margin-top:18px">주제별 모음 <small>{list.length}편</small></div>
+      <h1>{title}</h1>
+      <p class="lead">{desc} 모두 {list.length}편입니다.{linked.length > 0 && <span> 관련 업무 분야: {linked.map((a) => <a href={areaPath(a)} style="font-weight:600">{a.name}</a>)}</span>}</p>
     </div>
   </section>
   <section class="sec">

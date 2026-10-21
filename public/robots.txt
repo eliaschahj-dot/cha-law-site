@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /stats
+Disallow: /admin
 
-Sitemap: https://chahyungjin.com/sitemap-index.xml
+Sitemap: https://www.lawyer-cha.com/sitemap-index.xml

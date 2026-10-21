@@ -35,6 +35,8 @@ functions/api/contact.js    Cloudflare Pages Function — 상담 폼 수신(Rese
 public/                     robots.txt, favicon.svg, og.png
 ```
 
+> **2026.10.21 검색 노출(SEO) 구조**: 네이버·구글 자동완성 검색어 조사 결과를 바탕으로 ① 분야 페이지 9개의 검색용 제목·설명·'검색어 소제목 단락'(`src/data/seo.ts`), ② 절차 안내 4편(`/guide`)과 상황별 안내 4편(`/situations`, 원본 `src/content/guides/*.json`, `/admin`→'안내 페이지'에서 편집·추가), ③ 칼럼 주제별 모음 허브(`/columns/tag`)와 태그 페이지 제목, ④ 구조화 데이터(Article·FAQPage·BlogPosting·CollectionPage), ⑤ robots.txt 사이트맵 주소 교정(옛 도메인→www.lawyer-cha.com)을 넣었습니다. 광고(파워링크·구글 애즈)·네이버 채널·측정 방법은 `docs/seo-marketing-plan.md`에 있습니다.
+
 > **2026.10.20 디자인 테마**: 글은 시안 그대로 두고 `src/styles/theme.css`가 생김새를 입힙니다(제목 Noto Serif KR, 밝은 흰빛 바탕(종이 질감은 같은 날 제거), 카드·버튼·푸터, 아이콘 일러스트 `src/components/Icon.astro`, 히어로 장식, 사진 액자·폴라로이드, 등장·선 그리기·도장 애니메이션). 색·질감을 바꾸려면 theme.css만 고치면 됩니다.
 
 > **2026.10.20 마케터 시안 반영**: 홈(`src/pages/index.astro`)과 '상속 전문 변호사' 페이지(`src/pages/inheritance-lawyer.astro`, 옛 `/about`은 여기로 넘어감)를 마케터가 만든 `index.html`·`inheritance-lawyer.html` 그대로 옮겼습니다. 그 두 페이지의 CSS는 `src/styles/marketer.css`(`.mk` 래퍼 안에서만 적용), 전역 내비·푸터·버튼은 `global.css`로 옮겼고, 사진 12장은 `public/img/*.webp`입니다. 상담 신청서는 `src/components/ConsultForm.astro`(돌아가신 시기·상속인 구성·입장·관련 항목·상황·통화 가능 시간)이고 `server.js`의 `/api/contact`가 새 필드를 메일로 보냅니다. 문안은 변협 광고규정 검사(`scripts/content_tools.py`) 기준으로 '무료 법률상담'→'공익 법률상담', 서비스 상호 '온트랙' 언급만 바꿨습니다.

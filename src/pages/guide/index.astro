@@ -1,0 +1,48 @@
+---
+/* 상속 절차 안내 허브: 기한이 있는 일부터. 검색 노출용 내부 링크 허브. */
+import Base from '../../layouts/Base.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { procedureGuides, situationGuides, guidePath } from '../../data/guides';
+import { areas, areaPath } from '../../data/areas';
+
+const ld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: '상속 절차 안내', hasPart: procedureGuides.map((g) => ({ '@type': 'WebPage', name: g.title, url: new URL(guidePath(g), Astro.site).href })) };
+---
+<Base title="상속 절차 안내 | 사망 후 할 일 순서, 재산 조회, 분할협의서, 유언장 작성법" rawTitle description="부모님이 돌아가신 뒤 상속 절차 순서와 기한, 안심상속 원스톱 재산 조회, 상속재산분할협의서 작성법, 유언장 작성법과 공증 비용. 상속 전문 변호사 차형진이 절차마다 놓치기 쉬운 것을 정리했습니다." jsonLd={ld} breadcrumbs={[{ name: '홈', href: '/' }, { name: '상속 절차 안내' }]}>
+  <section class="area-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="/">홈</a><span>/</span><span>상속 절차 안내</span></div>
+      <div class="gu" style="margin-top:18px">절차 안내</div>
+      <h1>상속, 순서대로 하면 놓치지 않습니다</h1>
+      <p class="lead">기한이 걸린 일부터 정리했습니다. 각 안내는 관련 업무 분야와 칼럼으로 이어집니다.</p>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap">
+      <div class="grid2">
+        {procedureGuides.map((g) => (
+          <a class="card" href={guidePath(g)} style="text-decoration:none">
+            <div class="k">{g.eyebrow}</div>
+            <h3 style="font-size:19px;margin:4px 0 8px">{g.title}</h3>
+            <p style="font-size:14.5px">{g.lead}</p>
+            <p style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">{g.deadlines.slice(0, 3).map((d) => <span class="chip">{d.k}</span>)}</p>
+          </a>
+        ))}
+      </div>
+      <h2 style="font-size:22px;margin:36px 0 12px">이런 상황이라면</h2>
+      <div class="grid2">
+        {situationGuides.map((g) => (
+          <a class="card" href={guidePath(g)} style="text-decoration:none">
+            <div class="k">{g.eyebrow}</div>
+            <h3 style="font-size:17px;margin:4px 0 8px">{g.title.split(':')[0]}</h3>
+            <p style="font-size:14px">{g.desc.split('.')[0]}.</p>
+          </a>
+        ))}
+      </div>
+      <h2 style="font-size:22px;margin:36px 0 12px">업무 분야별 안내</h2>
+      <p style="display:flex;flex-wrap:wrap;gap:8px">
+        {areas.map((a) => <a class="btn btn-paper btn-sm" href={areaPath(a)}>{a.name}</a>)}
+      </p>
+    </div>
+  </section>
+  <CtaBand />
+</Base>

@@ -7,6 +7,7 @@ import { site } from '../../data/site';
 import { reFaq } from '../../data/realestate';
 import Icon from '../../components/Icon.astro';
 import Mark from '../../components/Mark.astro';
+import CrossBand from '../../components/CrossBand.astro';
 import '../../styles/marketer.css';
 
 const creds: [string, string, string, string][] = [
@@ -71,7 +72,7 @@ const shots = [
     <div class="wrap">
       <div class="herogrid">
         <div>
-          <div class="badge">법무법인 베율 부대표 · 부동산 <b>차형진 변호사</b></div>
+          <div class="badge">부동산 · 상속 전문 <b>차형진 변호사</b> · 법무법인 베율 부대표</div>
           <h1><span class="ln">전세금도 계약금도, 돌려받는</span><span class="ln amt">일만큼은 자신 있습니다.</span></h1>
           <div class="hero-sub">등기부와 계약서, 도면까지 <b>변호사가 직접 읽습니다.</b> 건축학과 법학을 함께 공부한 변호사가 상담도, 서면도, 재판도 <b>직접</b> 합니다.</div>
           <div class="cta-row">
@@ -202,6 +203,8 @@ const shots = [
       </div>
     </div>
   </section>
+
+  <CrossBand to="in" />
 
   <!-- 5 칼럼 -->
   <section id="reads">

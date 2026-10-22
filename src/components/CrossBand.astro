@@ -1,0 +1,33 @@
+---
+/* 두 분야 안내 띠(2026.10.22): 상속 홈에는 부동산을, 부동산 홈에는 상속을 "같은 변호사가 맡는다"고 알리고 상대 사이트로 보낸다. */
+interface Props { to: 'in' | 're' }
+const { to } = Astro.props;
+const data = to === 're'
+  ? {
+      eyebrow: '함께 맡는 분야 · 부동산',
+      h: '부동산 분쟁도 같은 변호사가 맡습니다',
+      p: '상속받은 집의 등기와 명의, 형제가 살던 집의 명도, 물려받은 상가의 임대차처럼 상속과 부동산은 한 사건 안에서 만납니다. 전세보증금 반환, 계약금 분쟁, 분양, 재개발, 공사대금·하자까지 부동산 전문 홈페이지에 따로 정리했습니다.',
+      chips: [['/real-estate/deposit', '전세보증금 반환'], ['/real-estate/sale', '매매 · 계약금'], ['/real-estate/lease', '임대차 · 명도'], ['/real-estate/presale', '분양'], ['/real-estate/redevelopment', '재개발 · 재건축'], ['/real-estate/construction', '공사대금 · 하자']],
+      btn: ['/real-estate', '부동산 전문 홈페이지 →'],
+    }
+  : {
+      eyebrow: '함께 맡는 분야 · 상속',
+      h: '상속 분쟁도 같은 변호사가 맡습니다',
+      p: '부모님이 남긴 집과 상가를 두고 벌어지는 형제 간 다툼, 유류분, 상속포기, 치매 부모님의 재산 보호처럼 부동산과 상속은 한 사건 안에서 만납니다. 상속재산분할부터 유언·성년후견까지 상속 전문 홈페이지에 따로 정리했습니다.',
+      chips: [['/dispute', '상속재산분할'], ['/legal-reserve', '유류분'], ['/renunciation', '상속포기 · 한정승인'], ['/guardianship', '성년후견'], ['/will', '유언'], ['/registration', '상속등기 · 명의신탁']],
+      btn: ['/', '상속 전문 홈페이지 →'],
+    };
+---
+<section class="sec band-paper crossband">
+  <div class="wrap">
+    <div class="sec-head" style="margin-bottom:18px">
+      <div class="gu">{data.eyebrow}</div>
+      <h2 style="font-size:clamp(26px,3.6vw,40px)">{data.h}</h2>
+      <p>{data.p}</p>
+    </div>
+    <p style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px">
+      {data.chips.map(([href, label]) => <a class="btn btn-paper btn-sm" href={href}>{label}</a>)}
+    </p>
+    <a class="btn btn-seal" href={data.btn[0]}>{data.btn[1]}</a>
+  </div>
+</section>

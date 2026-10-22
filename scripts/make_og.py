@@ -49,7 +49,7 @@ d.text((96, 300), '차형진', font=t1, fill=INK)
 d.line((96, 452, 156, 452), fill=BRASS, width=2)
 s1 = font(sans, 30, 'Medium')
 s2 = font(sans, 26, 'Regular')
-d.text((96, 478), '법무법인 베율 부대표 변호사 · ' + ('등기부·계약서·도면을 직접 읽습니다' if RE else '상담도 재판도 변호사가 직접 합니다'), font=s1, fill=INK2)
+d.text((96, 478), '부동산 · 상속 두 분야를 함께 맡습니다 · 법무법인 베율 부대표', font=s1, fill=INK2)
 d.text((96, 526), '070-4571-7668  ·  well@beyullaw.com', font=s2, fill=INK2)
 
 out = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public', 'og-re.png' if RE else 'og.png')

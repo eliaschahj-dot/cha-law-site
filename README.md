@@ -35,6 +35,8 @@ functions/api/contact.js    Cloudflare Pages Function — 상담 폼 수신(Rese
 public/                     robots.txt, favicon.svg, og.png
 ```
 
+> **2026.10.22 두 분야 통일**: 어느 사이트에서 봐도 "부동산·상속 두 분야를 함께 맡는 한 변호사"로 읽히도록 상단에 상속/부동산 전환 바(`Base.astro` `.sitebar`), 각 홈에 '다른 분야도 같은 변호사가 맡습니다' 띠(`CrossBand.astro`), 푸터 안내(`.ftwo`), 소개 페이지 직함·칩·담당 분야, 구조화 데이터(knowsAbout 두 분야 합침), OG 보조 문구를 맞췄습니다. 페이지 제목의 '상속 전문'·'부동산 전문'은 검색용으로 그대로 둡니다.
+
 > **2026.10.22 부동산 안내 페이지**: 절차 안내 4편(`/real-estate/guide`)과 상황별 안내 4편(`/real-estate/situations`)을 추가했습니다. 원본은 같은 `src/content/guides/*.json`이고 `site: re`로 구분합니다(`/admin`→'안내 페이지'→'사이트').
 
 > **2026.10.22 부동산 전문 하위 사이트 `/real-estate`**: 같은 도메인 아래 별도 사이트처럼 동작합니다. 홈(`src/pages/real-estate/index.astro`, 상속 홈과 같은 마케터 구성)·소개(`/real-estate/lawyer`)·분야 6개(`src/content/areas/re-*.json`, 10.16 개편 때 지웠던 것을 복원)·칼럼 목록(`/real-estate/columns`, 부동산·꿀팁 코너)·FAQ·비용·상담(`ConsultFormRe.astro`, 신청서에 '중요한 날짜·걸린 금액' 항목). 레이아웃은 `Base.astro`의 `variant`(주소가 `/real-estate`로 시작하면 자동)로 메뉴·브랜드 꼬리표·푸터·OG 이미지(`og-re.png`)·구조화 데이터가 바뀝니다. 글 페이지는 코너가 부동산·꿀팁이면 부동산 틀로 보입니다. 검색 문안은 `src/data/seo.ts`, 공용 FAQ는 `src/data/realestate.ts`.

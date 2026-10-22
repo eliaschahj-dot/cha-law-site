@@ -28,13 +28,14 @@ const orgLd = {
   '@type': 'Attorney',
   name: `${site.name} (${site.firm})`,
   jobTitle: site.role,
+  description: '부동산·상속 전문 변호사. 법무법인 베율 부대표. 상담·서면·재판을 변호사가 직접 합니다.',
   worksFor: { '@type': 'LegalService', name: site.firm },
   url: origin,
   telephone: site.phone,
   email: site.email,
   address: { '@type': 'PostalAddress', streetAddress: '테헤란로103길 10 길훈빌딩 2층', addressLocality: '강남구', addressRegion: '서울', addressCountry: 'KR' },
   areaServed: 'KR',
-  knowsAbout: v.knowsAbout,
+  knowsAbout: [...variants.in.knowsAbout, ...variants.re.knowsAbout],
   award: '서울특별시장 표창(2023)',
   openingHours: ['Mo-Fr 10:00-18:00', 'Sa 10:00-14:00'],
 };
@@ -100,6 +101,15 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
   {ldItems.map((ld) => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)}
 </head>
 <body>
+  <div class="sitebar" aria-label="분야 선택">
+    <div class="in">
+      <span class="sb-t">부동산 · 상속, 두 분야를 함께 맡는 <b>차형진 변호사</b></span>
+      <span class="sw" role="navigation">
+        <a href="/" class={v.key === 'in' ? 'cur' : undefined} aria-current={v.key === 'in' ? 'page' : undefined}>상속</a>
+        <a href="/real-estate" class={v.key === 're' ? 'cur' : undefined} aria-current={v.key === 're' ? 'page' : undefined}>부동산</a>
+      </span>
+    </div>
+  </div>
   <nav class="nav" aria-label="주요 메뉴">
     <div class="navin">
       <a class="brand" href={v.home} aria-label={`${site.name} ${v.field} 홈`}>
@@ -135,8 +145,12 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
         <a href="https://beyullaw.com" target="_blank" rel="noopener">법무법인 베율</a>
         <a href="/privacy">개인정보처리방침</a>
       </div>
+      <div class="ftwo">
+        <b>차형진 변호사는 부동산과 상속, 두 분야를 함께 맡습니다.</b>
+        <span>지금 보시는 곳은 {v.field} 전문 홈페이지입니다. {v.key === 're' ? '상속' : '부동산'} 사건은 <a href={v.other.href}>{v.other.label}</a>에 따로 정리해 두었고, 상담 창구와 변호사는 같습니다.</span>
+      </div>
       <div class="finfo">
-        <b>{site.firm}</b> · 부대표 변호사 차형진<br />
+        <b>{site.firm}</b> · 부대표 변호사 차형진 · 부동산 · 상속 전문<br />
         {site.address} ({site.transit})<br />
         변호사 직통 {site.phone} · {site.email}<br />
         {site.hours} · {site.closed}

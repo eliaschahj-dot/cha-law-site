@@ -238,3 +238,22 @@ body .list a:hover { background: rgba(255,255,255,.7); }
   body .mk .art .ico * { stroke-dashoffset: 0 !important; animation: none !important; }
   body .btn::after { display: none; }
 }
+
+/* ---------- 두 분야 전환 바(2026.10.22): 상속·부동산 하위 사이트 공통 ---------- */
+body .sitebar { background: #0F1A30; color: #C3CAD9; font-size: 12.5px; letter-spacing: -.02em; }
+body .sitebar .in { max-width: var(--maxw); margin: 0 auto; padding: 7px max(22px, env(safe-area-inset-left, 0px)) 7px max(22px, env(safe-area-inset-right, 0px)); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+body .sitebar .sb-t b { color: #fff; font-weight: 800; }
+body .sitebar .sw { display: inline-flex; gap: 6px; flex: none; }
+body .sitebar .sw a { padding: 3px 11px; border-radius: 999px; border: 1px solid rgba(255,255,255,.28); color: #E6EAF2; text-decoration: none; font-weight: 800; font-size: 12px; line-height: 1.5; transition: background .2s, color .2s; }
+body .sitebar .sw a:hover { background: rgba(255,255,255,.14); }
+body .sitebar .sw a.cur { background: #fff; color: #0F1A30; border-color: #fff; }
+body footer .ftwo { margin: 22px 0 6px; padding: 16px 18px; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; display: grid; gap: 6px; font-size: 13.5px; color: #B9C2D6; }
+body footer .ftwo b { color: #F5F4EF; font-family: var(--display); font-weight: 700; font-size: 15px; }
+body footer .ftwo a { color: var(--brass-lt); font-weight: 700; }
+body .crossband { border-top: 1px solid rgba(154,127,82,.25); border-bottom: 1px solid rgba(154,127,82,.25); background: linear-gradient(170deg, #FBFAF7, #F3F1EA); }
+body .mk .crossband h2 { font-family: var(--display); }
+@media (max-width: 640px) {
+  body .sitebar { font-size: 12px; }
+  body .sitebar .in { padding-top: 6px; padding-bottom: 6px; gap: 8px; }
+  body .sitebar .sb-t { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}

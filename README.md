@@ -35,6 +35,8 @@ functions/api/contact.js    Cloudflare Pages Function — 상담 폼 수신(Rese
 public/                     robots.txt, favicon.svg, og.png
 ```
 
+> **2026.10.22 부동산 안내 페이지**: 절차 안내 4편(`/real-estate/guide`)과 상황별 안내 4편(`/real-estate/situations`)을 추가했습니다. 원본은 같은 `src/content/guides/*.json`이고 `site: re`로 구분합니다(`/admin`→'안내 페이지'→'사이트').
+
 > **2026.10.22 부동산 전문 하위 사이트 `/real-estate`**: 같은 도메인 아래 별도 사이트처럼 동작합니다. 홈(`src/pages/real-estate/index.astro`, 상속 홈과 같은 마케터 구성)·소개(`/real-estate/lawyer`)·분야 6개(`src/content/areas/re-*.json`, 10.16 개편 때 지웠던 것을 복원)·칼럼 목록(`/real-estate/columns`, 부동산·꿀팁 코너)·FAQ·비용·상담(`ConsultFormRe.astro`, 신청서에 '중요한 날짜·걸린 금액' 항목). 레이아웃은 `Base.astro`의 `variant`(주소가 `/real-estate`로 시작하면 자동)로 메뉴·브랜드 꼬리표·푸터·OG 이미지(`og-re.png`)·구조화 데이터가 바뀝니다. 글 페이지는 코너가 부동산·꿀팁이면 부동산 틀로 보입니다. 검색 문안은 `src/data/seo.ts`, 공용 FAQ는 `src/data/realestate.ts`.
 
 > **2026.10.21 검색 노출(SEO) 구조**: 네이버·구글 자동완성 검색어 조사 결과를 바탕으로 ① 분야 페이지 9개의 검색용 제목·설명·'검색어 소제목 단락'(`src/data/seo.ts`), ② 절차 안내 4편(`/guide`)과 상황별 안내 4편(`/situations`, 원본 `src/content/guides/*.json`, `/admin`→'안내 페이지'에서 편집·추가), ③ 칼럼 주제별 모음 허브(`/columns/tag`)와 태그 페이지 제목, ④ 구조화 데이터(Article·FAQPage·BlogPosting·CollectionPage), ⑤ robots.txt 사이트맵 주소 교정(옛 도메인→www.lawyer-cha.com)을 넣었습니다. 광고(파워링크·구글 애즈)·네이버 채널·측정 방법은 `docs/seo-marketing-plan.md`에 있습니다.

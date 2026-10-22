@@ -117,6 +117,7 @@ collections:
     fields:
       - { label: 주소 조각, name: slug, widget: string, hint: "/guide/{slug} 또는 /situations/{slug}" }
       - { label: 종류, name: kind, widget: select, options: [{ label: 절차 안내(/guide), value: guide }, { label: 상황별 안내(/situations), value: situation }] }
+      - { label: 사이트, name: site, widget: select, default: in, options: [{ label: 상속(/guide·/situations), value: in }, { label: 부동산(/real-estate/guide·/real-estate/situations), value: re }] }
       - { label: 기준일, name: updated, widget: string, hint: "YYYY-MM-DD" }
       - { label: 제목, name: title, widget: string }
       - { label: 검색용 제목, name: seoTitle, widget: string, required: false, hint: "브라우저 탭·검색 결과 제목. 비우면 제목을 씁니다" }

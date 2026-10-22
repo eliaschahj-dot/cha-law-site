@@ -52,6 +52,8 @@ export const reFooterNav = [
   { href: '/real-estate/redevelopment', label: '재개발 · 재건축' },
   { href: '/real-estate/construction', label: '공사대금 · 하자' },
   { href: '/real-estate/faq', label: '자주 묻는 질문' },
+  { href: '/real-estate/guide', label: '부동산 절차 안내' },
+  { href: '/real-estate/situations', label: '이런 상황이라면' },
   { href: '/columns/topic/tips', label: '등기부 · 계약 체크리스트' },
   { href: '/columns/tag', label: '칼럼 주제별 모음' },
   { href: '/press', label: '언론 · 활동' },

@@ -1,0 +1,48 @@
+---
+/* 부동산 상황별 안내 허브: 집주인 변경, 가계약금, 권리금, 신축 하자. */
+import Base from '../../../layouts/Base.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { reSituationGuides, reProcedureGuides, guidePath } from '../../../data/guides';
+import { reAreas, areaPath } from '../../../data/areas';
+
+const ld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: '이런 상황이라면 · 상황별 부동산 안내', hasPart: reSituationGuides.map((g) => ({ '@type': 'WebPage', name: g.title, url: new URL(guidePath(g), Astro.site).href })) };
+---
+<Base variant="re" title="상황별 부동산 안내 | 집주인 변경, 가계약금, 상가 권리금, 신축 하자" rawTitle description="집주인이 바뀌었을 때 보증금, 가계약금을 보냈는데 집주인이 마음을 바꿨을 때, 상가 권리금을 못 받고 나가게 될 때, 신축 아파트·빌라에 누수·균열이 있을 때. 상담실에서 가장 자주 만나는 네 가지 상황을 부동산 전문 변호사 차형진이 정리했습니다." jsonLd={ld} breadcrumbs={[{ name: '홈', href: '/real-estate' }, { name: '이런 상황이라면' }]}>
+  <section class="area-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="/real-estate">홈</a><span>/</span><span>이런 상황이라면</span></div>
+      <div class="gu" style="margin-top:18px">상황별 안내</div>
+      <h1>지금 겪는 상황부터 찾아보세요</h1>
+      <p class="lead">상담실에서 가장 자주 만나는 상황을 골랐습니다. 상황마다 누구에게 무엇을 청구할 수 있는지, 무엇을 먼저 해야 하는지, 어떤 기한이 있는지를 적었습니다.</p>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap">
+      <div class="grid2">
+        {reSituationGuides.map((g) => (
+          <a class="card" href={guidePath(g)} style="text-decoration:none">
+            <div class="k">{g.eyebrow}</div>
+            <h3 style="font-size:19px;margin:4px 0 8px">{g.title}</h3>
+            <p style="font-size:14.5px">{g.lead}</p>
+            <p style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">{g.deadlines.slice(0, 3).map((d) => <span class="chip">{d.k}</span>)}</p>
+          </a>
+        ))}
+      </div>
+      <h2 style="font-size:22px;margin:36px 0 12px">절차 안내</h2>
+      <div class="grid2">
+        {reProcedureGuides.map((g) => (
+          <a class="card" href={guidePath(g)} style="text-decoration:none">
+            <div class="k">{g.eyebrow}</div>
+            <h3 style="font-size:17px;margin:4px 0 8px">{g.title.split(':')[0]}</h3>
+            <p style="font-size:14px">{g.desc.split('.')[0]}.</p>
+          </a>
+        ))}
+      </div>
+      <h2 style="font-size:22px;margin:36px 0 12px">업무 분야별 안내</h2>
+      <p style="display:flex;flex-wrap:wrap;gap:8px">
+        {reAreas.map((a) => <a class="btn btn-paper btn-sm" href={areaPath(a)}>{a.name}</a>)}
+      </p>
+    </div>
+  </section>
+  <CtaBand contact="/real-estate/contact" />
+</Base>

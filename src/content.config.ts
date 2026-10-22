@@ -44,6 +44,7 @@ const guides = defineCollection({
   schema: z.object({
     slug: z.string(),
     kind: z.enum(['guide', 'situation']),
+    site: z.enum(['in', 're']).default('in'), // in = 상속(/guide, /situations), re = 부동산(/real-estate/guide, /real-estate/situations)
     updated: z.string(),
     title: z.string(),
     seoTitle: z.string().optional(),

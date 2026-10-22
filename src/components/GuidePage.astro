@@ -1,28 +1,30 @@
 ---
-/* 안내 페이지 본문(절차 가이드·상황별 안내 공용). 분야 페이지(AreaPage)와 같은 틀을 쓴다. */
+/* 안내 페이지 본문(절차 가이드·상황별 안내 공용, 상속·부동산 두 사이트). 분야 페이지(AreaPage)와 같은 틀을 쓴다. */
 import Faq from './Faq.astro';
-import { areas, areaPath } from '../data/areas';
+import { allAreas, areaPath } from '../data/areas';
 import { getPublicColumns, related, postPath, fmtDate, tagPath } from '../data/posts';
 import { site } from '../data/site';
-import { guides, guidePath, hubOf, type Guide } from '../data/guides';
+import { guidesOf, guidePath, hubOf, siteMeta, type Guide } from '../data/guides';
 interface Props { g: Guide }
 const { g } = Astro.props;
+const gs = g.site ?? 'in';
+const m = siteMeta[gs];
 const hub = hubOf(g);
-const linked = areas.filter((a) => g.areas.includes(a.slug));
+const linked = allAreas.filter((a) => g.areas.includes(a.slug));
 const cols = await getPublicColumns();
 const posts = related(cols, g.tags, 6);
-const others = guides.filter((x) => x.slug !== g.slug);
+const others = guidesOf(gs).filter((x) => x.slug !== g.slug);
 const sameKind = others.filter((x) => x.kind === g.kind);
 const otherKind = others.filter((x) => x.kind !== g.kind);
 ---
 <section class="area-hero">
   <div class="wrap">
-    <div class="crumbs"><a href="/">홈</a><span>/</span><a href={hub.href}>{hub.label}</a><span>/</span><span>{g.title}</span></div>
+    <div class="crumbs"><a href={m.home}>홈</a><span>/</span><a href={hub.href}>{hub.label}</a><span>/</span><span>{g.title}</span></div>
     <div class="gu" style="margin-top:18px">{g.eyebrow} <small>{fmtDate(g.updated)} 기준</small></div>
     <h1 style="font-size:clamp(28px,4vw,44px)">{g.title}</h1>
     <p class="lead">{g.lead}</p>
     <div class="cta-row" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:26px">
-      <a class="btn btn-seal" href={`/contact?topic=${encodeURIComponent(linked[0]?.name ?? '상속')}`}>상담 신청</a>
+      <a class="btn btn-seal" href={`${m.contact}?topic=${encodeURIComponent(linked[0]?.name ?? m.field)}`}>상담 신청</a>
       <a class="btn btn-ghost" href={site.phoneHref}>변호사 직통 {site.phone}</a>
     </div>
   </div>
@@ -55,7 +57,7 @@ const otherKind = others.filter((x) => x.kind !== g.kind);
       <section>
         <h2>관련 업무 분야</h2>
         <div class="areas-grid">
-          {linked.map((a) => <a class="area-card" href={areaPath(a)}><span class="n">상속</span><h3>{a.name}</h3><p>{a.short}</p></a>)}
+          {linked.map((a) => <a class="area-card" href={areaPath(a)}><span class="n">{a.axis === 're' ? '부동산' : '상속'}</span><h3>{a.name}</h3><p>{a.short}</p></a>)}
         </div>
       </section>
     )}
@@ -76,7 +78,7 @@ const otherKind = others.filter((x) => x.kind !== g.kind);
       <div class="k">상담 예약</div>
       <div class="big">{site.phone}</div>
       <p>{site.hours} · 변호사 직통. {site.reply}.</p>
-      <a class="btn btn-seal" href="/contact">온라인 상담 신청</a>
+      <a class="btn btn-seal" href={m.contact}>온라인 상담 신청</a>
     </div>
     {sameKind.length > 0 && (
       <div class="card">

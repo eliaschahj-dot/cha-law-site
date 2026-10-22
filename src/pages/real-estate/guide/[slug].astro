@@ -1,0 +1,16 @@
+---
+/* 부동산 절차 안내: /real-estate/guide/{slug}. 원본 src/content/guides/*.json (site: re, kind: guide) */
+import Base from '../../../layouts/Base.astro';
+import GuidePage from '../../../components/GuidePage.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { reProcedureGuides, guideLd, type Guide } from '../../../data/guides';
+
+export function getStaticPaths() {
+  return reProcedureGuides.map((g) => ({ params: { slug: g.slug }, props: { g } }));
+}
+const { g } = Astro.props as { g: Guide };
+---
+<Base variant="re" title={g.seoTitle ?? g.title} rawTitle={!!g.seoTitle} description={g.desc} jsonLd={guideLd(g)} breadcrumbs={[{ name: '홈', href: '/real-estate' }, { name: '부동산 절차 안내', href: '/real-estate/guide' }, { name: g.title }]}>
+  <GuidePage g={g} />
+  <CtaBand contact="/real-estate/contact" />
+</Base>

@@ -1,0 +1,16 @@
+---
+/* 부동산 상황별 안내: /real-estate/situations/{slug}. 원본 src/content/guides/*.json (site: re, kind: situation) */
+import Base from '../../../layouts/Base.astro';
+import GuidePage from '../../../components/GuidePage.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { reSituationGuides, guideLd, type Guide } from '../../../data/guides';
+
+export function getStaticPaths() {
+  return reSituationGuides.map((g) => ({ params: { slug: g.slug }, props: { g } }));
+}
+const { g } = Astro.props as { g: Guide };
+---
+<Base variant="re" title={g.seoTitle ?? g.title} rawTitle={!!g.seoTitle} description={g.desc} jsonLd={guideLd(g)} breadcrumbs={[{ name: '홈', href: '/real-estate' }, { name: '이런 상황이라면', href: '/real-estate/situations' }, { name: g.title }]}>
+  <GuidePage g={g} />
+  <CtaBand contact="/real-estate/contact" />
+</Base>

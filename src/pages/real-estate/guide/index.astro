@@ -1,0 +1,48 @@
+---
+/* 부동산 절차 안내 허브: 기한이 있는 일부터. */
+import Base from '../../../layouts/Base.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { reProcedureGuides, reSituationGuides, guidePath } from '../../../data/guides';
+import { reAreas, areaPath } from '../../../data/areas';
+
+const ld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: '부동산 절차 안내', hasPart: reProcedureGuides.map((g) => ({ '@type': 'WebPage', name: g.title, url: new URL(guidePath(g), Astro.site).href })) };
+---
+<Base variant="re" title="부동산 절차 안내 | 전세보증금 반환 순서, 전세 계약 체크리스트, 명도소송 절차, 분양계약 해제" rawTitle description="전세보증금을 못 받았을 때 밟을 순서, 전세 계약 전 등기부·특약 체크리스트, 명도소송 절차와 기간, 분양계약 해제와 계약금 반환 절차. 건축을 공부한 부동산 전문 변호사 차형진이 절차마다 놓치기 쉬운 것을 정리했습니다." jsonLd={ld} breadcrumbs={[{ name: '홈', href: '/real-estate' }, { name: '부동산 절차 안내' }]}>
+  <section class="area-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="/real-estate">홈</a><span>/</span><span>부동산 절차 안내</span></div>
+      <div class="gu" style="margin-top:18px">절차 안내</div>
+      <h1>순서를 지키면, 돌려받을 길이 남습니다</h1>
+      <p class="lead">기한이 걸린 일부터 정리했습니다. 각 안내는 관련 업무 분야와 칼럼으로 이어집니다.</p>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap">
+      <div class="grid2">
+        {reProcedureGuides.map((g) => (
+          <a class="card" href={guidePath(g)} style="text-decoration:none">
+            <div class="k">{g.eyebrow}</div>
+            <h3 style="font-size:19px;margin:4px 0 8px">{g.title}</h3>
+            <p style="font-size:14.5px">{g.lead}</p>
+            <p style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">{g.deadlines.slice(0, 3).map((d) => <span class="chip">{d.k}</span>)}</p>
+          </a>
+        ))}
+      </div>
+      <h2 style="font-size:22px;margin:36px 0 12px">이런 상황이라면</h2>
+      <div class="grid2">
+        {reSituationGuides.map((g) => (
+          <a class="card" href={guidePath(g)} style="text-decoration:none">
+            <div class="k">{g.eyebrow}</div>
+            <h3 style="font-size:17px;margin:4px 0 8px">{g.title.split(':')[0]}</h3>
+            <p style="font-size:14px">{g.desc.split('.')[0]}.</p>
+          </a>
+        ))}
+      </div>
+      <h2 style="font-size:22px;margin:36px 0 12px">업무 분야별 안내</h2>
+      <p style="display:flex;flex-wrap:wrap;gap:8px">
+        {reAreas.map((a) => <a class="btn btn-paper btn-sm" href={areaPath(a)}>{a.name}</a>)}
+      </p>
+    </div>
+  </section>
+  <CtaBand contact="/real-estate/contact" />
+</Base>

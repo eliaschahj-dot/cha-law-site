@@ -4,7 +4,7 @@ import Base from '../../../layouts/Base.astro';
 import CtaBand from '../../../components/CtaBand.astro';
 import { getPublicColumns, tagPath } from '../../../data/posts';
 import { tagSeo, TAG_ORDER } from '../../../data/seo';
-import { areas, areaPath } from '../../../data/areas';
+import { allAreas } from '../../../data/areas';
 
 const cols = await getPublicColumns();
 const counts = new Map<string, number>();
@@ -12,6 +12,7 @@ for (const p of cols) for (const t of p.tags) counts.set(t, (counts.get(t) ?? 0)
 const ordered = [...TAG_ORDER.filter((t) => counts.has(t)), ...[...counts.keys()].filter((t) => !TAG_ORDER.includes(t)).sort()];
 const main = ordered.filter((t) => tagSeo[t]?.group === '상속');
 const rest = ordered.filter((t) => tagSeo[t]?.group !== '상속');
+const areas = allAreas;
 const ld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: '상속 칼럼 주제별 모음', hasPart: main.map((t) => ({ '@type': 'WebPage', name: tagSeo[t]?.title ?? t, url: new URL(tagPath(t), Astro.site).href })) };
 ---
 <Base title="상속 칼럼 주제별 모음 | 유류분·상속포기·상속재산분할·유언·성년후견" rawTitle description={`유류분, 상속재산분할, 상속포기·한정승인, 유언, 성년후견, 상속세, 상속등기까지 주제별로 모은 칼럼 ${cols.length}편. 상속 전문 변호사 차형진.`} jsonLd={ld} breadcrumbs={[{ name: '홈', href: '/' }, { name: '칼럼', href: '/columns' }, { name: '주제별 모음' }]}>
@@ -38,10 +39,17 @@ const ld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 
       </div>
       {rest.length > 0 && (
         <>
-          <h2 style="font-size:20px;margin:34px 0 10px">상속 부동산을 다룰 때 함께 보는 글</h2>
-          <p style="display:flex;flex-wrap:wrap;gap:8px">
-            {rest.map((t) => <a class="btn btn-paper btn-sm" href={tagPath(t)}>{t} <span style="opacity:.6">{counts.get(t)}</span></a>)}
-          </p>
+          <h2 style="font-size:22px;margin:34px 0 14px">부동산 <small style="font-size:14px;color:var(--ink-3);font-weight:600">— <a href="/real-estate">부동산 전문 홈페이지</a></small></h2>
+          <div class="grid3">
+            {rest.map((t) => { const s = tagSeo[t]; const linked = areas.filter((a) => a.tags.includes(t)); return (
+              <a class="card" href={tagPath(t)} style="text-decoration:none">
+                <div class="k">{t} · {counts.get(t)}편</div>
+                <h3 style="font-size:17px;margin:4px 0 6px">{s?.title ?? `${t} 칼럼 모음`}</h3>
+                <p style="font-size:14px">{s?.desc}</p>
+                {linked.length > 0 && <p style="color:var(--accent);font-weight:600;font-size:13px">관련 분야: {linked.map((a) => a.name).join(' · ')}</p>}
+              </a>
+            ); })}
+          </div>
         </>
       )}
       <p class="src" style="margin-top:26px">분야별 안내는 <a href="/inheritance">상속 업무 분야</a>에서, 상황별 안내는 <a href="/situations">이런 상황이라면</a>에서 보실 수 있습니다.</p>

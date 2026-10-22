@@ -1,0 +1,53 @@
+---
+/* 부동산 FAQ 모음: 일반·분야별·비용. 검색 노출용(FAQPage 구조화 데이터). */
+import Base from '../../layouts/Base.astro';
+import Faq from '../../components/Faq.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { reAreas, areaPath } from '../../data/areas';
+import { reFaq, reFeeFaq } from '../../data/realestate';
+
+const groups = [
+  { id: 'general', name: '상담 · 일반', items: reFaq },
+  ...reAreas.map((a) => ({ id: a.slug, name: a.name, items: a.faq, href: areaPath(a) })),
+  { id: 'fees', name: '비용', items: reFeeFaq, href: '/real-estate/fees' },
+];
+const all = groups.flatMap((g) => g.items);
+const ld = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: all.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+---
+<Base variant="re" title="부동산 자주 묻는 질문 | 전세보증금·계약금·명도·분양·재개발·공사대금" rawTitle description={`전세보증금을 못 받을 때 이사 가도 되는지, 가계약금이 계약금인지, 차임을 밀린 세입자를 언제 내보낼 수 있는지, 분양 광고가 달랐을 때, 현금청산 금액, 하자보수 기간까지 상담에서 가장 많이 받는 질문 ${all.length}개. 부동산 전문 변호사 차형진.`} jsonLd={ld} breadcrumbs={[{ name: '홈', href: '/real-estate' }, { name: '자주 묻는 질문' }]}>
+  <section class="area-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="/real-estate">홈</a><span>/</span><span>자주 묻는 질문</span></div>
+      <div class="gu" style="margin-top:18px">FAQ <small>{all.length}개</small></div>
+      <h1>부동산, 상담에서 가장 많이 받는 질문</h1>
+      <p class="lead">기한이 걸린 질문부터 보세요. 임대차 갱신 거절 통지는 만료 6개월 전부터, 전세보증금은 만료 즉시 임차권등기, 매도청구 소장은 답변 기한 안에. 여기 없는 질문은 상담 신청서에 그대로 적어 주시면 변호사가 직접 답합니다.</p>
+      <div class="docs" style="margin-top:22px">
+        {groups.map((g) => <li><a href={`#${g.id}`} style="text-decoration:none">{g.name}</a></li>)}
+      </div>
+    </div>
+  </section>
+  <div class="wrap area-body in">
+    <div class="main">
+      {groups.map((g) => (
+        <section id={g.id}>
+          <h2>{g.name}</h2>
+          <Faq items={g.items} />
+          {g.href && <p style="margin-top:14px"><a href={g.href} style="font-weight:700">{g.name} 자세히 보기 →</a></p>}
+        </section>
+      ))}
+    </div>
+    <aside class="side">
+      <div class="card">
+        <div class="k">상담 예약</div>
+        <p>여기 없는 질문은 신청서에 그대로 적어 주세요. 24시간 안에 변호사가 직접 연락드립니다.</p>
+        <a class="btn btn-seal" href="/real-estate/contact">온라인 상담 신청</a>
+      </div>
+      <div class="card">
+        <div class="k">계약 전에 읽을 글</div>
+        <p>등기부 읽는 법, 특약 문구, 계약 전 확인할 것을 모아 두었습니다.</p>
+        <a href="/columns/topic/tips" style="font-weight:700">등기부·계약 체크리스트 →</a>
+      </div>
+    </aside>
+  </div>
+  <CtaBand contact="/real-estate/contact" />
+</Base>

@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import '../styles/theme.css';
-import { site, nav, footerNav } from '../data/site';
+import { site, variants, variantOfPath, type Variant } from '../data/site';
 import Mark from '../components/Mark.astro';
 
 interface Props {
@@ -10,15 +10,18 @@ interface Props {
   jsonLd?: object | object[];
   breadcrumbs?: { name: string; href?: string }[];
   rawTitle?: boolean;
+  variant?: Variant; // 'in' 상속(기본) | 're' 부동산 하위 사이트. 생략하면 주소로 판단한다.
 }
-const { title, description = site.description, jsonLd, breadcrumbs, rawTitle } = Astro.props;
 const path = Astro.url.pathname;
+const v = variants[Astro.props.variant ?? variantOfPath(path)];
+const { nav, footerNav } = v;
+const { title, description = v.description, jsonLd, breadcrumbs, rawTitle } = Astro.props;
 const origin = Astro.site?.href ?? site.url; // astro.config의 site (SITE_URL 환경변수) 우선
 const canonical = new URL(path, origin).href;
-const fullTitle = rawTitle ? title : title === site.name ? `${site.name} | ${site.tagline}` : `${title} | ${site.name}`;
+const fullTitle = rawTitle ? title : title === site.name ? `${site.name} | ${v.tagline}` : `${title} | ${site.name}`;
 const naverVerify = site.naverVerify || import.meta.env.PUBLIC_NAVER_SITE_VERIFICATION;
 const googleVerify = site.googleVerify || import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
-const ogImage = new URL('/og.png', origin).href;
+const ogImage = new URL(v.og, origin).href;
 
 const orgLd = {
   '@context': 'https://schema.org',
@@ -31,13 +34,14 @@ const orgLd = {
   email: site.email,
   address: { '@type': 'PostalAddress', streetAddress: '테헤란로103길 10 길훈빌딩 2층', addressLocality: '강남구', addressRegion: '서울', addressCountry: 'KR' },
   areaServed: 'KR',
-  knowsAbout: ['상속재산분할', '기여분', '유류분', '상속포기', '한정승인', '성년후견', '유언', '상속등기', '상속세'],
+  knowsAbout: v.knowsAbout,
   award: '서울특별시장 표창(2023)',
   openingHours: ['Mo-Fr 10:00-18:00', 'Sa 10:00-14:00'],
 };
-const siteLd = { '@context': 'https://schema.org', '@type': 'WebSite', name: `${site.name} | ${site.tagline}`, url: origin, inLanguage: 'ko' };
+const siteLd = { '@context': 'https://schema.org', '@type': 'WebSite', name: `${site.name} | ${v.tagline}`, url: new URL(v.home, origin).href, inLanguage: 'ko' };
+const isHome = path === v.home || path === v.home + '/';
 const crumbLd = breadcrumbs && breadcrumbs.length > 0 ? { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumbs.map((b, i) => ({ '@type': 'ListItem', position: i + 1, name: b.name, ...(b.href ? { item: new URL(b.href, origin).href } : {}) })) } : null;
-const ldItems = [orgLd, ...(path === '/' ? [siteLd] : []), ...(crumbLd ? [crumbLd] : []), ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
+const ldItems = [orgLd, ...(isHome ? [siteLd] : []), ...(crumbLd ? [crumbLd] : []), ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
 const isCurrent = (href: string) => path === href || (href !== '/' && path.startsWith(href + '/')) || path === href + '/';
 ---
 <!doctype html>
@@ -98,21 +102,21 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
 <body>
   <nav class="nav" aria-label="주요 메뉴">
     <div class="navin">
-      <a class="brand" href="/" aria-label={`${site.name} 홈`}>
+      <a class="brand" href={v.home} aria-label={`${site.name} ${v.field} 홈`}>
         <Mark />
         <b>차형진<span>변호사</span></b>
-        <i>상속 · {site.firm}</i>
+        <i>{v.brandSub} · {site.firm}</i>
       </a>
       <div class="menu">
         {nav.map((n) => <a href={n.href} class={isCurrent(n.href) ? 'cur' : undefined} aria-current={isCurrent(n.href) ? 'page' : undefined}>{n.label}</a>)}
-        <a class="on" href="/contact">상담 예약</a>
+        <a class="on" href={v.contact}>상담 예약</a>
       </div>
       <a class="navtel" href={site.phoneHref}>{site.phone}</a>
     </div>
   </nav>
   <div class="mobcta">
     <a class="m1" href={site.phoneHref}>변호사 직통</a>
-    <a class="m2" href="/contact">상담 예약</a>
+    <a class="m2" href={v.contact}>상담 예약</a>
   </div>
 
   <main id="top">
@@ -124,8 +128,9 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
       <div class="fbar"></div>
       <div class="fmenu">
         {nav.map((n) => <a href={n.href}>{n.label}</a>)}
-        <a href="/contact">상담 예약</a>
+        <a href={v.contact}>상담 예약</a>
         {footerNav.map((n) => <a href={n.href}>{n.label}</a>)}
+        <a href={v.other.href} style="font-weight:800">{v.other.label} →</a>
         <a href={site.blog} target="_blank" rel="noopener">네이버 블로그</a>
         <a href="https://beyullaw.com" target="_blank" rel="noopener">법무법인 베율</a>
         <a href="/privacy">개인정보처리방침</a>
@@ -137,7 +142,7 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
         {site.hours} · {site.closed}
       </div>
       <div class="disc">
-        광고 주체: 변호사 차형진 ({site.firm} · {site.bar}) · 이 페이지의 내용은 상속에 관한 일반적인 정보이며, 개별 사건에 대한 법률 자문이 아닙니다. 사건마다 사실관계와 증거, 상속인 사이의 관계에 따라 판단과 결과가 달라질 수 있으며 특정한 결과를 약속하거나 보장하지 않습니다. 기한과 비율은 민법 등 현행 법령을 기준으로 정리했습니다. 상담 내용은 변호사법에 따라 비밀이 유지됩니다. © 2026 차형진 변호사
+        광고 주체: 변호사 차형진 ({site.firm} · {site.bar}) · 이 페이지의 내용은 {v.field}에 관한 일반적인 정보이며, 개별 사건에 대한 법률 자문이 아닙니다. 사건마다 사실관계와 증거, 당사자 사이의 관계에 따라 판단과 결과가 달라질 수 있으며 특정한 결과를 약속하거나 보장하지 않습니다. 기한과 비율은 민법·주택임대차보호법 등 현행 법령을 기준으로 정리했습니다. 상담 내용은 변호사법에 따라 비밀이 유지됩니다. © 2026 차형진 변호사
       </div>
     </div>
   </footer>

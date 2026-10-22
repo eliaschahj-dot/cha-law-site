@@ -1,0 +1,359 @@
+---
+/* 부동산 전문 홈(2026.10.22) — 상속 홈(src/pages/index.astro, 마케터 시안)과 같은 구성으로 부동산 문안을 입혔다.
+   구성: 히어로 → 자격 띠 → 다크 인용 → 돌려받는 방법(6) → 맡는 일(계약 전/뒤) → 칼럼 3 → 선언+기사 → 현장+편지 → 비용 → FAQ → 상담 신청서 */
+import Base from '../../layouts/Base.astro';
+import ConsultFormRe from '../../components/ConsultFormRe.astro';
+import { site } from '../../data/site';
+import { reFaq } from '../../data/realestate';
+import Icon from '../../components/Icon.astro';
+import Mark from '../../components/Mark.astro';
+import '../../styles/marketer.css';
+
+const creds: [string, string, string, string][] = [
+  ['표창', '서울특별시장 표창', '2023.12', 'award'],
+  ['공익', '서울시 공익변호사 · 마을변호사', '2020년부터', 'public'],
+  ['전공', '건축학 · 법학 복수전공', '도면과 등기부를 함께 읽습니다', 'education'],
+  ['소속', '법무법인 베율 부대표', '세무사·회계사와 한 팀', 'firm'],
+  ['예방', '전세 계약 검토 서비스 운영', '계약 전에 위험을 거릅니다', 'shield'],
+  ['기록', '부동산 칼럼 280편 이상', '직접 쓰고 직접 답합니다', 'pen'],
+];
+
+const cases = [
+  { icon: 'home-key', cat: '회수 · 전세보증금', stamp: '보증금을 돌려받습니다', stampSub: '만기 뒤에도 안 줄 때', k: '세입자', chip: '임차권등기 · 반환소송', h: '만기가 지났는데 "다음 세입자 오면 주겠다"고만 한다면', from: '독촉 문자만<br />보내며 기다리기', to: '임차권등기명령 → 지급명령·소송<br />→ 가압류·경매 배당까지', desc: '보증금 반환은 순서가 결과를 바꿉니다. 이사를 가야 한다면 임차권등기명령으로 대항력과 우선변제권을 먼저 지키고, 내용증명·지급명령·반환소송과 가압류로 압박한 뒤, 끝까지 주지 않으면 경매와 배당으로 받습니다. 전세사기가 의심되면 특별법 피해자 결정 신청을 함께 봅니다.' },
+  { icon: 'scale', cat: '회수 · 계약금', stamp: '계약금을 지킵니다', stampSub: '해제와 이행 사이에서', k: '매수인 · 매도인', chip: '배액배상 · 가처분', h: '상대가 마음을 바꿔 계약을 깨려 한다면', from: '"두 배 줄 테니<br />없던 일로 하자"', to: '이행 착수 여부로<br />해제 차단, 처분금지가처분', desc: '계약금만 오간 단계에서는 상대가 배액을 물고 해제할 수 있지만, 중도금을 치르는 등 이행에 들어가면 더는 그럴 수 없습니다. 가계약금도 목적물과 대금이 특정됐다면 계약으로 봅니다. 지금이 어느 단계인지를 먼저 확정하고, 필요하면 가처분으로 처분을 막습니다.' },
+  { icon: 'search-doc', cat: '회수 · 분양', stamp: '광고물이 증거입니다', stampSub: '말과 다른 아파트·상가', k: '수분양자', chip: '해제 · 손해배상', h: '모델하우스와 다른 집, 확정수익 약속이 사라진 상가라면', from: '"원래 다 그렇다"는<br />분양사의 답변', to: '광고물·녹취·계약서로<br />해제·취소·손해배상', desc: '분양사는 이미 답변을 준비해 두었습니다. 카탈로그와 안내 문자, 상담 녹취를 먼저 확보하고, 계약서의 면책 문구와 광고의 차이를 비교해 해제·취소가 가능한지, 손해배상으로 갈지 정합니다. 중도금 대출 거절로 계약을 유지할 수 없을 때도 위약금을 다툴 여지가 있습니다.' },
+  { no: true, icon: 'shield', cat: '방어 · 명도', stamp: '집을 돌려받습니다', stampSub: '나가지 않는 세입자', k: '임대인 · 건물주', chip: '가처분 · 명도소송', h: '차임을 밀리면서 나가지 않는다면', from: '직접 짐을 빼려다<br />오히려 형사 문제', to: '점유이전금지가처분 →<br />명도소송 → 강제집행', desc: '세입자가 버틸 때 임대인이 직접 문을 잠그거나 짐을 옮기면 거꾸로 책임을 지게 됩니다. 점유이전금지가처분을 먼저 걸어 상대가 바뀌는 것을 막고, 차임 연체·계약 종료를 근거로 명도소송과 연체 차임 청구를 함께 진행해 집행까지 끝냅니다.' },
+  { no: true, icon: 'coins-home', cat: '방어 · 재개발', stamp: '제값을 받고 나갑니다', stampSub: '매도청구·현금청산', k: '조합원 · 현금청산자', chip: '감정평가 · 매도청구 대응', h: '조합에서 매도청구 소장이 왔다면', from: '조합이 제시한<br />감정가에 서명', to: '법원 감정으로 시가 재평가<br />답변과 협상', desc: '분양신청을 하지 않았거나 하지 못해 현금청산 대상이 됐다면, 조합이 제시하는 금액이 전부가 아닙니다. 매도청구 소송에서는 법원 감정으로 시가를 다시 정하고, 세입자라면 주거이전비·영업손실 보상을 따로 봅니다. 총회 결의에 하자가 있으면 사업 자체를 다툴 수도 있습니다.' },
+  { icon: 'calc', cat: '회수 · 공사대금·하자', stamp: '도면을 직접 읽습니다', stampSub: '건축을 공부한 변호사', k: '건축주 · 시공사', chip: '기성고 · 하자 감정', h: '다 지었는데 돈을 안 주거나, 다 받았는데 하자가 있다면', from: '"그건 추가 공사가<br />아니었다"는 다툼', to: '도면·시방서·기성 내역으로<br />금액 특정, 유치권·가압류', desc: '공사대금은 얼마나 했는지(기성고)와 무엇이 추가였는지를 증명하는 싸움이고, 하자는 어디까지가 하자인지를 감정으로 가리는 싸움입니다. 건축을 공부한 변호사가 도면과 견적서를 직접 읽어 감정 항목을 짜고, 유치권·가압류로 대금을 먼저 확보합니다.' },
+];
+
+// 맡는 일: 계약 전(검토) / 계약 뒤(회수). page = 상세 페이지, topic = 상담 신청서 미리 선택
+const pre = [
+  { id: 'k-lease-check', icon: 'home-key', b: '전세 계약 검토', d: '등기부의 근저당·선순위, 집주인의 세금 체납, 특약 한 줄을 계약 전에 거릅니다. 전세 계약 검토 서비스를 운영하며 봐 온 문제들입니다.', li: ['전세 계약 전에 등기부·특약 확인이 필요할 때', '보증보험 가입이 안 된다고 할 때'], chip: ['전입신고·확정일자', '계약 당일'], page: '/real-estate/deposit', topic: '전세보증금', name: '전세 계약 검토' },
+  { id: 'k-sale-check', icon: 'pen', b: '매매 계약서 검토', d: '가계약금, 계약금 비율, 잔금일과 명도 조건, 특약 문구가 뒤의 분쟁을 정합니다. 보내기 전에 한 번 봅니다.', li: ['가계약금을 보내기 전에', '잔금 전에 상대가 이상한 요구를 할 때'], chip: ['가계약금', '계약 성립 여부'], page: '/real-estate/sale', topic: '매매', name: '매매 계약서 검토' },
+  { id: 'k-presale-check', icon: 'search-doc', b: '분양 계약 검토', d: '분양 광고와 계약서의 차이, 중도금 대출 조건, 전매 제한과 위약금 조항을 계약 전에 짚습니다.', li: ['상가 "확정수익" 설명을 들었을 때', '중도금 대출이 불확실할 때'], chip: ['광고물 보관', '계약 전부터'], page: '/real-estate/presale', topic: '분양', name: '분양 계약 검토' },
+  { id: 'k-shop-lease', icon: 'firm', b: '상가 임대차 계약', d: '권리금, 갱신요구권, 차임 인상 상한, 원상회복 범위를 계약서에 미리 정해 둡니다.', li: ['상가를 얻거나 내줄 때', '권리금을 주고 들어갈 때'], chip: ['상가 갱신요구권', '10년'], page: '/real-estate/lease', topic: '임대차', name: '상가 임대차 계약' },
+];
+const post = [
+  { id: 'k-deposit', icon: 'home-key', b: '전세보증금 반환', d: '임차권등기명령부터 반환소송, 가압류, 경매 배당, 전세사기 특별법 피해자 지원까지 순서대로 갑니다.', li: ['만기가 지났는데 보증금을 못 받을 때', '집이 경매에 넘어갔을 때'], chip: ['임차권등기명령', '만료 즉시'], page: '/real-estate/deposit', topic: '전세보증금', name: '전세보증금 반환' },
+  { id: 'k-eviction', icon: 'shield', b: '명도 · 차임', d: '점유이전금지가처분을 먼저 걸고 명도소송과 연체 차임 청구를 함께 진행해 집행까지 끝냅니다.', li: ['세입자가 차임을 밀리며 나가지 않을 때', '갱신 거절을 두고 다툴 때'], chip: ['갱신 거절 통지', '만료 6~2개월 전'], page: '/real-estate/lease', topic: '임대차', name: '명도 · 차임' },
+  { id: 'k-presale', icon: 'search-doc', b: '분양 해제 · 손해배상', d: '허위·과장 광고, 중도금 대출 거절, 입주 지연. 계약서와 광고물을 비교해 해제·취소·손해배상 중 길을 정합니다.', li: ['광고와 다른 집·상가를 받았을 때', '중도금 대출이 막혀 계약을 유지할 수 없을 때'], chip: ['분양 광고물', '증거로 보관'], page: '/real-estate/presale', topic: '분양', name: '분양 해제 · 손해배상' },
+  { id: 'k-redevelopment', icon: 'coins-home', b: '재개발 · 현금청산', d: '매도청구 소장 대응, 현금청산 금액 감정, 총회 결의 효력, 세입자 보상까지 어느 자리에 서 있는지에 맞춰 갑니다.', li: ['매도청구 소장을 받았을 때', '현금청산 금액이 낮다고 느낄 때'], chip: ['관리처분계획 취소소송', '90일'], page: '/real-estate/redevelopment', topic: '재개발', name: '재개발 · 현금청산' },
+  { id: 'k-construction', icon: 'calc', b: '공사대금 · 하자', d: '기성고 감정과 추가 공사 입증, 하자 감정 항목 설계, 유치권·가압류로 대금 먼저 확보.', li: ['공사를 마쳤는데 대금을 안 줄 때', '신축 건물에 누수·균열이 있을 때'], chip: ['하자담보책임', '기간 확인'], page: '/real-estate/construction', topic: '공사', name: '공사대금 · 하자' },
+];
+
+const reads = [
+  { n: '전세보증금', h: '집주인이 돈이 없다고 할 때 밟아야 할 순서', p: '임차권등기명령, 내용증명, 지급명령, 반환소송, 가압류, 경매 배당. 어느 단계에서 무엇을 먼저 해야 하는지 순서대로 정리했습니다.', href: '/columns/224388145362' },
+  { n: '가계약금', h: '가계약금 돌려받는 방법 3가지만 아시면 됩니다', p: '가계약금이라는 이름이 아니라 문자와 송금 내역의 내용이 결과를 정합니다. 돌려받는 경우와 못 받는 경우를 갈랐습니다.', href: '/columns/223952565294' },
+  { n: '명도', h: '나가지 않는 임차인을 내보내는 방법 총정리', p: '직접 내보내면 안 되는 이유, 점유이전금지가처분을 먼저 거는 이유, 명도소송 기간과 비용, 강제집행까지의 순서.', href: '/columns/224410870172' },
+];
+
+const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: reFaq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+
+const shots = [
+  ['/img/field-06.webp', '부스에서 계약서 상담 중인 차형진 변호사'],
+  ['/img/field-02.webp', '공익 법률 강연 현장'],
+  ['/img/field-04.webp', '소셜벤처 박람회 부스'],
+  ['/img/field-01.webp', '재산 보호 강연'],
+  ['/img/field-05.webp', '지역 주민 대상 법률 강연'],
+  ['/img/field-03.webp', '강연에 모인 시민들'],
+  ['/img/field-08.webp', '소셜밸류커넥트 부스 현장'],
+  ['/img/field-07.webp', '강연장 전경'],
+];
+---
+<Base variant="re" title="부동산 변호사 차형진 | 전세금도 계약금도, 돌려받는 일만큼은 자신 있습니다" rawTitle description="전세보증금, 계약금, 분양대금, 공사대금을 돌려받고 집을 돌려받는 일. 건축학과 법학을 함께 공부한 차형진 변호사(법무법인 베율 부대표)가 등기부·계약서·도면을 직접 읽고, 상담도 서면도 재판도 직접 합니다. 전세 계약 검토 서비스 운영." jsonLd={faqLd}>
+<div class="mk">
+
+  <!-- 1 HERO -->
+  <header class="hero" id="hero">
+    <svg class="ornament" viewBox="0 0 640 520" aria-hidden="true"><g class="ink"><circle cx="470" cy="170" r="150"/><circle cx="470" cy="170" r="210"/><circle cx="470" cy="170" r="270"/></g><path d="M110 500V300h90v200"/><path d="M200 500V220h120v280"/><path d="M320 500V340h80v160"/><path d="M400 500V260h110v240"/><path d="M230 250h60M230 290h60M230 330h60M230 370h60M430 290h50M430 330h50M430 370h50M430 410h50"/><path d="M140 340h30M140 380h30M140 420h30"/><path d="M90 500h470"/><path d="M548 462a18 18 0 1 0 0-36a18 18 0 0 0 0 36zM566 444h50l8 10-10 10-8-8-8 8-8-8-8 8"/></svg>
+    <div class="wm"><Mark /></div>
+    <div class="wrap">
+      <div class="herogrid">
+        <div>
+          <div class="badge">법무법인 베율 부대표 · 부동산 <b>차형진 변호사</b></div>
+          <h1><span class="ln">전세금도 계약금도, 돌려받는</span><span class="ln amt">일만큼은 자신 있습니다.</span></h1>
+          <div class="hero-sub">등기부와 계약서, 도면까지 <b>변호사가 직접 읽습니다.</b> 건축학과 법학을 함께 공부한 변호사가 상담도, 서면도, 재판도 <b>직접</b> 합니다.</div>
+          <div class="cta-row">
+            <a class="btn btn-p" href="#consult">1:1 부동산 상담 신청</a>
+            <a class="btn btn-s" href="#judge">돌려받는 방법 보기</a>
+          </div>
+          <div class="hero-note">상담 내용은 사무실을 거치지 않고 변호사에게 바로 전달됩니다. 24시간 안에 직접 연락드립니다.</div>
+        </div>
+        <figure class="hero-photo">
+          <img src="/img/hero-lecture.webp" alt="재산 보호를 강연하는 차형진 변호사" width="1100" height="1375" fetchpriority="high" />
+          <figcaption><b>차형진 변호사</b>재산 보호 강연 중</figcaption>
+        </figure>
+      </div>
+    </div>
+    <div class="creds">
+      <div class="wrap">
+        <div class="credrow">
+          {creds.map(([k, v, s, ic]) => <div class="cred"><Icon name={ic} /><small>{k}</small><b>{k === '기록' ? <>부동산 칼럼 <i data-count="280">280</i>편 이상</> : v}</b><span>{s}</span></div>)}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2 다크 인용 -->
+  <section class="film">
+    <div class="wrap">
+      <div class="filmgrid">
+        <div>
+          <div class="filmbox"><img src="/img/consult-citizen.webp" alt="공익 법률상담에서 시민과 이야기하는 차형진 변호사" width="526" height="433" loading="lazy" /></div>
+          <div class="filmsrc">공익 법률상담 현장에서</div>
+        </div>
+        <div>
+          <div class="filmq"><span class="mkq">“</span>만기가 한 달이나 지났는데,<br /><em>다음 세입자 들어오면 주겠다고만 합니다.</em><span class="mkq">”</span></div>
+          <div class="filmwho">상담에서 가장 많이 듣는 이야기입니다.</div>
+          <div class="filmcta">
+            <p>기다리는 동안 보증금은 그대로지만, 이사를 가는 순간 <b>대항력과 우선변제권</b>이 달라집니다.</p>
+            <p>임차권등기명령부터 가압류와 경매 배당까지, 어느 단계에서 무엇을 먼저 해야 하는지 순서를 지킬 때 <em>돌려받을 수 있는 길</em>이 남습니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 돌려받는 방법 -->
+  <section id="judge">
+    <div class="wrap">
+      <div class="shead">
+        <div class="eyebrow">돌려받는 방법</div>
+        <h2>계약서 한 줄, 등기부 한 칸이<br /><em>결과를 가릅니다.</em></h2>
+        <p class="sub">같은 분쟁이라도 어느 단계에서 무엇을 먼저 하느냐에 따라 돌려받는 금액이 달라집니다. <strong>기다리다 때를 놓치는 일만은 막습니다.</strong></p>
+      </div>
+      <div class="cases">
+        {cases.map((c) => (
+          <article class={`case${c.no ? ' no' : ''}`}>
+            <div class="casetop">
+              <span class="cat">{c.cat}</span>
+              <div class="art"><Icon name={c.icon} /></div>
+              <div class={`stamp2${c.no ? ' no' : ''}`}><b>{c.stamp}</b><span>{c.stampSub}</span></div>
+            </div>
+            <div class="casebody">
+              <div class="cmeta"><span class="k">{c.k}</span><span class="chip">{c.chip}</span></div>
+              <h3>{c.h}</h3>
+              <div class="ba"><div class="from" set:html={c.from}></div><div class="ar">→</div><div class="to" set:html={c.to}></div></div>
+              <p class="desc">{c.desc}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div class="secfoot"><a class="btn btn-o" href="#consult">내 상황에서 돌려받을 수 있는지 묻기 →</a></div>
+      <div class="tnote">계약 내용과 증거, 상대방의 재산 상태에 따라 결과는 사건마다 달라집니다. 의뢰인의 명예와 비밀을 지키기 위해 판결문과 개별 사건 결과는 이곳에 싣지 않습니다.</div>
+    </div>
+  </section>
+
+  <!-- 4 맡는 일 -->
+  <section class="tint" id="fields">
+    <div class="wrap">
+      <div class="shead">
+        <div class="eyebrow">맡는 일</div>
+        <h2 style="font-size:clamp(34px,5.6vw,62px)">부동산 문제는 두 번 찾아옵니다.</h2>
+        <div class="h2sub">계약하기 전에는 검토가,<br />계약한 뒤에는 회수가 문제입니다.</div>
+        <p class="sub">아직 도장을 찍기 전인지, 이미 계약이 끝나 분쟁이 시작됐는지에 따라 해야 할 일이 완전히 다릅니다. <strong>지금 계신 쪽부터 확인해 보세요.</strong></p>
+      </div>
+      <div class="kgroups">
+        <div class="kgroup pre">
+          <div class="khead">
+            <span class="ktag">계약 전 · 검토</span>
+            <h3>아직 도장을 찍기 전이라면</h3>
+            <p>등기부 한 칸, 특약 한 줄을 미리 보는 것이 몇 년짜리 소송을 막습니다.</p>
+          </div>
+          <div class="klist">
+            {pre.map((k) => (
+              <div class="kitem" id={k.id}>
+                <button class="kbtn" type="button" aria-expanded="false"><span class="kico"><Icon name={k.icon} /></span><span class="kt"><b>{k.b}</b><span>{k.d}</span></span><span class="kgo" aria-hidden="true">+</span></button>
+                <div class="kacc">
+                  <ul>{k.li.map((x) => <li>{x}</li>)}</ul>
+                  <div class="kchip">{k.chip[0]} <b>{k.chip[1]}</b></div>
+                  <div class="kact"><a class="klink" href={`/real-estate/contact?side=모름&topic=${encodeURIComponent(k.topic)}`}>{k.name} 상담 신청 →</a><a class="kcon" href={k.page}>자세히 보기</a></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div class="kgroup post">
+          <div class="khead">
+            <span class="ktag">계약 뒤 · 회수</span>
+            <h3>이미 분쟁이 시작됐다면</h3>
+            <p>보증금·계약금·분양대금·공사대금을 돌려받고, 집을 돌려받는 일을 끝까지 맡습니다.</p>
+          </div>
+          <div class="klist">
+            {post.map((k) => (
+              <div class="kitem" id={k.id}>
+                <button class="kbtn" type="button" aria-expanded="false"><span class="kico"><Icon name={k.icon} /></span><span class="kt"><b>{k.b}</b><span>{k.d}</span></span><span class="kgo" aria-hidden="true">+</span></button>
+                <div class="kacc">
+                  <ul>{k.li.map((x) => <li>{x}</li>)}</ul>
+                  <div class="kchip">{k.chip[0]} <b>{k.chip[1]}</b></div>
+                  <div class="kact"><a class="klink" href={`/real-estate/contact?topic=${encodeURIComponent(k.topic)}`}>{k.name} 상담 신청 →</a><a class="kcon" href={k.page}>자세히 보기</a></div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div class="kfoot dl">
+            <div><small>임차권등기명령</small><b>만료 즉시</b></div>
+            <div><small>갱신 거절 통지</small><b>6~2개월 전</b></div>
+            <div><small>관리처분계획 취소소송</small><b>90일</b></div>
+            <p>기한이 있는 일부터 먼저 확인합니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 칼럼 -->
+  <section id="reads">
+    <div class="wrap">
+      <div class="shead mid">
+        <div class="eyebrow">먼저 읽어보세요</div>
+        <h2>섣불리 움직이지 마세요.<br /><em>글 세 개만 먼저 읽어보세요.</em></h2>
+        <p class="sub">같은 질문에 답해 온 부동산 칼럼이 280편을 넘었습니다. 상담 전에 먼저 읽어보시면 <strong>내 상황에서 무엇을 먼저 해야 하는지</strong> 보이실 겁니다.</p>
+      </div>
+      <div class="reads">
+        {reads.map((r) => <a class="read" href={r.href}><div class="n">{r.n}</div><h3>{r.h}</h3><p>{r.p}</p><div class="go">읽어보기 →</div></a>)}
+      </div>
+      <div class="secfoot"><a class="btn btn-o" href="/real-estate/columns">부동산 칼럼 전체 보기 →</a></div>
+    </div>
+  </section>
+
+  <!-- 6 선언 + 기사 -->
+  <section class="tint" id="why">
+    <div class="wrap">
+      <div class="declgrid">
+        <div>
+          <div class="eyebrow">변호사 선택</div>
+          <h2 style="margin-bottom:26px">등기부만 떼어 주는<br />부동산 변호사,<br /><em>정말 많습니다.</em></h2>
+          <p>등기부를 출력해 근저당이 있다고 알려 주고, 계약서 서식을 채워 주는 일. 그건 누구나 합니다.</p>
+          <p>갑구와 을구의 순서를 끝까지 읽어 내 보증금이 몇 번째인지 계산하고, 도면과 시방서를 펼쳐 어디까지가 하자인지 가르고, 분양 광고의 문장 하나를 계약서와 맞춰 보는 일. <strong>돌려받을 수 있는 돈을 단 한 푼이라도 더 찾아내는 일</strong>이야말로 변호사의 역량에 달려 있습니다.</p>
+          <p>건축학과 법학을 함께 공부했고, 전세 계약 검토 서비스를 만들어 계약 전에 위험을 거르는 일을 해 왔습니다. <strong>집은 사고파는 물건이기 전에, 한 가족이 사는 자리</strong>라고 생각하기 때문입니다.</p>
+          <p style="margin-top:22px"><strong>결과는 판결문 대신, 저와 나누는 대화 속에서 직접 확인해 주세요.</strong></p>
+          <div class="cta-row" style="margin-top:26px"><a class="btn btn-s" href="/real-estate/lawyer">차형진 변호사 이야기 더 보기 →</a></div>
+        </div>
+        <div>
+          <article class="news">
+            <div class="newsbar"><span class="logo">마이데일리 <i>MYDAILY</i></span><span class="sect">사회 · 법조</span></div>
+            <div class="newsbody">
+              <div class="cate">법조</div>
+              <h4 class="nhl">차형진 변호사, 서울시 표창장 수상</h4>
+              <div class="nmeta">2024.01</div>
+              <figure class="nfig">
+                <img src="/img/award-seoul.webp" alt="서울특별시장 표창장, 서울시 마을변호사 차형진, 2023년 12월 18일" width="640" height="898" loading="lazy" />
+                <figcaption>서울특별시장 표창장 · 2023.12.18</figcaption>
+              </figure>
+              <div class="nquote">“평소 서울시 공익변호사로 맡은 바 직무를 성실히 수행해 왔으며, 시민의 법률복지 향상에 기여한 공이 크므로 이에 표창합니다.”<cite>서울특별시장 표창장 중</cite></div>
+            </div>
+          </article>
+          <div class="plist">
+            <a href="https://topclass.chosun.com/news/articleView.html?idxno=36302" target="_blank" rel="noopener"><span>톱클래스</span>차형진 변호사 관련 기사 보기 →</a>
+            <a href="/press"><span>언론 · 활동</span>기록으로 남은 활동 전체 보기 →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 현장 + 편지 -->
+  <section id="field">
+    <div class="wrap">
+      <div class="shead mid">
+        <div class="eyebrow">현장에서</div>
+        <div class="goal">계약서에 도장을 찍은 뒤 수습하는 것보다,<br /><b>찍기 전에 한 줄을 고치는 일.</b></div>
+      </div>
+      <div class="a-stage">
+        <div class="a-photos">
+          <div class="a-track">
+            {shots.map(([src, alt]) => <div class="shot"><img src={src} alt={alt} width="520" height="390" loading="lazy" /></div>)}
+            {shots.map(([src]) => <div class="shot" aria-hidden="true"><img src={src} alt="" width="520" height="390" loading="lazy" /></div>)}
+          </div>
+        </div>
+        <div class="a-card">
+          <div class="gcap">공익 법률상담 부스, 강연, 소셜벤처 박람회에서 만난 분들입니다.</div>
+          <div class="letter">
+            <p class="em">저는 지금도 공익 법률상담과 강연 현장을 찾아다닙니다.</p>
+            <p>전세사기로 평생 모은 돈을 잃을 위기에 놓인 청년들, 흉흉한 소문에 계약을 앞두고 잠을 설치는 분들을 상담실에서 너무 많이 만났습니다. 그래서 전세 계약 전에 위험 요소를 걸러내는 서비스를 직접 만들어 운영해 왔습니다.</p>
+            <p>변호사의 시각으로 계약서를 조금만 미리 들여다보면 <strong>충분히 막을 수 있는 손해가 너무 많기 때문입니다.</strong></p>
+            <p class="em">이미 분쟁이 시작된 분께도 같은 마음입니다.</p>
+            <p>화가 난 의뢰인을 진정시키고, 때로는 소송보다 빠르고 확실한 합의나 협상안을 먼저 제안합니다. 상대의 재산 상태를 보고 소송이 비용만 더 드는 길이라면 그렇게 말씀드립니다.</p>
+            <p>제 수익이 줄어드는 비효율을 감내하더라도, 가장 적은 손해로 일상을 되찾는 길을 찾는 것. <span class="hl">그것이 변호사로서 마땅히 가져야 할 양심이라고 믿습니다.</span></p>
+            <p>변호사와 의뢰인의 관계는 거래가 아니라 <strong>동행</strong>이어야 한다고 생각합니다.</p>
+            <div class="sign">법무법인 베율 부대표 변호사<b>부동산 변호사 차형진</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 비용 -->
+  <section class="tint" id="fee">
+    <div class="wrap">
+      <div class="shead">
+        <div class="eyebrow">비용</div>
+        <h2>비용은 상담에서<br /><em>먼저 말씀드립니다.</em></h2>
+        <p class="sub">보증금을 돌려받기 위해 다시 큰돈을 걸어야 한다면 법의 도움은 멀어집니다. 비용 구조를 모른 채 시작하지 않도록 <strong>첫 상담에서 받을 수 있는 금액과 총 예상 비용을 함께 숫자로 드립니다.</strong></p>
+      </div>
+      <div class="fees">
+        <div class="fee"><div class="fico"><Icon name="calc" /></div><small>원칙 하나</small><h3>받을 금액과 비용을 같이</h3><p>상대의 재산 상태까지 보고 실제로 회수할 수 있는 금액과 비용을 나란히 놓고 말씀드립니다. 비용이 더 드는 소송은 권하지 않습니다.</p></div>
+        <div class="fee"><div class="fico"><Icon name="pie" /></div><small>원칙 둘</small><h3>사건에 맞는 구조로</h3><p>소송·가처분·집행은 착수금과 성공보수의 일반 수임으로, 임차권등기·내용증명 같은 정형 절차는 건별 정액으로, 계약서 검토와 자문은 시간제로 진행합니다.</p></div>
+        <div class="fee"><div class="fico"><Icon name="pen" /></div><small>원칙 셋</small><h3>변호사가 직접, 정해진 건수만</h3><p>등기부·계약서·도면을 변호사가 직접 읽고, 서면과 변론도 직접 합니다. 한 사건 한 사건 집중해서 다룰 수 있는 건수만 맡습니다.</p></div>
+      </div>
+      <div class="secfoot"><a class="btn btn-o" href="/real-estate/fees">비용 안내 자세히 →</a></div>
+    </div>
+  </section>
+
+  <!-- 9 FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="shead mid">
+        <div class="eyebrow">자주 묻는 질문</div>
+        <h2>상담 전에 <em>궁금하신 것들</em></h2>
+      </div>
+      <div class="faq">
+        {reFaq.map((f, i) => <details open={i === 0}><summary>{f.q}</summary><div class="ans"><p>{f.a}</p></div></details>)}
+      </div>
+      <div class="secfoot"><a class="btn btn-o" href="/real-estate/faq">질문 전체 보기 →</a></div>
+    </div>
+  </section>
+
+  <!-- 10 상담 -->
+  <section class="tint" id="consult">
+    <div class="wrap">
+      <div class="shead mid">
+        <div class="eyebrow">상담 신청</div>
+        <h2>길게 쓰실 필요 <em>없습니다.</em></h2>
+        <p class="sub">사실 그대로, 정리된 만큼만 적어주세요.<br /><strong>제가 직접 읽고, 제가 판단하고, 제가 답하겠습니다.</strong></p>
+      </div>
+      <ConsultFormRe />
+      <div class="contact2">
+        <div><small>변호사 직통</small><a class="tel" href={site.phoneHref}>{site.phone}</a><span>평일 10:00–18:00 · 토 10:00–14:00</span></div>
+        <div><small>이메일 (계약서·등기부 사진 첨부 가능)</small><div class="mail">{site.email}</div><span>검토 후 변호사가 직접 연락드립니다</span></div>
+      </div>
+      <p class="closing">집은 사고파는 것이 아니라,<br /><b>지키는 것입니다.</b></p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // 맡는 일 항목: 한 묶음에서 하나만 펼친다. 주소에 #k-… 가 있으면 그 항목을 연다.
+  const openItem = (it: Element | null) => {
+    if (!it) return;
+    const list = it.parentElement!;
+    list.querySelectorAll('.kitem.open').forEach((x) => { x.classList.remove('open'); x.querySelector('.kbtn')?.setAttribute('aria-expanded', 'false'); });
+    it.classList.add('open');
+    it.querySelector('.kbtn')?.setAttribute('aria-expanded', 'true');
+  };
+  document.querySelectorAll('.kgroups').forEach((g) => {
+    g.addEventListener('click', (e) => {
+      const b = (e.target as Element).closest('.kbtn');
+      if (!b) return;
+      const it = b.parentElement!;
+      if (it.classList.contains('open')) { it.classList.remove('open'); b.setAttribute('aria-expanded', 'false'); } else openItem(it);
+    });
+  });
+  const byHash = () => { const h = location.hash.slice(1); if (h.startsWith('k-')) openItem(document.getElementById(h)); };
+  byHash();
+  window.addEventListener('hashchange', byHash);
+</script>
+</Base>

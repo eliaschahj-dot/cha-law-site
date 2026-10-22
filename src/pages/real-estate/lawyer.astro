@@ -1,0 +1,160 @@
+---
+/* 부동산 전문 변호사 차형진 소개(2026.10.22) — 상속 소개 페이지(inheritance-lawyer.astro)와 같은 틀. */
+import Base from '../../layouts/Base.astro';
+import { site } from '../../data/site';
+import '../../styles/marketer.css';
+
+const ld = {
+  '@context': 'https://schema.org', '@type': 'Person', name: '차형진', jobTitle: site.role, worksFor: { '@type': 'Organization', name: site.firm },
+  alumniOf: ['한동대학교', '카이스트 경영대학원'], knowsAbout: ['부동산', '전세보증금', '매매계약', '임대차', '분양', '재개발', '건축'], award: '서울특별시장 표창(2023)',
+};
+---
+<Base variant="re" title="부동산 전문 변호사 차형진 | 건축학·법학 복수전공, 전세 계약 검토 서비스 운영" rawTitle description="부동산 전문 변호사 차형진. 건축학과 법학을 함께 공부해 등기부·계약서·도면을 직접 읽습니다. 전세사기를 막는 전세 계약 검토 서비스 운영, 서울특별시장 표창, 법무법인 베율 부대표." jsonLd={ld} breadcrumbs={[{ name: '홈', href: '/real-estate' }, { name: '부동산 전문 변호사' }]}>
+<main class="mk ppage" id="p-lawyer">
+  <header class="lhero">
+    <div class="wrap">
+      <nav class="crumb" aria-label="현재 위치"><a href="/real-estate">홈</a><span>›</span><span>부동산 전문 변호사</span></nav>
+      <div class="lgrid">
+        <div class="lphoto"><img src="/img/hero-lecture.webp" alt="재산 보호를 강연하는 차형진 변호사" width="1100" height="1375" /></div>
+        <div>
+          <div class="lrole">법무법인 베율 부대표 변호사 · 부동산</div>
+          <div class="lname"><h1>차형진</h1><em>Cha Hyung-jin</em></div>
+          <div class="lchips">
+            <span class="hi">서울특별시장 표창</span>
+            <span>건축학 · 법학 복수전공</span>
+            <span>전세 계약 검토 서비스 운영</span>
+            <span>KAIST 사회적기업가 MBA</span>
+          </div>
+          <div class="lquote">“전세금도 계약금도,<br />돌려받는 일만큼은 자신 있습니다.”<em>다만 돌려받는 것만큼, 계약 전에 막는 일도 함께 합니다.<br />그 이야기를 아래에 적었습니다.</em></div>
+          <div class="lmeta">
+            <div><span>변호사 직통</span><b>{site.phone}</b></div>
+            <div><span>사무소</span><b>{site.firm} · 삼성역 8번 출구</b></div>
+            <div><span>담당 분야</span><b>전세보증금 · 계약금 · 명도 · 분양 · 재개발 · 공사</b></div>
+          </div>
+          <div class="lcta">
+            <a class="btn btn-p" href="/real-estate/contact">1:1 부동산 상담 신청</a>
+            <a class="btn btn-s" href={site.phoneHref}>변호사에게 바로 전화</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <div class="shead mid">
+        <div class="eyebrow">차형진 변호사의 글</div>
+        <h2>등기부를 <em>끝까지</em> 읽는<br />변호사가 되기로 한 이유</h2>
+      </div>
+      <div class="essay" style="margin-top:52px">
+        <div class="pull top">
+          <p>“변호사님, 등기부에 근저당 있는 건 알고 있어요.</p>
+          <p>그런데 그게 제 보증금이랑 무슨 상관인지는 아무도 안 알려주더라고요.”</p>
+          <cite>전세 계약을 앞둔 분이 상담실에서 제게 한 말입니다.</cite>
+        </div>
+        <p style="margin-top:34px">등기부에 근저당이 있다는 사실은 누구나 출력해 줍니다. 하지만 그 근저당의 채권최고액이 집값의 몇 할인지, 내 보증금이 배당에서 몇 번째인지, 집주인의 세금 체납이 그보다 앞서는지는 계산해 봐야 압니다.</p>
+        <p>저는 건축학과 법학을 함께 공부했습니다. 도면을 읽을 줄 알게 되면서, 계약서와 등기부도 같은 눈으로 보게 됐습니다. <b>종이 한 장에 적힌 숫자와 순서가 실제 집에서 어떤 결과로 나타나는지</b>를 끝까지 따라가는 눈입니다.</p>
+        <p class="em">부동산 분쟁의 결과는 대개<br /><em>계약서 한 줄과 등기부 한 칸</em>에서 이미 정해져 있습니다.</p>
+        <p>그 한 줄을 계약 전에 고치는 일과, 이미 분쟁이 시작된 뒤 그 한 칸을 근거로 돌려받는 일. 제가 하는 두 가지 일입니다.</p>
+
+        <div class="ehead"><span>하나</span>전세 계약 검토 서비스를<br />직접 만든 이유</div>
+        <p>전세사기로 평생 모은 돈을 잃을 위기에 놓인 청년들, 뉴스의 흉흉한 소문에 계약을 앞두고 잠을 설치는 분들을 상담실에서 너무 많이 만났습니다.</p>
+        <p>분쟁이 시작된 뒤에 찾아오시면 돌려받는 데 1년이 걸리지만, 계약 전에 등기부와 특약을 한 번만 보면 그 1년을 쓰지 않아도 됩니다. 그래서 전세 계약 전에 위험 요소를 걸러내는 서비스를 직접 만들어 운영해 왔습니다.</p>
+        <div class="ephotos">
+          <img src="/img/field-06.webp" alt="부스에서 계약서 상담 중인 차형진 변호사" width="520" height="390" loading="lazy" />
+          <img src="/img/field-04.webp" alt="소셜벤처 박람회 부스" width="520" height="390" loading="lazy" />
+          <img src="/img/field-01.webp" alt="재산 보호 강연" width="520" height="390" loading="lazy" />
+        </div>
+        <p class="ecap">공익 법률상담 부스, 소셜벤처 박람회, 재산 보호 강연 현장</p>
+        <p class="em">계약서에 도장을 찍은 뒤 수습하는 것보다,<br /><em>찍기 전에 한 줄을 고치는 일.</em></p>
+        <p class="tight">그것이 제가 생각하는 부동산 변호사의 첫 번째 일입니다.</p>
+
+        <div class="ehead"><span>둘</span>“소송합시다”라는 말,<br />사실 변호사에겐 가장 쉬운 말입니다</div>
+        <p>보증금을 떼인 분, 계약금을 날릴 위기에 놓인 분은 대개 감정이 극에 달해 계십니다. “비용은 상관없으니 당장 소송하죠.” 변호사에게는 가장 유혹적인 순간입니다.</p>
+        <p>하지만 저는 그 순간 한 번 더 멈춰 섭니다. 상대에게 재산이 없다면 이겨도 받을 수 없고, 소송 1년 동안 일상은 멈춥니다. 그래서 <b>상대의 재산 상태를 먼저 조회하고, 소송보다 빠른 길이 있다면 그것부터 제안</b>합니다. 임차권등기와 가압류 한 번으로 끝나는 사건도 많습니다.</p>
+        <p class="em">이기는 것만큼,<br />실제로 <em>돌려받는 것</em>이 중요합니다.</p>
+
+        <div class="ehead"><span>셋</span>착수금이라는 문턱을 낮추고,<br />함께 걷는 길을 택했습니다</div>
+        <p>보증금을 돌려받으려는 분에게 다시 큰 착수금을 요구하는 것은 모순이라고 생각합니다. 그래서 임차권등기명령·내용증명·지급명령처럼 정형화된 절차는 건별 정액으로, 계약서 검토는 실제 일한 시간만큼만 받는 시간제로 열어 두었습니다.</p>
+        <p class="em">변호사와 의뢰인의 관계는<br />거래가 아니라 <em>동행</em>이어야 한다고 믿습니다.</p>
+        <div class="resgrid">
+          <div class="resc"><span>등기부·계약서·도면</span><b>변호사가 직접 읽습니다</b><i>건축학·법학 복수전공, 중원종합법률사무소 부동산 분야</i></div>
+          <div class="resc"><span>소송 전에</span><b>재산 조회와 협상안부터</b><i>받을 수 없는 소송은 권하지 않습니다</i></div>
+          <div class="resc"><span>분쟁이 되기 전에</span><b>전세 계약 검토 서비스</b><i>계약 전에 등기부·특약의 위험을 거릅니다</i></div>
+          <div class="resc"><span>의뢰인의 비밀</span><b>판결문은 싣지 않습니다</b><i>누군가의 상처를 홍보에 쓰지 않습니다</i></div>
+        </div>
+        <div class="div"></div>
+        <div class="close">글을 마칩니다</div>
+        <p>누군가에게는 평생의 상처일 사건을 홍보 수단으로 삼고 싶지 않아, 이곳에 판결문을 나열하지 않습니다. 의뢰인의 명예와 비밀을 지키는 것이 변호사로서 지켜야 할 첫 번째 예의라고 생각합니다.</p>
+        <p>대신 저와 대화를 나누시는 과정에서, 제가 쌓아온 경험이 여러분의 고민에 어떤 답을 내놓는지 직접 느끼실 수 있을 거라 확신합니다.</p>
+        <p class="em">길게 쓰실 필요 없습니다.<br />계약서와 등기부 사진, 지금까지의 경과만 보내 주세요.</p>
+        <p class="tight">제가 직접 읽고, 제가 판단하고, 제가 답하겠습니다.</p>
+        <div class="sign"><b>차형진</b><span>법무법인 베율 부대표 변호사</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tint">
+    <div class="wrap">
+      <div class="shead">
+        <div class="eyebrow">PROFILE</div>
+        <h2>차형진 변호사 <em>약력</em></h2>
+      </div>
+      <div class="cvgrid">
+        <div class="cvbox">
+          <h4>학력 · 경력</h4>
+          <ul>
+            <li><b>現</b> 법무법인 베율 부대표 변호사</li>
+            <li><b>現</b> 리걸테크 기업 온전 주식회사 대표</li>
+            <li><b>前</b> 온전 법률사무소 대표 변호사</li>
+            <li><b>前</b> 중원종합법률사무소 (부동산 분야)</li>
+            <li><b>前</b> 서울북부지방법원 국선변호인</li>
+          </ul>
+          <div class="grp">학력</div>
+          <ul>
+            <li>한동대학교 건축학 · 법학 복수전공</li>
+            <li>카이스트 경영대학원 사회적기업가 MBA</li>
+          </ul>
+        </div>
+        <div class="cvbox">
+          <h4>대외 활동</h4>
+          <ul>
+            <li>서울시 공익변호사 (2020~)</li>
+            <li>서울시 마을변호사</li>
+            <li>전세 계약 검토 서비스 운영</li>
+            <li>대한변호사협회 미래청년위원</li>
+            <li>(사)한국상사법학회 정회원</li>
+          </ul>
+        </div>
+        <div class="cvbox">
+          <h4>수상 · 강의</h4>
+          <ul>
+            <li><b>서울특별시장 표창</b><br />시민 법률복지 향상 기여 (2023.12)</li>
+            <li>부동산 · 상속 설계 강의<br />고려대 등 대학 특강</li>
+            <li>2022 정보접근성 기술 국제협력 컨퍼런스 참여</li>
+            <li>KISTI 패밀리기업 지정 · 온전㈜ (2024)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="docs">
+        <figure><img src="/img/award-seoul.webp" alt="서울특별시장 표창장, 2023년 12월 18일" width="640" height="898" loading="lazy" /><figcaption>서울특별시장 표창 · 2023.12</figcaption></figure>
+        <figure><img src="/img/kisti.webp" alt="KISTI 패밀리기업 지정서, 온전 주식회사" width="560" height="816" loading="lazy" /><figcaption>KISTI 패밀리기업 지정 · 온전㈜</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="finalcta">
+    <div class="wrap">
+      <div class="in">
+        <div class="k">상담 예약</div>
+        <h2>계약서와 등기부 사진만 보내 주시면,<br /><em>변호사가 직접 답합니다.</em></h2>
+        <p>어느 쪽에 계신지, 걸린 금액, 만료일이나 잔금일 같은 날짜만 알려주셔도 충분합니다. 상담 자리에서 만난 변호사가 협상과 재판까지 그대로 들어갑니다.</p>
+        <div class="row">
+          <a class="btn btn-p" href="/real-estate/contact">1:1 부동산 상담 신청</a>
+          <a class="btn btn-s" href={site.phoneHref}>{site.phone}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+</Base>

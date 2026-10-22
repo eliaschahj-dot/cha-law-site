@@ -2,9 +2,9 @@
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import CtaBand from '../../components/CtaBand.astro';
-import { getPublicColumns, related, postPath, fmtDate, sectionSlug, sections, tagPath, type Post } from '../../data/posts';
+import { getPublicColumns, related, postPath, fmtDate, sectionSlug, sections, tagPath, variantOfSection, type Post } from '../../data/posts';
 import { site } from '../../data/site';
-import { areas, areaPath } from '../../data/areas';
+import { allAreas, areaPath } from '../../data/areas';
 
 export async function getStaticPaths() {
   const cols = await getPublicColumns();
@@ -12,7 +12,12 @@ export async function getStaticPaths() {
 }
 const { p, rel } = Astro.props as { p: Post; rel: Post[] };
 const sec = sections.find((s) => s.name === p.section);
-const linkedAreas = areas.filter((a) => a.tags.some((t) => p.tags.includes(t))).slice(0, 3);
+const variant = variantOfSection(p.section);
+const home = variant === 're' ? '/real-estate' : '/';
+const colsHref = variant === 're' ? '/real-estate/columns' : '/columns';
+const colsLabel = variant === 're' ? '부동산 칼럼' : '칼럼';
+const field = variant === 're' ? '부동산' : '상속';
+const linkedAreas = allAreas.filter((a) => a.tags.some((t) => p.tags.includes(t))).sort((a, b) => (a.axis === b.axis ? 0 : (a.axis === variant ? -1 : 1))).slice(0, 3);
 const { Content } = await render(p.entry);
 const ld = {
   '@context': 'https://schema.org', '@type': 'BlogPosting', headline: p.title, datePublished: p.date, dateModified: p.date,
@@ -22,14 +27,14 @@ const ld = {
   publisher: { '@type': 'Person', name: '차형진 변호사', url: site.url },
 };
 ---
-<Base title={p.title} description={p.excerpt || `${p.title} — 차형진 변호사의 ${p.section} 칼럼 (${fmtDate(p.date)})`} jsonLd={ld} breadcrumbs={[{ name: '홈', href: '/' }, { name: '칼럼', href: '/columns' }, { name: sec?.label ?? p.section, href: `/columns/topic/${sectionSlug(p.section)}` }, { name: p.title }]}>
+<Base variant={variant} title={p.title} description={p.excerpt || `${p.title} — 차형진 변호사의 ${p.section} 칼럼 (${fmtDate(p.date)})`} jsonLd={ld} breadcrumbs={[{ name: '홈', href: home }, { name: colsLabel, href: colsHref }, { name: sec?.label ?? p.section, href: `/columns/topic/${sectionSlug(p.section)}` }, { name: p.title }]}>
   <article>
     <section class="area-hero">
       <div class="wrap">
-        <div class="crumbs"><a href="/">홈</a><span>/</span><a href="/columns">칼럼</a><span>/</span><a href={`/columns/topic/${sectionSlug(p.section)}`}>{sec?.label}</a></div>
+        <div class="crumbs"><a href={home}>홈</a><span>/</span><a href={colsHref}>{colsLabel}</a><span>/</span><a href={`/columns/topic/${sectionSlug(p.section)}`}>{sec?.label}</a></div>
         <div class="gu" style="margin-top:18px">{sec?.label} <small>{fmtDate(p.date)}</small></div>
         <h1 style="font-size:clamp(28px,4vw,46px)">{p.title}</h1>
-        <p class="lead" style="font-size:14px;color:var(--ink-2);margin-top:14px">글 · <b>상속 전문 변호사 차형진</b> (법무법인 베율) · 처음 게시 {fmtDate(p.date)}{p.source === 'naver' ? ' 네이버 블로그' : ''}{p.tags.length > 0 && <span style="color:var(--ink-3)"> · {p.tags.map((t) => <a href={tagPath(t)} style="color:inherit;text-decoration:none;margin-right:6px">#{t}</a>)}</span>}</p>
+        <p class="lead" style="font-size:14px;color:var(--ink-2);margin-top:14px">글 · <b>{field} 전문 변호사 차형진</b> (법무법인 베율) · 처음 게시 {fmtDate(p.date)}{p.source === 'naver' ? ' 네이버 블로그' : ''}{p.tags.length > 0 && <span style="color:var(--ink-3)"> · {p.tags.map((t) => <a href={tagPath(t)} style="color:inherit;text-decoration:none;margin-right:6px">#{t}</a>)}</span>}</p>
       </div>
     </section>
     <div class="wrap area-body">
@@ -53,7 +58,7 @@ const ld = {
           <section>
             <h2>이 글과 관련된 업무 분야</h2>
             <div class="areas-grid">
-              {linkedAreas.map((a) => <a class="area-card" href={areaPath(a)}><span class="n">상속</span><h3>{a.name}</h3><p>{a.short}</p></a>)}
+              {linkedAreas.map((a) => <a class="area-card" href={areaPath(a)}><span class="n">{a.axis === 're' ? '부동산' : '상속'}</span><h3>{a.name}</h3><p>{a.short}</p></a>)}
             </div>
           </section>
         )}
@@ -70,8 +75,8 @@ const ld = {
         <div class="card">
           <div class="k">글쓴이</div>
           <h3 style="font-size:18px">차형진 변호사</h3>
-          <p>상속 전문 변호사. 법무법인 베율 부대표. 상담도 재판도 변호사가 직접 합니다.</p>
-          <a class="btn btn-seal" href="/contact">상담 신청</a>
+          <p>{field} 전문 변호사. 법무법인 베율 부대표. 상담도 재판도 변호사가 직접 합니다.</p>
+          <a class="btn btn-seal" href={variant === 're' ? '/real-estate/contact' : '/contact'}>상담 신청</a>
         </div>
         {p.naverUrl && (
           <div class="card">

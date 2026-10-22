@@ -9,7 +9,7 @@ export default defineConfig({
   markdown: { rehypePlugins: [rehypeTables] },
   build: { format: 'directory' },
   trailingSlash: 'ignore',
-  // 2026.10.16 상속 단일 전문으로 개편: 옛 주소는 새 랜딩 페이지로 보낸다
+  // 2026.10.16 상속 단일 전문으로 개편: 옛 주소는 새 랜딩 페이지로 보낸다. 2026.10.22 /real-estate 는 부동산 전문 하위 사이트로 다시 열었다.
   redirects: {
     '/about': '/inheritance-lawyer',
     '/inheritance/division': '/dispute',
@@ -19,13 +19,5 @@ export default defineConfig({
     '/inheritance/will': '/will',
     '/inheritance/registration': '/registration',
     '/inheritance/tax': '/tax',
-    '/real-estate': '/',
-    '/real-estate/deposit': '/',
-    '/real-estate/presale': '/',
-    '/real-estate/sale': '/',
-    '/real-estate/lease': '/',
-    '/real-estate/redevelopment': '/',
-    '/real-estate/construction': '/',
-    '/columns/topic/real-estate': '/columns',
   },
 });

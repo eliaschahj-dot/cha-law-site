@@ -1,12 +1,12 @@
 // 칼럼 RSS (네이버 서치어드바이저 RSS 제출용). 전문 게재 글만, 최신 50편.
 import type { APIRoute } from 'astro';
-import { getPublicColumns, postPath } from '../data/posts';
+import { getPublicColumns, postPath, IN_SECTIONS } from '../data/posts';
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 export const GET: APIRoute = async ({ site }) => {
   const origin = (site?.href ?? 'https://www.lawyer-cha.com/').replace(/\/$/, '');
-  const posts = (await getPublicColumns()).filter((p) => p.full).slice(0, 50);
+  const posts = (await getPublicColumns()).filter((p) => p.full && IN_SECTIONS.includes(p.section)).slice(0, 50);
   const items = posts.map((p) => `    <item>
       <title>${esc(p.title)}</title>
       <link>${origin}${postPath(p)}</link>

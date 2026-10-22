@@ -91,6 +91,8 @@ app.post('/api/contact', async (req, res) => {
   const side = s(d.side);
   const topic = s(d.topic);
   const calltime = s(d.calltime);
+  const dates = s(d.dates);   // 부동산 신청서: 만료일·잔금일 등
+  const amount = s(d.amount); // 부동산 신청서: 걸린 금액
   if (!name || !phone || !d.agree) return res.status(400).json({ ok: false, error: 'missing fields' });
   if (message.length > 4000) return res.status(400).json({ ok: false, error: 'too long' });
 
@@ -103,6 +105,8 @@ app.post('/api/contact', async (req, res) => {
     heirs && `상속인 구성: ${heirs}`,
     side && `입장: ${side}`,
     topic && `관련: ${topic}`,
+    dates && `중요한 날짜: ${dates}`,
+    amount && `걸린 금액: ${amount}`,
     calltime && `통화 가능 시간: ${calltime}`,
     source && `유입 경로: ${source}`,
     '',

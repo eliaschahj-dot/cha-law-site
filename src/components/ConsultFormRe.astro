@@ -1,0 +1,99 @@
+---
+/* 부동산 상담 신청서(2026.10.22). /real-estate 홈 #consult 와 /real-estate/contact 에서 쓴다. 전송은 server.js 의 /api/contact (dates·amount 항목 추가). */
+import { site } from '../data/site';
+interface Props { side?: string; topic?: string }
+const { side, topic } = Astro.props;
+const sides = [['임차인', '세입자 (보증금·권리금)'], ['임대인', '집주인·건물주 (명도·차임)'], ['매수인', '사려는 쪽 (계약금·잔금·등기)'], ['매도인', '파는 쪽'], ['수분양자', '분양받은 쪽'], ['조합원·청산자', '재개발·재건축'], ['시공·건축주', '공사대금·하자'], ['모름', '잘 모르겠습니다']];
+const topics = [['전세보증금', '전세보증금 반환·전세사기'], ['매매', '매매계약·계약금·가계약'], ['임대차', '임대차·명도·권리금'], ['분양', '분양계약·분양권'], ['재개발', '재개발·재건축·현금청산'], ['공사', '공사대금·하자'], ['등기', '등기·명의·소유권'], ['기타', '부동산 외 (민사·상속·형사·가사)']];
+---
+<form class="formwrap" id="cform" method="post" action="/api/contact" novalidate>
+  <input type="hidden" name="area" value="부동산" />
+  <div class="frow">
+    <div class="f">
+      <label for="c-name">성함 <span class="req">*</span></label>
+      <input id="c-name" name="name" type="text" placeholder="성함을 입력해 주세요" required autocomplete="name" />
+    </div>
+    <div class="f">
+      <label for="c-phone">연락처 <span class="req">*</span></label>
+      <input id="c-phone" name="phone" type="tel" placeholder="010-0000-0000" required autocomplete="tel" />
+    </div>
+  </div>
+  <div class="frow">
+    <div class="f">
+      <label for="c-dates">중요한 날짜</label>
+      <input id="c-dates" name="dates" type="text" placeholder="예) 계약 만료 2026.11.30 / 잔금일 지남 / 소장 받은 날" />
+      <div class="hint">만료일·잔금일·소장 송달일처럼 기한이 걸린 날짜부터 확인합니다.</div>
+    </div>
+    <div class="f">
+      <label for="c-amount">걸린 금액</label>
+      <input id="c-amount" name="amount" type="text" placeholder="예) 보증금 2억 / 계약금 5천만 원" />
+    </div>
+  </div>
+  <div class="f">
+    <span class="lbl">지금 어느 쪽에 계신가요</span>
+    <div class="chips">
+      {sides.map(([v, l]) => <label><input type="radio" name="side" value={v} checked={side === v} /> {l}</label>)}
+    </div>
+  </div>
+  <div class="f">
+    <span class="lbl">관련된 것 (여러 개 선택 가능)</span>
+    <div class="chips">
+      {topics.map(([v, l]) => <label><input type="checkbox" name="topic" value={v} checked={topic === v} /> {l}</label>)}
+    </div>
+  </div>
+  <div class="f">
+    <label for="c-story">상황</label>
+    <textarea id="c-story" name="story" placeholder="아시는 만큼만, 사실 그대로 적어주세요."></textarea>
+    <div class="hint">“만기가 지났는데 보증금을 못 받고 있습니다”라고만 적으셔도 됩니다.</div>
+  </div>
+  <div class="f">
+    <label for="c-calltime">통화 가능한 시간</label>
+    <input id="c-calltime" name="calltime" type="text" placeholder="예) 평일 오후 / 문자 먼저" />
+  </div>
+  <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
+  <label class="agree">
+    <input id="c-agree" name="agree" type="checkbox" required />
+    <span>상담을 위한 개인정보 수집·이용에 동의합니다. 수집한 정보는 상담 목적으로만 사용하며 상담 종료 후 1년 안에 파기합니다. <a href="/privacy">개인정보처리방침</a></span>
+  </label>
+  <button class="btn btn-p submit" type="submit" id="c-submit">차형진 변호사에게 직접 묻기</button>
+  <div class="done" id="c-done" role="status" aria-live="polite"></div>
+  <div class="formnote">사무실을 거치지 않고 변호사에게 바로 전달됩니다.<br />상담 내용은 변호사법에 따라 비밀이 지켜집니다.</div>
+</form>
+
+<script>
+  const form = document.getElementById('cform') as HTMLFormElement | null;
+  const done = document.getElementById('c-done') as HTMLDivElement | null;
+  const btn = document.getElementById('c-submit') as HTMLButtonElement | null;
+  if (form) {
+    const q = new URLSearchParams(location.search);
+    const side = q.get('side'); const topic = q.get('topic');
+    if (side) (form.querySelector(`input[name=side][value="${side}"]`) as HTMLInputElement | null)?.click();
+    if (topic) (form.querySelector(`input[name=topic][value="${topic}"]`) as HTMLInputElement | null)?.click();
+  }
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form || !done || !btn) return;
+    const name = (form.querySelector('#c-name') as HTMLInputElement).value.trim();
+    const phone = (form.querySelector('#c-phone') as HTMLInputElement).value.trim();
+    const agree = (form.querySelector('#c-agree') as HTMLInputElement).checked;
+    done.style.display = 'block';
+    if (!name || !phone) { done.textContent = '성함과 연락처를 적어주셔야 연락드릴 수 있습니다.'; return; }
+    if (!agree) { done.textContent = '개인정보 수집·이용에 동의해 주셔야 접수됩니다.'; return; }
+    const fd = new FormData(form);
+    const data: Record<string, unknown> = Object.fromEntries(fd.entries());
+    data.topic = fd.getAll('topic');
+    data.agree = agree;
+    const h = (window as any).__hit; if (h) { data.sid = h.sid; data.vid = h.vid; }
+    btn.disabled = true; btn.textContent = '보내는 중…';
+    try {
+      const r = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && j.ok) {
+        done.textContent = '접수되었습니다. 24시간 안에 변호사가 직접 연락드리겠습니다.';
+        form.reset();
+      } else { throw new Error(j.error || 'send failed'); }
+    } catch {
+      done.textContent = '전송에 실패했습니다. 전화 070-4571-7668 로 연락 주시면 바로 안내드리겠습니다.';
+    } finally { btn.disabled = false; btn.textContent = '차형진 변호사에게 직접 묻기'; }
+  });
+</script>

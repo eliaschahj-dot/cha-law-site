@@ -61,7 +61,7 @@ collections:
       - { label: 본문, name: body, widget: markdown }
 
   - name: areas
-    label: 상속 분야 (7)
+    label: 업무 분야 (상속 9 · 부동산 6)
     label_singular: 분야
     folder: src/content/areas
     create: false

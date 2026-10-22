@@ -1,0 +1,77 @@
+---
+import Base from '../../layouts/Base.astro';
+import Faq from '../../components/Faq.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { reFeeFaq } from '../../data/realestate';
+---
+<Base variant="re" title="부동산 변호사 비용·수임료 안내 | 착수금·성공보수·시간제, 전세보증금·명도·계약금 소송 비용" rawTitle description="부동산 변호사 비용은 첫 상담에서 총 예상 비용과 기간을 숫자로 말씀드립니다. 착수금·성공보수의 일반 수임, 계약 검토·자문의 시간제, 인지대·가압류 공탁금 같은 실비 정산 원칙. 전세보증금 반환 소송, 명도소송, 계약금 소송, 분양 소송 비용의 구조. 부동산 전문 변호사 차형진." breadcrumbs={[{ name: '홈', href: '/real-estate' }, { name: '비용 안내' }]}>
+  <section class="area-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="/real-estate">홈</a><span>/</span><span>비용 안내</span></div>
+      <div class="gu" style="margin-top:18px">비용 안내</div>
+      <h1>비용은 상담에서 먼저 말씀드립니다</h1>
+      <p class="lead">보증금을 돌려받기 위해 다시 큰돈을 걸어야 한다면 법의 도움은 멀어집니다. 비용 구조를 모른 채 시작하지 않도록, 첫 상담에서 받을 수 있는 금액과 총 예상 비용, 기간을 함께 숫자로 드립니다.</p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="principles">
+        <div class="principle"><div class="num">원칙 하나</div><h3>받을 금액과 비용을 같이</h3><p>보증금·계약금·공사대금처럼 돌려받을 금액이 정해진 사건은, 상대의 재산 상태까지 보고 "실제로 회수할 수 있는 금액"과 비용을 나란히 놓고 말씀드립니다. 비용이 더 드는 소송은 권하지 않습니다.</p></div>
+        <div class="principle"><div class="num">원칙 둘</div><h3>사건에 맞는 구조로</h3><p>소송·가처분·명도 집행은 착수금과 성공보수로 구성된 일반 수임 계약으로, 계약서 검토와 분쟁 초기 대응은 실제 일한 시간만큼 받는 시간제로 진행합니다. 임차권등기명령·지급명령처럼 절차가 정형화된 일은 건별 정액으로 안내합니다.</p></div>
+        <div class="principle"><div class="num">원칙 셋</div><h3>변호사가 직접, 정해진 건수만</h3><p>등기부와 계약서, 도면을 변호사가 직접 읽고, 서면과 변론도 직접 합니다. 집중해서 다룰 수 있는 건수만 맡습니다.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec band-paper">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="gu">구조</div>
+        <h2>세 가지 수임 방식</h2>
+      </div>
+      <div class="grid3">
+        <div class="card">
+          <div class="k">일반 수임</div>
+          <h3>착수금 + 성공보수</h3>
+          <ul>
+            <li>보증금반환·명도·계약금·분양·공사대금 소송, 가처분·가압류</li>
+            <li>착수금은 사건 착수 시, 성공보수는 결과에 따라 계약서에 정한 기준대로</li>
+            <li>심급(1심·항소심)마다 별도 계약</li>
+            <li>인지·송달료, 감정료, 가압류 공탁금(보증보험), 집행 비용은 실비로 별도 정산</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="k">정액 (정형 절차)</div>
+          <h3>건별 정액</h3>
+          <ul>
+            <li>임차권등기명령, 내용증명, 지급명령, 점유이전금지가처분 단독 신청</li>
+            <li>서류 준비부터 접수·결정까지 한 번에</li>
+            <li>이후 소송으로 이어지면 일반 수임으로 전환하고 기지급액을 반영</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="k">시간제</div>
+          <h3>수행 시간 기준 + 상한</h3>
+          <ul>
+            <li>전세·매매·분양·상가 계약서 검토, 특약 작성, 분쟁 초기 대응과 협상</li>
+            <li>실제 수행 시간을 정산하되 계약 시 상한을 함께 정함</li>
+            <li>적용 여부와 단가는 상담에서 안내</li>
+          </ul>
+        </div>
+      </div>
+      <p class="notice" style="margin-top:22px">수임료는 사건마다 다르므로 이 페이지에 금액을 적지 않습니다. 상담 예약 시 상담료를 안내해 드리고, 상담 자리에서 총 예상 비용과 회수 전망을 함께 말씀드립니다.</p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="gu">자주 묻는 질문</div>
+        <h2>비용에 관해 자주 묻는 것</h2>
+      </div>
+      <Faq items={reFeeFaq} />
+    </div>
+  </section>
+  <CtaBand contact="/real-estate/contact" />
+</Base>

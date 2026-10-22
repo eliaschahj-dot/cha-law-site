@@ -1,4 +1,7 @@
-# OG 이미지(1200×630) 생성. 로고 마크 + '상속 전문 변호사 차형진'. 실행: python -X utf8 scripts/make_og.py
+# OG 이미지(1200×630) 생성. 로고 마크 + '상속 전문 변호사 차형진'. 실행: python -X utf8 scripts/make_og.py [re]
+# 're' 를 주면 부동산용(og-re.png)을 만든다.
+import sys
+RE = len(sys.argv) > 1 and sys.argv[1] == 're'
 from PIL import Image, ImageDraw, ImageFont
 import os
 
@@ -37,8 +40,8 @@ mark(96, 84, 2.6, INK, 7)
 
 # 제목
 t1 = font(serif, 88)
-d.text((96, 190), '상속', font=t1, fill=ACCENT)
-w = d.textlength('상속 ', font=t1)
+d.text((96, 190), '부동산' if RE else '상속', font=t1, fill=ACCENT)
+w = d.textlength(('부동산' if RE else '상속') + ' ', font=t1)
 d.text((96 + w, 190), '전문 변호사', font=t1, fill=INK)
 d.text((96, 300), '차형진', font=t1, fill=INK)
 
@@ -46,9 +49,9 @@ d.text((96, 300), '차형진', font=t1, fill=INK)
 d.line((96, 452, 156, 452), fill=BRASS, width=2)
 s1 = font(sans, 30, 'Medium')
 s2 = font(sans, 26, 'Regular')
-d.text((96, 478), '법무법인 베율 부대표 변호사 · 상담도 재판도 변호사가 직접 합니다', font=s1, fill=INK2)
+d.text((96, 478), '법무법인 베율 부대표 변호사 · ' + ('등기부·계약서·도면을 직접 읽습니다' if RE else '상담도 재판도 변호사가 직접 합니다'), font=s1, fill=INK2)
 d.text((96, 526), '070-4571-7668  ·  well@beyullaw.com', font=s2, fill=INK2)
 
-out = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public', 'og.png')
+out = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public', 'og-re.png' if RE else 'og.png')
 img.save(out, optimize=True)
 print('saved', out, os.path.getsize(out))

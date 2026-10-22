@@ -1,13 +1,13 @@
 ---
 import Faq from './Faq.astro';
-import { axisMeta, type Area, areas, areaPath } from '../data/areas';
+import { axisMeta, type Area, allAreas, areaPath } from '../data/areas';
 import { getPublicColumns, related, postPath, fmtDate, tagPath } from '../data/posts';
 import { site } from '../data/site';
 import { areaSeo } from '../data/seo';
 interface Props { area: Area }
 const { area } = Astro.props;
-const meta = axisMeta.in;
-const siblings = areas.filter((a) => a.slug !== area.slug);
+const meta = axisMeta[area.axis ?? 'in'];
+const siblings = allAreas.filter((a) => a.axis === (area.axis ?? 'in') && a.slug !== area.slug);
 const cols = await getPublicColumns();
 const posts = related(cols, area.tags, 8);
 const seo = areaSeo[area.slug];
@@ -15,12 +15,12 @@ const tagCounts = area.tags.map((t) => ({ t, n: cols.filter((p) => p.tags.includ
 ---
 <section class="area-hero">
   <div class="wrap">
-    <div class="crumbs"><a href="/">홈</a><span>/</span><a href={meta.hub}>상속 업무 분야</a><span>/</span><span>{area.name}</span></div>
+    <div class="crumbs"><a href={meta.home}>홈</a><span>/</span><a href={meta.hub}>{meta.hubLabel}</a><span>/</span><span>{area.name}</span></div>
     <div class="gu" style="margin-top:18px">{meta.gu} <small>{area.short}</small></div>
     <h1>{area.name}</h1>
     <p class="lead">{area.lead}</p>
     <div class="cta-row" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:26px">
-      <a class="btn btn-seal" href={`/contact?area=${encodeURIComponent(area.name)}`}>{area.name} 상담 신청</a>
+      <a class="btn btn-seal" href={`${meta.contact}?area=${encodeURIComponent(area.name)}`}>{area.name} 상담 신청</a>
       <a class="btn btn-ghost" href={site.phoneHref}>변호사 직통 {site.phone}</a>
     </div>
   </div>
@@ -77,10 +77,10 @@ const tagCounts = area.tags.map((t) => ({ t, n: cols.filter((p) => p.tags.includ
       <div class="k">상담 예약</div>
       <div class="big">{site.phone}</div>
       <p>{site.hours} · 변호사 직통. {site.reply}.</p>
-      <a class="btn btn-seal" href={`/contact?area=${encodeURIComponent(area.name)}`}>온라인 상담 신청</a>
+      <a class="btn btn-seal" href={`${meta.contact}?area=${encodeURIComponent(area.name)}`}>온라인 상담 신청</a>
     </div>
     <div class="card">
-      <div class="k">상속 · 다른 분야</div>
+      <div class="k">{meta.name} · 다른 분야</div>
       <ul style="list-style:none;padding:0;display:grid;gap:8px">
         {siblings.map((a) => <li><a href={areaPath(a)} style="text-decoration:none;font-weight:500">{a.name}</a></li>)}
       </ul>

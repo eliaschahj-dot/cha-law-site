@@ -1,0 +1,47 @@
+---
+/* 부동산 칼럼 목록: 부동산 코너 + 꿀팁(등기부·계약 체크리스트). 글 자체는 /columns/{id} 로 열린다. */
+import Base from '../../../layouts/Base.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { getPublicColumns, sections, postPath, fmtDate, tagPath, RE_SECTIONS } from '../../../data/posts';
+import { tagSeo, RE_TAG_ORDER } from '../../../data/seo';
+const cols = await getPublicColumns();
+const main = cols.filter((p) => RE_SECTIONS.includes(p.section));
+const latest = main.slice(0, 40);
+const reSections = sections.filter((s) => RE_SECTIONS.includes(s.name));
+const counts = Object.fromEntries(reSections.map((s) => [s.slug, cols.filter((p) => p.section === s.name).length]));
+const tagCounts = RE_TAG_ORDER.map((t) => ({ t, n: main.filter((p) => p.tags.includes(t)).length })).filter((x) => x.n > 0);
+const firstYear = main.length ? main[main.length - 1].date.slice(0, 4) : '2023';
+---
+<Base variant="re" title="부동산 칼럼 | 전세보증금·분양·매매계약·임대차·등기부 읽는 법" rawTitle description={`부동산에 관해 ${firstYear}년부터 써 온 법률 칼럼 ${main.length}편. 전세보증금 반환, 전세사기 예방, 분양계약, 매매 계약금, 임대차·명도, 재개발, 공사대금·하자, 등기부 읽는 법. 부동산 전문 변호사 차형진.`} breadcrumbs={[{ name: '홈', href: '/real-estate' }, { name: '부동산 칼럼' }]}>
+  <section class="area-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="/real-estate">홈</a><span>/</span><span>부동산 칼럼</span></div>
+      <div class="gu" style="margin-top:18px">칼럼 · 부동산</div>
+      <h1>계약 전에 읽으면 분쟁이 줄어드는 글</h1>
+      <p class="lead">전세 계약 검토 서비스와 상담실에서 받은 질문에 답해 온 글입니다. 부동산 분쟁 {counts['real-estate'] ?? 0}편, 등기부·계약 체크리스트 {counts.tips ?? 0}편.</p>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="wrap">
+      <div class="filters">
+        <a href="/real-estate/columns" aria-current="page">전체</a>
+        {reSections.map((s) => <a href={`/columns/topic/${s.slug}`}>{s.label} <span style="opacity:.6">{counts[s.slug]}</span></a>)}
+      </div>
+      <h2 style="font-size:22px;margin:30px 0 10px">주제별로 모아 보기</h2>
+      <p style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px">
+        {tagCounts.map((x) => <a class="btn btn-paper btn-sm" href={tagPath(x.t)} title={tagSeo[x.t]?.title}>{x.t} <span style="opacity:.6">{x.n}</span></a>)}
+      </p>
+      <h2 style="font-size:22px;margin:30px 0 10px">최근 글</h2>
+      <div class="list">
+        {latest.map((p) => (
+          <a href={postPath(p)}>
+            <time datetime={p.date}>{fmtDate(p.date)}</time>
+            <div><b>{p.title}</b><span class="chip">{p.section}</span>{p.excerpt && <span>{p.excerpt}</span>}</div>
+          </a>
+        ))}
+      </div>
+      <p class="src" style="margin-top:22px">상속 칼럼은 <a href="/columns">상속 전문 홈페이지의 칼럼</a>에 따로 모아 두었습니다.</p>
+    </div>
+  </section>
+  <CtaBand contact="/real-estate/contact" />
+</Base>

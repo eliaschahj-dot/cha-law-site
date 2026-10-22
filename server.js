@@ -7,7 +7,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
-import { DATA_DIR, ensureDir, record, parseUA, readEvents, aggregate, renderStats, makeSession, readSession, parseCookies } from './analytics.js';
+import { DATA_DIR, ensureDir, record, parseUA, readEvents, aggregate, renderStats, sessionsCsv, makeSession, readSession, parseCookies } from './analytics.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, 'dist');
@@ -140,7 +140,9 @@ app.post('/api/contact', async (req, res) => {
   } else {
     console.log('[contact] (no mail key)\n' + text);
   }
-  record({ type: 'contact', side, topic, area, sid: String(d.sid || '').slice(0, 40), vid: String(d.vid || '').slice(0, 40) }).catch(() => {});
+  const refPath = (() => { try { return new URL(req.get('referer') || '', 'https://x').pathname; } catch { return ''; } })();
+  const contactSite = d.site === 're' || d.site === 'in' ? d.site : (area === '부동산' || /^\/real-estate(\/|$)/.test(refPath) ? 're' : 'in');
+  record({ type: 'contact', site: contactSite, side, topic, area, sid: String(d.sid || '').slice(0, 40), vid: String(d.vid || '').slice(0, 40) }).catch(() => {});
   res.json({ ok: true });
 });
 
@@ -169,9 +171,10 @@ app.post('/api/hit', (req, res) => {
   if (type === 'view') {
     const p = str(d.path, 200);
     if (!p.startsWith('/') || /^\/(admin|stats)/.test(p)) return res.status(204).end();
-    Object.assign(ev, { path: p, title: str(d.title, 120), ref: str(d.ref, 300), q: str(d.q, 120), w: Number(d.w) || 0, dev: ua.dev, br: ua.br, cc: str(req.headers['cf-ipcountry'] || req.headers['x-country'] || '', 4).toUpperCase() });
+    Object.assign(ev, { path: p, site: d.site === 're' || d.site === 'in' ? d.site : (/^\/real-estate(\/|$)/.test(p) ? 're' : 'in'), title: str(d.title, 120), ref: str(d.ref, 300), q: str(d.q, 120), w: Number(d.w) || 0, dev: ua.dev, br: ua.br, cc: str(req.headers['cf-ipcountry'] || req.headers['x-country'] || '', 4).toUpperCase() });
   } else {
     ev.dur = Math.max(0, Math.min(3600, Math.round(Number(d.dur) || 0)));
+    if (d.dp !== undefined) ev.dp = Math.max(0, Math.min(100, Math.round(Number(d.dp) || 0)));
   }
   record(ev).catch(() => {});
   res.status(204).end();
@@ -182,9 +185,23 @@ app.get('/stats', async (req, res) => {
   const user = statsUser(req);
   if (!user && process.env.STATS_OPEN !== '1') return res.redirect('/stats/login');
   const days = [7, 30, 90, 365].includes(Number(req.query.days)) ? Number(req.query.days) : 30;
-  const agg = aggregate(await readEvents(days), days);
-  if (req.query.format === 'json') return res.json(agg);
-  res.type('html').send(renderStats(agg, { user: user ? '로그인됨' : '', siteUrl: SITE_URL.replace(/^https?:\/\//, '') }));
+  const site = ['all', 'in', 're'].includes(String(req.query.site)) ? String(req.query.site) : 'all';
+  const events = await readEvents(days * 2); // 직전 기간 비교용으로 두 배를 읽는다
+  const agg = aggregate(events, days, site, 0);
+  const prev = aggregate(events, days, site, days);
+  if (req.query.format === 'json') return res.json({ ...agg, prevTotals: prev.totals });
+  res.type('html').send(renderStats(agg, { user: user ? '로그인됨' : '', siteUrl: SITE_URL.replace(/^https?:\/\//, ''), prev }));
+});
+
+app.get('/stats/export.csv', async (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  const user = statsUser(req);
+  if (!user && process.env.STATS_OPEN !== '1') return res.redirect('/stats/login');
+  const days = [7, 30, 90, 365].includes(Number(req.query.days)) ? Number(req.query.days) : 30;
+  const site = ['all', 'in', 're'].includes(String(req.query.site)) ? String(req.query.site) : 'all';
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="visits-${site}-${days}d.csv"`);
+  res.send(sessionsCsv(await readEvents(days), days, site));
 });
 
 app.get('/stats/login', (req, res) => {

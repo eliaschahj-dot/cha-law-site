@@ -7,6 +7,7 @@ const sides = [['청구', '먼저 소송을 하려는 쪽'], ['피청구', '소�
 const topics = [['분할', '상속재산분할'], ['유류분', '유류분'], ['기여분', '기여분·특별수익'], ['포기', '상속포기·한정승인'], ['후견', '성년후견'], ['유언', '유언'], ['세금', '상속세·증여'], ['기타', '상속 외 (민사·부동산·형사·가사)']];
 ---
 <form class="formwrap" id="cform" method="post" action="/api/contact" novalidate>
+  <input type="hidden" name="site" value="in" />
   <div class="frow">
     <div class="f">
       <label for="c-name">성함 <span class="req">*</span></label>

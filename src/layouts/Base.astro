@@ -46,7 +46,7 @@ const ldItems = [orgLd, ...(isHome ? [siteLd] : []), ...(crumbLd ? [crumbLd] : [
 const isCurrent = (href: string) => path === href || (href !== '/' && path.startsWith(href + '/')) || path === href + '/';
 ---
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-site={v.key}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -89,10 +89,11 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
     var sid=sessionStorage.getItem('cs')||rnd();sessionStorage.setItem('cs',sid);
     var id=rnd();window.__hit={sid:sid,vid:vid};
     var send=function(o){var b=JSON.stringify(o);if(navigator.sendBeacon){navigator.sendBeacon('/api/hit',new Blob([b],{type:'text/plain'}))}else{fetch('/api/hit',{method:'POST',headers:{'Content-Type':'application/json'},body:b,keepalive:true}).catch(function(){})}};
-    send({type:'view',id:id,sid:sid,vid:vid,path:location.pathname,ref:document.referrer||'',title:document.title,w:screen.width,q:location.search.slice(0,120)});
-    var active=0,last=Date.now(),vis=document.visibilityState==='visible',sent=0;
+    send({type:'view',id:id,sid:sid,vid:vid,site:document.documentElement.getAttribute('data-site')||'in',path:location.pathname,ref:document.referrer||'',title:document.title,w:screen.width,q:location.search.slice(0,120)});
+    var depth=0,measure=function(){var h=Math.max(document.documentElement.scrollHeight,1)-innerHeight;var p=h<=0?100:Math.min(100,Math.round(((scrollY||0)/h)*100));if(p>depth)depth=p};measure();addEventListener('scroll',measure,{passive:true});
+    var active=0,last=Date.now(),vis=document.visibilityState==='visible',sent=0,sentDp=-1;
     var tick=function(){if(vis)active+=Date.now()-last;last=Date.now()};
-    var leave=function(){tick();var d=Math.round(active/1000);if(d>sent){sent=d;send({type:'leave',id:id,sid:sid,dur:d})}};
+    var leave=function(){tick();measure();var d=Math.round(active/1000);if(d>sent||depth>sentDp){sent=d;sentDp=depth;send({type:'leave',id:id,sid:sid,dur:d,dp:depth})}};
     document.addEventListener('visibilitychange',function(){tick();vis=document.visibilityState==='visible';if(!vis)leave()});
     addEventListener('pagehide',leave);
     setInterval(function(){if(vis)leave()},30000);

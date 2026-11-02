@@ -11,6 +11,7 @@ const siblings = allAreas.filter((a) => a.axis === (area.axis ?? 'in') && a.slug
 const cols = await getPublicColumns();
 const posts = related(cols, area.tags, 8);
 const seo = areaSeo[area.slug];
+const kw = seo?.keywords?.[0] ?? area.name;
 const tagCounts = area.tags.map((t) => ({ t, n: cols.filter((p) => p.tags.includes(t)).length })).filter((x) => x.n > 0);
 ---
 <section class="area-hero">
@@ -20,7 +21,7 @@ const tagCounts = area.tags.map((t) => ({ t, n: cols.filter((p) => p.tags.includ
     <h1>{area.name}</h1>
     <p class="lead">{area.lead}</p>
     <div class="cta-row" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:26px">
-      <a class="btn btn-seal" href={`${meta.contact}?area=${encodeURIComponent(area.name)}`}>{area.name} 상담 신청</a>
+      <a class="btn btn-seal" href={`${meta.contact}?area=${encodeURIComponent(area.name)}`}>{kw} 상담 신청</a>
       <a class="btn btn-ghost" href={site.phoneHref}>변호사 직통 {site.phone}</a>
     </div>
   </div>
@@ -29,14 +30,14 @@ const tagCounts = area.tags.map((t) => ({ t, n: cols.filter((p) => p.tags.includ
   <div class="main">
     {area.deadlines && area.deadlines.length > 0 && (
       <section>
-        <h2>먼저 확인할 기한과 기준</h2>
+        <h2>{kw}, 먼저 확인할 기한과 기준</h2>
         <div class="grid3">
           {area.deadlines.map((d) => <div class="card"><div class="k">{d.k}</div><p style="color:var(--ink);font-weight:600;font-size:15.5px">{d.v}</p></div>)}
         </div>
       </section>
     )}
     <section>
-      <h2>이런 상황이라면</h2>
+      <h2>{kw} 상담, 이런 상황이라면</h2>
       <ul class="situ">{area.situations.map((s) => <li>{s}</li>)}</ul>
     </section>
     {seo && seo.blocks.map((b) => (
@@ -47,7 +48,7 @@ const tagCounts = area.tags.map((t) => ({ t, n: cols.filter((p) => p.tags.includ
       </section>
     ))}
     <section>
-      <h2>절차와 순서</h2>
+      <h2>{kw} 절차와 순서</h2>
       <ol class="steps">{area.steps.map((s) => <li><div><b>{s.t}</b><span>{s.d}</span></div></li>)}</ol>
     </section>
     <section>
@@ -55,7 +56,7 @@ const tagCounts = area.tags.map((t) => ({ t, n: cols.filter((p) => p.tags.includ
       <ul class="docs">{area.docs.map((d) => <li>{d}</li>)}</ul>
     </section>
     <section>
-      <h2>자주 묻는 질문</h2>
+      <h2>{kw} 자주 묻는 질문</h2>
       <Faq items={area.faq} />
     </section>
     {posts.length > 0 && (

@@ -163,6 +163,8 @@ def write_content(logno: str, meta: dict, body: str) -> pathlib.Path:
               f"source: {yaml_str(meta.get('source') or 'naver')}",
               f"public: {'true' if meta.get('public') else 'false'}",
               "review:" + ("" if meta.get("review") else " []")]
+    if meta.get("needsRewrite"):
+        lines.append("needsRewrite: true")
     for r in meta.get("review") or []:
         lines.append(f"  - {yaml_str(r)}")
     lines.append("---")

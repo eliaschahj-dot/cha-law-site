@@ -17,6 +17,13 @@ const columns = defineCollection({
     source: z.string().optional().default('naver'),
     public: z.boolean().default(true),
     review: z.array(z.string()).default([]),
+    // 2026.11.02 재작성 파이프라인(scripts/rewrite_columns.py)이 붙이는 항목
+    slug: z.string().optional(),       // 영문 키워드 주소(/columns/{slug}); 없으면 logNo
+    keyword: z.string().optional(),
+    rewritten: z.string().optional(),  // 재작성 날짜. 있으면 자체 표준 주소, 없으면 네이버 원문을 표준 주소로
+    cover: z.string().optional(),      // 대표 이미지
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
+    needsRewrite: z.boolean().default(false), // 동기화로 새로 들어온 글: 재작성 전까지 비공개
   }),
 });
 

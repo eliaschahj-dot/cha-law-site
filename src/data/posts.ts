@@ -14,6 +14,7 @@ export interface Post {
   public: boolean;       // 목록·페이지 생성 여부
   review: string[];      // 비어 있지 않으면 전문 대신 요약만
   full: boolean;         // 전문 게재 가능
+  slug?: string; keyword?: string; rewritten?: string; cover?: string; faq: { q: string; a: string }[]; needsRewrite: boolean;
   entry: CollectionEntry<'columns'>;
 }
 
@@ -38,7 +39,7 @@ export const visibleSections = sections.filter((s) => !s.hidden);
 export const tagPath = (tag: string) => `/columns/tag/${encodeURIComponent(tag)}`;
 export const sectionBySlug = (slug: string) => sections.find((s) => s.slug === slug);
 export const sectionSlug = (name: string) => sections.find((s) => s.name === name)?.slug ?? 'inheritance';
-export const postPath = (p: Pick<Post, 'id'>) => `/columns/${p.id}`;
+export const postPath = (p: Pick<Post, 'id' | 'slug'>) => `/columns/${p.slug || p.id}`;
 export const fmtDate = (iso: string) => iso.replaceAll('-', '.');
 
 let cache: Promise<Post[]> | null = null;
@@ -53,7 +54,7 @@ export function getColumns(): Promise<Post[]> {
         const titleHits = reviewHits(d.title);
         titleHits.forEach((h) => hits.add(h));
         const review = [...hits];
-        const isPublic = d.public && PUBLIC_SECTIONS.includes(d.section) && titleHits.length === 0;
+        const isPublic = d.public && !d.needsRewrite && PUBLIC_SECTIONS.includes(d.section) && titleHits.length === 0;
         return {
           id: entry.id,
           title: d.title,
@@ -67,6 +68,7 @@ export function getColumns(): Promise<Post[]> {
           public: isPublic,
           review,
           full: review.length === 0 && (entry.body ?? '').trim().length > 0,
+          slug: d.slug, keyword: d.keyword, rewritten: d.rewritten, cover: d.cover, faq: d.faq, needsRewrite: d.needsRewrite,
           entry,
         } satisfies Post;
       });

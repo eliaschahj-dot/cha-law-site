@@ -113,7 +113,8 @@ def to_site(p: dict, known: set) -> dict:
     public = section is not None and not title_hits
     meta = dict(title=p["title"].strip(), date=(p.get("date") or "")[:10], section=section, category=p.get("category_name"),
                 categoryNo=cat_no, tags=ct.auto_tags(p["title"]), excerpt=ct.excerpt_of(md),
-                naverUrl=f"https://blog.naver.com/{fetch_index.BLOG_ID}/{log_no}", public=public, review=review, source="naver")
+                naverUrl=f"https://blog.naver.com/{fetch_index.BLOG_ID}/{log_no}", public=public, review=review, source="naver",
+                needsRewrite=True)  # 2026.11.02: 네이버 글 복제본은 유사문서가 되므로 재작성(scripts/rewrite_columns.py) 전까지 비공개
     ct.write_content(log_no, meta, md)
     return {"logNo": log_no, "title": p["title"], "section": section, "public": public, "review": review, "images": len(img_map)}
 

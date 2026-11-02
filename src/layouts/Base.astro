@@ -11,13 +11,14 @@ interface Props {
   breadcrumbs?: { name: string; href?: string }[];
   rawTitle?: boolean;
   variant?: Variant; // 'in' 상속(기본) | 're' 부동산 하위 사이트. 생략하면 주소로 판단한다.
+  canonical?: string; // 표준 주소를 바꿀 때(재작성 전 칼럼은 네이버 원문)
 }
 const path = Astro.url.pathname;
 const v = variants[Astro.props.variant ?? variantOfPath(path)];
 const { nav, footerNav } = v;
 const { title, description = v.description, jsonLd, breadcrumbs, rawTitle } = Astro.props;
 const origin = Astro.site?.href ?? site.url; // astro.config의 site (SITE_URL 환경변수) 우선
-const canonical = new URL(path, origin).href;
+const canonical = Astro.props.canonical || new URL(path, origin).href;
 const fullTitle = rawTitle ? title : title === site.name ? `${site.name} | ${v.tagline}` : `${title} | ${site.name}`;
 const naverVerify = site.naverVerify || import.meta.env.PUBLIC_NAVER_SITE_VERIFICATION;
 const googleVerify = site.googleVerify || import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;

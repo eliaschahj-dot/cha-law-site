@@ -35,6 +35,8 @@ functions/api/contact.js    Cloudflare Pages Function — 상담 폼 수신(Rese
 public/                     robots.txt, favicon.svg, og.png
 ```
 
+> **2026.11.02 칼럼 재작성(마케터 피드백)**: 네이버에서 옮긴 칼럼은 그대로 두면 유사문서가 되므로 `scripts/rewrite_columns.py`(Claude API)로 '같은 기획·흐름, 새 문장'으로 다시 씁니다. 핵심 키워드를 제목 맨 앞에 두고 본문 포함 6회 이상, 영문 키워드 슬러그(`/columns/Jeonse-Deposit-Return-Lawsuit`), 글마다 새 대표 이미지(`public/columns/{slug}/cover.webp`), FAQ 3개. 원본은 `scripts/naver/original/`에 보관, 옛 주소(logNo)는 서버가 새 슬러그로 301. 재작성 전 글은 표준 주소를 네이버 원문으로 두어 중복으로 잡히지 않게 하고, 동기화로 새로 들어온 글은 재작성 전까지 비공개(`needsRewrite`)입니다. 실행: `python -X utf8 scripts/rewrite_columns.py --limit 20` / `--all` / `--check`.
+
 > **2026.10.22 두 분야 통일**: 어느 사이트에서 봐도 "부동산·상속 두 분야를 함께 맡는 한 변호사"로 읽히도록 상단에 상속/부동산 전환 바(`Base.astro` `.sitebar`), 각 홈에 '다른 분야도 같은 변호사가 맡습니다' 띠(`CrossBand.astro`), 푸터 안내(`.ftwo`), 소개 페이지 직함·칩·담당 분야, 구조화 데이터(knowsAbout 두 분야 합침), OG 보조 문구를 맞췄습니다. 페이지 제목의 '상속 전문'·'부동산 전문'은 검색용으로 그대로 둡니다.
 
 > **2026.10.22 부동산 안내 페이지**: 절차 안내 4편(`/real-estate/guide`)과 상황별 안내 4편(`/real-estate/situations`)을 추가했습니다. 원본은 같은 `src/content/guides/*.json`이고 `site: re`로 구분합니다(`/admin`→'안내 페이지'→'사이트').

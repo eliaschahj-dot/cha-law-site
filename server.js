@@ -235,6 +235,15 @@ app.get('/stats/logout', (req, res) => {
   res.redirect('/');
 });
 
+// 재작성된 칼럼: 옛 주소 /columns/{logNo} → /columns/{영문 슬러그} (301). 표는 빌드가 만든 dist/columns-redirects.json
+let columnRedirects = {};
+try { columnRedirects = JSON.parse(fs.readFileSync(path.join(DIST, 'columns-redirects.json'), 'utf8')); } catch { columnRedirects = {}; }
+app.get(/^\/columns\/(\d{8,})\/?$/, (req, res, next) => {
+  const slug = columnRedirects[req.params[0]];
+  if (!slug) return next();
+  res.redirect(301, `/columns/${slug}`);
+});
+
 app.use(express.static(DIST, {
   extensions: ['html'],
   setHeaders(res, filePath) {

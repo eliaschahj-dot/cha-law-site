@@ -23,7 +23,8 @@ const columns = defineCollection({
     rewritten: z.string().optional(),  // 재작성 날짜. 있으면 자체 표준 주소, 없으면 네이버 원문을 표준 주소로
     cover: z.string().optional(),      // 대표 이미지
     faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
-    needsRewrite: z.boolean().default(false), // 동기화로 새로 들어온 글: 재작성 전까지 비공개
+    needsRewrite: z.boolean().default(false),
+    oldId: z.string().optional(), // 네이버 글이 아닌 칼럼의 옛 주소 조각(재작성 전 파일명) // 동기화로 새로 들어온 글: 재작성 전까지 비공개
   }),
 });
 

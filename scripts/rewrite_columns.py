@@ -13,7 +13,8 @@
 원본은 scripts/naver/original/{logNo}.md 에 보관하고, src/content/columns/{logNo}.md 를 덮어쓴다(프런트매터에 slug·keyword·rewritten·faq·cover 추가).
 API 키: 환경변수 ANTHROPIC_API_KEY 또는 ~/bohum-banbak/key.txt, 워크스페이스 헤더는 ~/bohum-banbak/workspace.txt.
 """
-import argparse, io, json, os, re, sys, time, pathlib, hashlib
+import argparse, io, json, os, re, sys, time, pathlib, hashlib, threading
+SLUG_LOCK = threading.Lock()
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -206,7 +207,7 @@ def client():
 def ask(cl, section, title, body, stricter=False):
     msg = PROMPT % (section, title, body)
     if stricter: msg += "\n\n(추가 지시) 앞서 쓴 결과가 원문과 너무 비슷했습니다. 문장 구조와 어휘를 완전히 바꾸고, 예시와 설명 순서를 재배치하세요. 키워드 횟수 6~8회를 꼭 지키세요."
-    r = cl.messages.create(model=MODEL, max_tokens=8000, messages=[{"role": "user", "content": msg}])
+    r = cl.messages.create(model=MODEL, max_tokens=12000, messages=[{"role": "user", "content": msg}])
     txt = "".join(getattr(b, "text", "") for b in r.content)
     def sec(name, nxt):
         m = re.search(r"===%s===\s*(.*?)\s*===%s===" % (name, nxt), txt, re.S)
@@ -215,7 +216,9 @@ def ask(cl, section, title, body, stricter=False):
     faq = []
     for q, a_ in re.findall(r"Q:\s*(.+?)\s*\nA:\s*(.+?)(?=\nQ:|\Z)", sec("FAQ", "BODY"), re.S):
         faq.append({"q": q.strip(), "a": re.sub(r"\s+", " ", a_).strip()})
-    data = {"keyword": sec("KEYWORD", "TITLE"), "title": sec("TITLE", "SLUG"), "slug": sec("SLUG", "EXCERPT"), "excerpt": sec("EXCERPT", "FAQ"), "faq": faq, "body_md": sec("BODY", "END")}
+    mb = re.search(r"===BODY===\s*(.*?)(?:\s*===END===|\Z)", txt, re.S)
+    if not mb or len(mb.group(1).strip()) < 600: raise ValueError("BODY 구간 없음/짧음: " + txt[:160].replace(chr(10), " "))
+    data = {"keyword": sec("KEYWORD", "TITLE"), "title": sec("TITLE", "SLUG"), "slug": sec("SLUG", "EXCERPT"), "excerpt": sec("EXCERPT", "FAQ"), "faq": faq, "body_md": mb.group(1).strip()}
     usage = getattr(r, "usage", None)
     return data, (usage.input_tokens if usage else 0), (usage.output_tokens if usage else 0)
 
@@ -248,10 +251,11 @@ def rewrite_one(cl, f, slugs, dry=False):
         new_body, data["faq"], n = fill_keyword(kw, title, new_body, data.get("faq", [])[:3])
         if sim < 0.12 and n >= 6: break
         print(f"  재시도 {attempt + 1}: 유사도 {sim:.2f}, 키워드 {n}회")
-    slug = slugify(data.get("slug") or kw) or f"Post-{f.stem}"
-    base = slug; k = 2
-    while slug in slugs and slugs[slug] != f.stem: slug = f"{base}-{k}"; k += 1
-    slugs[slug] = f.stem
+    with SLUG_LOCK:
+        slug = slugify(data.get("slug") or kw) or f"Post-{f.stem}"
+        base = slug; k = 2
+        while slug in slugs and slugs[slug] != f.stem: slug = f"{base}-{k}"; k += 1
+        slugs[slug] = f.stem
     cover = make_cover(slug, kw, title, section)
     fm.update({"title": title, "slug": slug, "keyword": kw, "excerpt": data.get("excerpt", "").strip(), "faq": data.get("faq", [])[:3], "cover": cover, "rewritten": time.strftime("%Y-%m-%d"), "public": True})
     fm.pop("needsRewrite", None)

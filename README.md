@@ -36,6 +36,8 @@ public/                     robots.txt, favicon.svg, og.png
 ```
 
 > **2026.11.02 칼럼 재작성(마케터 피드백)**: 네이버에서 옮긴 칼럼은 그대로 두면 유사문서가 되므로 `scripts/rewrite_columns.py`(Claude API)로 '같은 기획·흐름, 새 문장'으로 다시 씁니다. 핵심 키워드를 제목 맨 앞에 두고 본문 포함 6회 이상, 영문 키워드 슬러그(`/columns/Jeonse-Deposit-Return-Lawsuit`), 글마다 새 대표 이미지(`public/columns/{slug}/cover.webp`), FAQ 3개. 원본은 `scripts/naver/original/`에 보관, 옛 주소(logNo)는 서버가 새 슬러그로 301. 재작성 전 글은 표준 주소를 네이버 원문으로 두어 중복으로 잡히지 않게 하고, 동기화로 새로 들어온 글은 재작성 전까지 비공개(`needsRewrite`)입니다. 실행: `python -X utf8 scripts/rewrite_columns.py --limit 20` / `--all` / `--check`.
+>
+> **2026.11.03 자동 재작성**: 새로 동기화된 글은 두 경로 중 먼저 도는 쪽이 재작성합니다. ① 깃허브 액션 `naver-sync.yml` — 저장소 Secrets 에 `ANTHROPIC_API_KEY`(선택 `ANTHROPIC_WORKSPACE_ID`)를 넣으면 06:00 동기화 직후 서버에서 재작성까지 끝내고 커밋합니다(리눅스에서는 나눔 글꼴로 대표 이미지 생성). ② 차형진 PC 의 Claude 예약 작업 `auto-rewrite-columns`(매일 07:10, 앱이 켜져 있어야 실행, 꺼져 있으면 다음 실행 시) — `git pull` 후 남은 글을 재작성·빌드·커밋·푸시하고 `X-App-Version` 으로 배포를 확인합니다. 둘 다 돌면 두 번째는 "대상 없음"으로 끝나므로 중복 비용은 없습니다. 비용은 글 1편당 약 150~250원.
 
 > **2026.10.22 두 분야 통일**: 어느 사이트에서 봐도 "부동산·상속 두 분야를 함께 맡는 한 변호사"로 읽히도록 상단에 상속/부동산 전환 바(`Base.astro` `.sitebar`), 각 홈에 '다른 분야도 같은 변호사가 맡습니다' 띠(`CrossBand.astro`), 푸터 안내(`.ftwo`), 소개 페이지 직함·칩·담당 분야, 구조화 데이터(knowsAbout 두 분야 합침), OG 보조 문구를 맞췄습니다. 페이지 제목의 '상속 전문'·'부동산 전문'은 검색용으로 그대로 둡니다.
 

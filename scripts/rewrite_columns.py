@@ -108,10 +108,13 @@ def slugify(s):
 
 # ---------- 대표 이미지 ----------
 FONTS = pathlib.Path(r"C:\Windows\Fonts")
+# 리눅스(GitHub Actions)에서는 나눔 글꼴(fonts-nanum)로 대신한다: 굵게→NanumGothicBold, 보통→NanumGothic, 한바탕→NanumMyeongjoBold
+NANUM = pathlib.Path("/usr/share/fonts/truetype/nanum")
+LINUX_ALT = {"malgunbd.ttf": "NanumGothicBold.ttf", "malgun.ttf": "NanumGothic.ttf", "HANBatangB.ttf": "NanumMyeongjoBold.ttf"}
 def font(name, size):
     for cand in [name, "malgunbd.ttf", "malgun.ttf"]:
-        p = FONTS / cand
-        if p.exists(): return ImageFont.truetype(str(p), size)
+        for p in (FONTS / cand, NANUM / LINUX_ALT.get(cand, cand)):
+            if p.exists(): return ImageFont.truetype(str(p), size)
     return ImageFont.load_default()
 
 def wrap_text(d, text, f, width):
@@ -141,7 +144,7 @@ def make_cover(slug, keyword, title, section):
         seg((12, 5.5), (20, 5.5)); seg((5.5, 11.5), (26.5, 11.5)); seg((16, 11.5), (7, 26.5)); seg((16, 11.5), (25, 26.5))
     mark(80, 70, 2.2, navy, 6)
     d.text((170, 92), f"{section} · 차형진 변호사", font=font("malgun.ttf", 26), fill=(90, 100, 125))
-    kf = font("HANBatangB.ttf", 40) if (FONTS / "HANBatangB.ttf").exists() else font("malgunbd.ttf", 40)
+    kf = font("HANBatangB.ttf", 40) if ((FONTS / "HANBatangB.ttf").exists() or (NANUM / "NanumMyeongjoBold.ttf").exists()) else font("malgunbd.ttf", 40)
     d.text((80, 170), keyword, font=kf, fill=accent)
     tf = font("malgunbd.ttf", 48)
     y = 240

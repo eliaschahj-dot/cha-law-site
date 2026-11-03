@@ -30,10 +30,24 @@ jobs:
       - name: 새 글 가져오기
         run: python -I -X utf8 scripts/naver_sync.py --limit 30
 
+      # 2026.11.03: 새로 들어온 글(needsRewrite)을 같은 실행에서 재작성한다.
+      # 저장소 Secrets 에 ANTHROPIC_API_KEY(선택: ANTHROPIC_WORKSPACE_ID)를 넣어야 돌아간다. 없으면 건너뛰고,
+      # 이 PC 의 예약 작업(auto-rewrite-columns, 매일 07:10)이 대신 처리한다. 비용은 글 1편당 약 150~250원.
+      - name: 새 글 재작성(키가 설정된 경우)
+        if: env.ANTHROPIC_API_KEY != ''
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_WORKSPACE_ID: ${{ secrets.ANTHROPIC_WORKSPACE_ID }}
+        run: |
+          sudo apt-get install -y -qq fonts-nanum > /dev/null
+          pip install --quiet anthropic
+          python -X utf8 scripts/rewrite_columns.py --limit 30 --workers 2
+          python -X utf8 scripts/rewrite_columns.py --fix
+
       - name: 변경 사항 커밋·푸시
         id: commit
         run: |
-          git add src/content/columns public/columns
+          git add src/content/columns public/columns scripts/naver/original
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "새 글 없음"
@@ -41,7 +55,7 @@ jobs:
             n=$(git diff --cached --name-only -- src/content/columns | wc -l)
             git config user.name "naver-sync"
             git config user.email "naver-sync@users.noreply.github.com"
-            git commit -m "네이버 동기화: 칼럼 ${n}편 추가"
+            git commit -m "네이버 동기화: 칼럼 ${n}편 추가·재작성"
             git push
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi

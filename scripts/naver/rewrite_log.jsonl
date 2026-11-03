@@ -452,3 +452,4 @@
 {"id": "224126759486", "slug": "Sale-Contract-Termination", "keyword": "분양계약 해지", "title": "분양계약 해지 가능한 경우와 최근 법원 판단 흐름 정리", "sim": 0.071, "kw": 6, "in": 4861, "out": 7303, "chars": 2892}
 {"id": "223771673207", "slug": "Jeonse-Landlord-Unreachable", "keyword": "전세 집주인 연락두절", "title": "전세 집주인 연락두절, 만기 한 달 전부터 밟아야 할 단계별 대응", "sim": 0.024, "kw": 6, "in": 4236, "out": 4253, "chars": 1868}
 {"id": "223394395545", "slug": "Tenant-Auction-Distribution-Order", "keyword": "임차인 경매 배당순위", "title": "임차인 경매 배당순위, 낙찰받았는데도 1순위가 아닐 수 있는 이유", "sim": 0.06, "kw": 8, "in": 4549, "out": 7464, "chars": 2682}
+{"id": "224459348315", "slug": "Objection-To-Enforcement-Lawsuit", "keyword": "청구이의의 소", "title": "청구이의의 소 절차, 이미 갚은 빚에 강제집행이 들어왔다면", "sim": 0.05, "kw": 6, "in": 4300, "out": 5495, "chars": 2400}

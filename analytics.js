@@ -105,12 +105,25 @@ const fmtDur = (s) => (s >= 60 ? `${Math.floor(s / 60)}분 ${s % 60}초` : `${s}
 const WEEK = ['일', '월', '화', '수', '목', '금', '토'];
 
 /** 세션 목록(sid 별 묶음). site = 'all' | 'in' | 're'. window: [now-(offset+days)d, now-offset d) */
-export function buildSessions(events, days, site = 'all', offset = 0) {
+/** 봇 추정(2026.11.06): UA 로는 못 거르는 해외 크롤러·스캐너. 국가가 한국이 아니면서 (체류 이벤트가 전혀 없거나, 직접 방문으로 10초 안에 끝났거나, 브라우저 언어가 한국어가 아닌) 방문 */
+const isBotLike = (s, hasLeave) => {
+  if (!s.cc || s.cc === 'KR') return false;
+  if (!hasLeave) return true;
+  if (s.source.name === '직접 방문·북마크' && s.dur <= 10) return true;
+  if (s.lang && !/^ko/i.test(s.lang)) return true;
+  return false;
+};
+
+export function buildSessions(events, days, site = 'all', offset = 0, { includeBots = false } = {}) {
   const to = Date.now() - offset * 86400000, from = to - days * 86400000;
   const inWin = (e) => { const t = Date.parse(e.t); return t >= from && t < to; };
   const all = events.filter(inWin);
   const views = all.filter((e) => e.type === 'view' && !e.bot && (site === 'all' || evSite(e) === site));
   const leaves = all.filter((e) => e.type === 'leave');
+  const clicks = all.filter((e) => e.type === 'click');
+  const clickBySid = new Map();
+  for (const c of clicks) clickBySid.set(c.sid, (clickBySid.get(c.sid) || 0) + 1);
+  const leaveIds = new Set(leaves.map((l) => l.id));
   const durById = new Map(), depthById = new Map();
   for (const l of leaves) {
     durById.set(l.id, Math.max(durById.get(l.id) || 0, Math.min(Number(l.dur) || 0, 3600)));
@@ -132,23 +145,29 @@ export function buildSessions(events, days, site = 'all', offset = 0) {
     });
     const first = list[0];
     const siteSet = new Set(pages.map((p) => p.site));
-    sessions.push({
-      sid, vid: first.vid, start: first.t, source: sourceOf(first.ref, first.q), utm: utmOf(first.q), dev: first.dev, br: first.br, cc: first.cc || '',
-      site: siteSet.size === 1 ? [...siteSet][0] : 'both', pages, dur: pages.reduce((s, p) => s + p.dur, 0), contacts: contactBySid.get(sid) || 0,
-    });
+    const sess = {
+      sid, vid: first.vid, start: first.t, source: sourceOf(first.ref, first.q), utm: utmOf(first.q), dev: first.dev, br: first.br, cc: first.cc || '', lang: first.lang || '',
+      site: siteSet.size === 1 ? [...siteSet][0] : 'both', pages, dur: pages.reduce((s, p) => s + p.dur, 0), contacts: contactBySid.get(sid) || 0, clicks: clickBySid.get(sid) || 0,
+    };
+    sess.bot = isBotLike(sess, list.some((v) => leaveIds.has(v.id)));
+    sessions.push(sess);
   }
   sessions.sort((a, b) => Date.parse(b.start) - Date.parse(a.start));
+  const botSessions = sessions.filter((s) => s.bot).length;
+  const kept = includeBots ? sessions : sessions.filter((s) => !s.bot);
+  const keptSids = new Set(kept.map((s) => s.sid));
+  const keptViews = includeBots ? views : views.filter((v) => keptSids.has(v.sid));
   // 사이트별로 볼 때 상담 신청도 그 사이트 것만
   const contactsOf = contacts.filter((c) => {
     if (site === 'all') return true;
     const cs = c.site === 're' || c.site === 'in' ? c.site : (bySid.has(c.sid) ? evSite(bySid.get(c.sid)[0]) : (c.area === '부동산' ? 're' : 'in'));
     return cs === site;
   });
-  return { sessions, views, contacts: contactsOf, from, to };
+  return { sessions: kept, views: keptViews, contacts: contactsOf, from, to, botSessions, includeBots };
 }
 
-export function aggregate(events, days, site = 'all', offset = 0) {
-  const { sessions, views, contacts, from } = buildSessions(events, days, site, offset);
+export function aggregate(events, days, site = 'all', offset = 0, opts = {}) {
+  const { sessions, views, contacts, from, botSessions, includeBots } = buildSessions(events, days, site, offset, opts);
   const uniq = (arr) => new Set(arr).size;
   const vidCount = new Map(); for (const s of sessions) vidCount.set(s.vid, (vidCount.get(s.vid) || 0) + 1);
   const totals = {
@@ -159,6 +178,7 @@ export function aggregate(events, days, site = 'all', offset = 0) {
     avgPages: sessions.length ? +(views.length / sessions.length).toFixed(1) : 0,
     bounce: sessions.length ? Math.round((sessions.filter((s) => s.pages.length === 1).length / sessions.length) * 100) : 0,
     contacts: contacts.length,
+    clicks: sessions.filter((s) => s.clicks > 0).length, // 전화·메일 버튼을 누른 방문
     conv: sessions.length ? +((contacts.length / sessions.length) * 100).toFixed(1) : 0,
     returningVisitors: [...vidCount.values()].filter((n) => n > 1).length,
     returningShare: sessions.length ? Math.round((sessions.filter((s) => vidCount.get(s.vid) > 1).length / sessions.length) * 100) : 0,
@@ -175,8 +195,8 @@ export function aggregate(events, days, site = 'all', offset = 0) {
   // 전환 분석: 묶음별 방문 수·상담 수·전환율
   const convBy = (key) => {
     const m = new Map();
-    for (const s of sessions) { const k = key(s); const r = m.get(k) || { n: 0, c: 0, dur: 0 }; r.n++; r.c += s.contacts ? 1 : 0; r.dur += s.dur; m.set(k, r); }
-    return [...m].map(([k, r]) => ({ key: k, sessions: r.n, contacts: r.c, rate: +((r.c / r.n) * 100).toFixed(1), avgDur: Math.round(r.dur / r.n) })).sort((a, b) => b.sessions - a.sessions);
+    for (const s of sessions) { const k = key(s); const r = m.get(k) || { n: 0, c: 0, k: 0, dur: 0 }; r.n++; r.c += s.contacts ? 1 : 0; r.k += s.clicks ? 1 : 0; r.dur += s.dur; m.set(k, r); }
+    return [...m].map(([k, r]) => ({ key: k, sessions: r.n, contacts: r.c, clicks: r.k, rate: +((r.c / r.n) * 100).toFixed(1), avgDur: Math.round(r.dur / r.n) })).sort((a, b) => b.sessions - a.sessions);
   };
   const sources = convBy((s) => s.source.name);
   const devices = convBy((s) => s.dev || '?');
@@ -207,6 +227,7 @@ export function aggregate(events, days, site = 'all', offset = 0) {
     ['홈을 봄', sessions.filter((s) => saw(s, (p) => p.kind === '홈')).length],
     ['분야·안내·칼럼을 봄', sessions.filter((s) => saw(s, (p) => ['분야', '안내', '칼럼', '소개'].includes(p.kind))).length],
     ['상담 페이지를 봄', sessions.filter((s) => saw(s, (p) => p.kind === '상담 페이지')).length],
+    ['전화·메일 클릭 또는 신청', sessions.filter((s) => s.contacts > 0 || s.clicks > 0).length],
     ['상담 신청', sessions.filter((s) => s.contacts > 0).length],
   ];
   const kinds = convBy((s) => (s.pages[0] ? s.pages[0].kind : '?'));
@@ -215,28 +236,28 @@ export function aggregate(events, days, site = 'all', offset = 0) {
   const weekdays = Array.from({ length: 7 }, () => ({ sessions: 0, contacts: 0 }));
   for (const s of sessions) { const d = new Date(Date.parse(s.start) + KST); hours[d.getUTCHours()]++; const w = weekdays[d.getUTCDay()]; w.sessions++; if (s.contacts) w.contacts++; }
 
-  const out = { days, site, totals, daily: dailyRows, sources, devices, browsers, countries, entries, exits: exits.slice(0, 12), campaigns, pages, columns, depthPages, funnel, kinds, hours, weekdays, recent: sessions.slice(0, 60), contactsList: contacts.slice(-30).reverse() };
+  const out = { days, site, botSessions, includeBots: !!includeBots, totals, daily: dailyRows, sources, devices, browsers, countries, entries, exits: exits.slice(0, 12), campaigns, pages, columns, depthPages, funnel, kinds, hours, weekdays, recent: sessions.slice(0, 60), contactsList: contacts.slice(-30).reverse() };
   if (site === 'all' && offset === 0) {
     out.bySite = {};
-    for (const k of ['in', 're']) { const a = aggregate(events, days, k, 0); out.bySite[k] = { totals: a.totals, topEntries: a.entries.slice(0, 3), topSources: a.sources.slice(0, 3) }; }
+    for (const k of ['in', 're']) { const a = aggregate(events, days, k, 0, opts); out.bySite[k] = { totals: a.totals, topEntries: a.entries.slice(0, 3), topSources: a.sources.slice(0, 3) }; }
   }
   return out;
 }
 
 /** CSV 내보내기(세션 단위) */
-export function sessionsCsv(events, days, site = 'all') {
-  const { sessions } = buildSessions(events, days, site);
+export function sessionsCsv(events, days, site = 'all', opts = {}) {
+  const { sessions } = buildSessions(events, days, site, 0, opts);
   const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const head = ['시작(KST)', '사이트', '유입', '캠페인', '기기', '브라우저', '국가', '페이지수', '체류초', '진입', '이탈', '상담신청', '경로'];
-  const rows = sessions.map((s) => [kstTime(s.start), SITES[s.site] || s.site, s.source.name, s.utm ? `${s.utm.source}/${s.utm.medium}/${s.utm.campaign}` : '', s.dev, s.br, s.cc, s.pages.length, s.dur, norm(s.pages[0]?.path || ''), norm(s.pages[s.pages.length - 1]?.path || ''), s.contacts, s.pages.map((p) => `${norm(p.path)}(${p.dur}s)`).join(' > ')]);
+  const head = ['시작(KST)', '사이트', '유입', '캠페인', '기기', '브라우저', '국가', '페이지수', '체류초', '진입', '이탈', '상담신청', '전화메일클릭', '봇추정', '경로'];
+  const rows = sessions.map((s) => [kstTime(s.start), SITES[s.site] || s.site, s.source.name, s.utm ? `${s.utm.source}/${s.utm.medium}/${s.utm.campaign}` : '', s.dev, s.br, s.cc, s.pages.length, s.dur, norm(s.pages[0]?.path || ''), norm(s.pages[s.pages.length - 1]?.path || ''), s.contacts, s.clicks, s.bot ? 1 : 0, s.pages.map((p) => `${norm(p.path)}(${p.dur}s)`).join(' > ')]);
   return '﻿' + [head, ...rows].map((r) => r.map(q).join(',')).join('\r\n');
 }
 
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 export function renderStats(agg, { user = '', siteUrl = '', prev = null } = {}) {
-  const { totals: T, days, site } = agg;
-  const qs = (o) => `/stats?days=${o.days ?? days}&site=${o.site ?? site}`;
+  const { totals: T, days, site, botSessions = 0, includeBots = false } = agg;
+  const qs = (o) => `/stats?days=${o.days ?? days}&site=${o.site ?? site}${(o.all ?? includeBots) ? '&all=1' : ''}`;
   const max = Math.max(1, ...agg.daily.map((d) => d.sessions));
   const bars = agg.daily.map((d, i) => {
     const h = Math.round((d.sessions / max) * 120);
@@ -268,7 +289,7 @@ export function renderStats(agg, { user = '', siteUrl = '', prev = null } = {}) 
   const siteTag = (s) => (s === 'both' ? '<span class="tag both">둘 다</span>' : s === 're' ? '<span class="tag re">부동산</span>' : '<span class="tag in">상속</span>');
   const recentRows = agg.recent.map((s) => [
     kstTime(s.start),
-    `<code title="${esc(s.vid)}">${esc(String(s.vid).slice(0, 6))}</code>${s.contacts ? ' <b class="cv">상담</b>' : ''}`,
+    `<code title="${esc(s.vid)}">${esc(String(s.vid).slice(0, 6))}</code>${s.contacts ? ' <b class="cv">상담</b>' : ''}${s.clicks ? ' <b class="cv tel">전화·메일</b>' : ''}${s.bot ? ' <b class="cv bot">봇 추정</b>' : ''}`,
     site === 'all' ? siteTag(s.site) : esc(s.source.name),
     site === 'all' ? esc(s.source.name) : `${esc(s.dev)} · ${esc(s.br)}${s.cc ? ' · ' + esc(s.cc) : ''}`,
     `<div class="flow">${s.pages.map((p) => `<span title="${esc(p.title)}"><a href="${esc(p.path)}" target="_blank" rel="noopener">${esc(p.path)}</a> <em>${fmtDur(p.dur)}</em>${p.dp !== undefined ? `<small>${p.dp}%</small>` : ''}</span>`).join('<i>→</i>')}</div>`,
@@ -276,7 +297,7 @@ export function renderStats(agg, { user = '', siteUrl = '', prev = null } = {}) 
   ]);
   const funnelMax = Math.max(1, agg.funnel[0][1]);
   const funnelRows = agg.funnel.map(([k, n], i) => { const base = agg.funnel[0][1] || 1; const prevN = i ? agg.funnel[i - 1][1] || 0 : n; return `<div class="fr"><span class="fk">${k}</span><span class="fb"><i style="width:${Math.round((n / funnelMax) * 100)}%"></i></span><span class="fn">${n}</span><span class="fp">${Math.round((n / base) * 100)}%${i ? ` <small>이전 단계의 ${prevN ? Math.round((n / prevN) * 100) : 0}%</small>` : ''}</span></div>`; }).join('');
-  const convTable = (rows, label, limit = 10) => table(rows.slice(0, limit).map((r) => [esc(r.key || '(없음)'), r.sessions, pct(r.sessions), r.contacts, `<b>${r.rate}%</b>`, fmtDur(r.avgDur)]), [label, '방문', '비율', '상담', '전환율', '평균 체류']);
+  const convTable = (rows, label, limit = 10) => table(rows.slice(0, limit).map((r) => [esc(r.key || '(없음)'), r.sessions, pct(r.sessions), r.contacts, r.clicks || 0, `<b>${r.rate}%</b>`, fmtDur(r.avgDur)]), [label, '방문', '비율', '상담', '전화·메일', '전환율', '평균 체류']);
   const bySiteCards = agg.bySite ? `<div class="grid2 sitecards">${['in', 're'].map((k) => { const b = agg.bySite[k]; const t = b.totals; return `<div class="card s-${k}"><h2><span class="tag ${k}">${SITES[k]}</span> ${SITES[k]} 전문 홈페이지 <a class="more" href="${qs({ site: k })}">자세히 →</a></h2>
 <div class="mini"><div><small>방문</small><b>${t.sessions}</b></div><div><small>방문자</small><b>${t.visitors}</b></div><div><small>페이지뷰</small><b>${t.views}</b></div><div><small>평균 체류</small><b>${fmtDur(t.avgDur)}</b></div><div><small>상담 신청</small><b>${t.contacts}</b></div><div><small>전환율</small><b>${t.conv}%</b></div></div>
 <p class="note">진입: ${b.topEntries.map((e) => `${esc(e.key)} ${e.sessions}`).join(' · ') || '-'}<br>유입: ${b.topSources.map((e) => `${esc(e.key)} ${e.sessions}`).join(' · ') || '-'}</p></div>`; }).join('')}</div>` : '';
@@ -296,15 +317,16 @@ h1{font-size:22px;margin:0}h1 small{font-size:13px;color:var(--ink3);font-weight
 table{width:100%;border-collapse:collapse;font-size:13.5px}th{text-align:left;color:var(--ink3);font-weight:700;font-size:12px;padding:6px 8px;border-bottom:1px solid var(--line)}td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}td:last-child,th:last-child{text-align:right}.muted{color:var(--ink3)}
 svg.chart{width:100%;height:150px;display:block}svg.chart rect{fill:var(--accent)}svg.chart circle.c{fill:#C9A227}svg.chart text{font-size:10px;fill:var(--ink3)}
 .hours{display:flex;gap:3px;align-items:flex-end;height:70px}.hb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px}.hb i{display:block;width:100%;background:var(--brass);border-radius:2px 2px 0 0;min-height:1px}.hb b{font-size:9px;color:var(--ink3);font-weight:600}.hb b em{font-style:normal;color:#C9A227;margin-left:2px}
-.flow span{white-space:nowrap}.flow em{font-style:normal;color:var(--accent);font-weight:700;font-size:12px}.flow small{color:var(--ink3);font-size:10px;margin-left:3px}.flow i{color:var(--ink3);margin:0 6px;font-style:normal}.flow a{color:var(--ink);text-decoration:none}code{font-size:12px;background:#EEF0F4;padding:1px 5px;border-radius:3px}.cv{font-size:11px;color:#fff;background:#C9A227;padding:1px 6px;border-radius:999px}
+.flow span{white-space:nowrap}.flow em{font-style:normal;color:var(--accent);font-weight:700;font-size:12px}.flow small{color:var(--ink3);font-size:10px;margin-left:3px}.flow i{color:var(--ink3);margin:0 6px;font-style:normal}.flow a{color:var(--ink);text-decoration:none}code{font-size:12px;background:#EEF0F4;padding:1px 5px;border-radius:3px}.cv{font-size:11px;color:#fff;background:#C9A227;padding:1px 6px;border-radius:999px}.cv.tel{background:#2E7D5B}.cv.bot{background:#7E879A}
 .tag{display:inline-block;font-size:11px;font-weight:800;padding:1px 8px;border-radius:999px;color:#fff;background:var(--in)}.tag.re{background:var(--re)}.tag.both{background:var(--ink3)}
 .sitecards .card.s-in{border-top:3px solid var(--in)}.sitecards .card.s-re{border-top:3px solid var(--re)}.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 14px}.mini small{display:block;font-size:11px;color:var(--ink3)}.mini b{font-size:20px;font-weight:900}
 .share{display:flex;height:12px;border-radius:999px;overflow:hidden;background:#EEF0F4;margin-top:4px}.share i{display:block;height:100%}.share .in{background:var(--in)}.share .re{background:var(--re)}
 .funnel{display:grid;gap:8px}.fr{display:grid;grid-template-columns:150px 1fr 56px 150px;gap:10px;align-items:center;font-size:13.5px}.fb{height:16px;background:#EEF0F4;border-radius:999px;overflow:hidden}.fb i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#3C6FBF)}.fn{font-weight:900;text-align:right}.fp{color:var(--ink3);font-size:12.5px}.fp small{color:var(--ink3)}@media(max-width:640px){.fr{grid-template-columns:100px 1fr 44px}.fp{display:none}}
 .note{font-size:12.5px;color:var(--ink3);margin-top:8px}footer{font-size:12px;color:var(--ink3);margin-top:20px}footer a{color:var(--ink2)}
 </style></head><body><div class="wrap">
-<header><h1>방문 통계 <small>${esc(siteUrl)} · 최근 ${days}일 · 한국 시간</small></h1><div class="tabs">${periodTabs}<a href="${qs({})}&format=json">JSON</a><a href="/stats/export.csv?days=${days}&site=${site}">CSV</a>${user ? `<a href="/stats/logout">로그아웃</a>` : ''}</div></header>
+<header><h1>방문 통계 <small>${esc(siteUrl)} · 최근 ${days}일 · 한국 시간</small></h1><div class="tabs">${periodTabs}<a href="${qs({})}&format=json">JSON</a><a href="/stats/export.csv?days=${days}&site=${site}${includeBots ? '&all=1' : ''}">CSV</a>${user ? `<a href="/stats/logout">로그아웃</a>` : ''}</div></header>
 <div class="sitebar"><span>보는 사이트</span><div class="tabs">${siteTabs}</div><span class="muted">상속 = / 아래 · 부동산 = /real-estate 아래(칼럼은 코너 기준)</span></div>
+<div class="sitebar"><span>봇 추정 방문</span><div class="tabs"><a class="${includeBots ? '' : 'on'}" href="${qs({ all: false })}">빼고 보기 (실방문)</a><a class="${includeBots ? 'on' : ''}" href="${qs({ all: true })}">포함해서 보기</a></div><span class="muted">이 기간 봇 추정 ${botSessions}건 — 해외에서 체류 기록 없이, 또는 직접 방문으로 10초 안에 끝났거나 브라우저 언어가 한국어가 아닌 방문</span></div>
 ${bySiteCards}${shareBar ? `<div class="card"><h2>두 사이트 방문 비중</h2>${shareBar}</div>` : ''}
 <div class="kpis">
 <div class="kpi"><small>방문(세션)</small><b>${T.sessions.toLocaleString('ko-KR')}</b><span>30분 넘게 비우면 새 방문</span>${delta(T.sessions, P.sessions)}</div>
@@ -313,6 +335,7 @@ ${bySiteCards}${shareBar ? `<div class="card"><h2>두 사이트 방문 비중</h
 <div class="kpi"><small>평균 체류</small><b>${fmtDur(T.avgDur)}</b><span>화면이 보인 시간만 합산</span>${delta(T.avgDur, P.avgDur)}</div>
 <div class="kpi"><small>한 쪽만 보고 이탈</small><b>${T.bounce}%</b><span>페이지 1개로 끝난 방문</span>${delta(T.bounce, P.bounce, { pctPoint: true, lowerBetter: true })}</div>
 <div class="kpi"><small>상담 신청</small><b>${T.contacts}</b><span>전환율 ${T.conv}% (방문 대비)</span>${delta(T.contacts, P.contacts)}</div>
+<div class="kpi"><small>전화·메일 클릭</small><b>${T.clicks ?? 0}</b><span>전화·메일 버튼을 누른 방문</span>${delta(T.clicks ?? 0, P.clicks ?? 0)}</div>
 </div>
 <p class="note" style="margin:-8px 0 16px">▲▼ 는 직전 ${days}일과 비교한 변화입니다.</p>
 <div class="card"><h2>일별 방문 <span class="muted" style="font-weight:500">· 노란 점 = 상담 신청</span></h2><svg class="chart" viewBox="0 0 900 150" preserveAspectRatio="none">${bars}${labels}</svg>
@@ -342,7 +365,7 @@ ${agg.campaigns.length ? `<div class="card"><h2>캠페인(UTM)별 전환</h2>${c
 <div class="card"><h2>최근 상담 신청</h2>${table(agg.contactsList.map((c) => [kstTime(c.t), c.site ? siteTag(c.site) : (c.area === '부동산' ? siteTag('re') : siteTag('in')), esc(c.side || ''), esc(c.topic || '')]), ['시각', '사이트', '입장', '관련'])}</div>
 </div>
 <div class="card"><h2>최근 방문 흐름 (최근 60건)</h2>${table(recentRows, ['시각', '방문자', site === 'all' ? '사이트' : '유입', site === 'all' ? '유입' : '기기', '본 페이지와 체류시간·스크롤', '합계'])}<p class="note">방문자 칸은 브라우저가 만든 임의 식별값의 앞 6자입니다. 이름·IP는 기록하지 않습니다. 변호사님 본인 방문은 이 화면에 로그인한 브라우저에서는 제외됩니다.</p></div>
-<footer>기록 위치: ${esc(DATA_DIR)} · 매월 파일 하나(events-YYYY-MM.jsonl). 검색엔진·메신저 미리보기 로봇은 제외. 스크롤 깊이는 2026.10.22 이후 기록부터. <a href="/">상속 홈</a> · <a href="/real-estate">부동산 홈</a> · <a href="/admin/">글 편집기</a></footer>
+<footer>기록 위치: ${esc(DATA_DIR)} · 매월 파일 하나(events-YYYY-MM.jsonl). 검색엔진·메신저 미리보기 로봇은 제외하고, 해외 봇 추정 방문은 기본으로 뺍니다. 스크롤 깊이는 2026.11.06 이후 기록이 정확합니다(그 전은 페이지가 그려지기 전에 재어 100%로 남음). 전화·메일 클릭은 2026.11.06 이후 기록부터. <a href="/">상속 홈</a> · <a href="/real-estate">부동산 홈</a> · <a href="/admin/">글 편집기</a></footer>
 </div></body></html>`;
 }
 const depthTop = (arr, n) => arr.slice(0, n);

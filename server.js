@@ -79,7 +79,11 @@ app.get('/robots.txt', (req, res) => {
 
 app.post('/api/contact', async (req, res) => {
   const d = req.body || {};
-  if (d.company) return res.json({ ok: true }); // 허니팟
+  if (d.company) { // 허니팟: 로봇이거나 자동완성이 숨은 칸을 채운 경우. 조용히 성공으로 답하되 로그와 통계에는 남긴다(2026.11.06)
+    console.warn(`[contact] honeypot hit ref=${req.get('referer') || '-'} ua=${String(req.get('user-agent') || '').slice(0, 80)}`);
+    record({ type: 'honeypot', sid: String(d.sid || '').slice(0, 40), vid: String(d.vid || '').slice(0, 40), path: String(d.source || '').slice(0, 200) }).catch(() => {});
+    return res.json({ ok: true });
+  }
   const s = (v) => (Array.isArray(v) ? v.map((x) => String(x).trim()).filter(Boolean).join(', ') : String(v || '').trim());
   const name = s(d.name);
   const phone = s(d.phone);
@@ -165,13 +169,16 @@ app.post('/api/hit', (req, res) => {
   const str = (v, n) => String(v || '').slice(0, n);
   const ua = parseUA(req.headers['user-agent'] || '');
   if (ua.bot) return res.status(204).end();
-  const type = d.type === 'leave' ? 'leave' : d.type === 'view' ? 'view' : '';
+  const type = d.type === 'leave' ? 'leave' : d.type === 'view' ? 'view' : d.type === 'click' ? 'click' : '';
   if (!type) return res.status(400).end();
   const ev = { type, id: str(d.id, 24), sid: str(d.sid, 40), vid: str(d.vid, 40) };
   if (type === 'view') {
     const p = str(d.path, 200);
     if (!p.startsWith('/') || /^\/(admin|stats)/.test(p)) return res.status(204).end();
-    Object.assign(ev, { path: p, site: d.site === 're' || d.site === 'in' ? d.site : (/^\/real-estate(\/|$)/.test(p) ? 're' : 'in'), title: str(d.title, 120), ref: str(d.ref, 300), q: str(d.q, 120), w: Number(d.w) || 0, dev: ua.dev, br: ua.br, cc: str(req.headers['cf-ipcountry'] || req.headers['x-country'] || '', 4).toUpperCase() });
+    Object.assign(ev, { path: p, lang: str(d.lang, 16), site: d.site === 're' || d.site === 'in' ? d.site : (/^\/real-estate(\/|$)/.test(p) ? 're' : 'in'), title: str(d.title, 120), ref: str(d.ref, 300), q: str(d.q, 120), w: Number(d.w) || 0, dev: ua.dev, br: ua.br, cc: str(req.headers['cf-ipcountry'] || req.headers['x-country'] || '', 4).toUpperCase() });
+  } else if (type === 'click') { // 전화·메일 버튼 클릭(2026.11.06): 폼 대신 전화를 쓰는 방문을 세기 위해
+    ev.what = d.what === 'tel' ? 'tel' : 'mail'; ev.path = str(d.path, 200);
+    ev.site = d.site === 're' || d.site === 'in' ? d.site : (/^\/real-estate(\/|$)/.test(ev.path) ? 're' : 'in');
   } else {
     ev.dur = Math.max(0, Math.min(3600, Math.round(Number(d.dur) || 0)));
     if (d.dp !== undefined) ev.dp = Math.max(0, Math.min(100, Math.round(Number(d.dp) || 0)));
@@ -187,8 +194,9 @@ app.get('/stats', async (req, res) => {
   const days = [7, 30, 90, 365].includes(Number(req.query.days)) ? Number(req.query.days) : 30;
   const site = ['all', 'in', 're'].includes(String(req.query.site)) ? String(req.query.site) : 'all';
   const events = await readEvents(days * 2); // 직전 기간 비교용으로 두 배를 읽는다
-  const agg = aggregate(events, days, site, 0);
-  const prev = aggregate(events, days, site, days);
+  const includeBots = req.query.all === '1'; // 기본은 봇 추정 방문을 뺀 '실방문'
+  const agg = aggregate(events, days, site, 0, { includeBots });
+  const prev = aggregate(events, days, site, days, { includeBots });
   if (req.query.format === 'json') return res.json({ ...agg, prevTotals: prev.totals });
   res.type('html').send(renderStats(agg, { user: user ? '로그인됨' : '', siteUrl: SITE_URL.replace(/^https?:\/\//, ''), prev }));
 });
@@ -201,7 +209,7 @@ app.get('/stats/export.csv', async (req, res) => {
   const site = ['all', 'in', 're'].includes(String(req.query.site)) ? String(req.query.site) : 'all';
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
   res.setHeader('Content-Disposition', `attachment; filename="visits-${site}-${days}d.csv"`);
-  res.send(sessionsCsv(await readEvents(days), days, site));
+  res.send(sessionsCsv(await readEvents(days), days, site, { includeBots: req.query.all === '1' }));
 });
 
 app.get('/stats/login', (req, res) => {

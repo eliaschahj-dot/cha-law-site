@@ -5,6 +5,7 @@ import { allAreas, areaPath } from '../data/areas';
 import { getPublicColumns, related, postPath, fmtDate, tagPath } from '../data/posts';
 import { site } from '../data/site';
 import { guidesOf, guidePath, hubOf, siteMeta, type Guide } from '../data/guides';
+import QuickConsult from './QuickConsult.astro';
 interface Props { g: Guide }
 const { g } = Astro.props;
 const gs = g.site ?? 'in';
@@ -40,12 +41,16 @@ const otherKind = others.filter((x) => x.kind !== g.kind);
         </div>
       </section>
     )}
-    {g.sections.map((s) => (
-      <section>
-        <h2>{s.h}</h2>
-        {s.p.map((t) => <p>{t}</p>)}
-        {s.list && s.list.length > 0 && <ul class="situ">{s.list.map((i) => <li>{i}</li>)}</ul>}
-      </section>
+    {g.sections.map((s, i) => (
+      <>
+        <section>
+          <h2>{s.h}</h2>
+          {s.p.map((t) => <p>{t}</p>)}
+          {s.list && s.list.length > 0 && <ul class="situ">{s.list.map((i) => <li>{i}</li>)}</ul>}
+        </section>
+        {/* 2026.11.06: 둘째 소제목까지 읽은 사람을 그 자리에서 잡는 간이 상담 상자(전화 + 3칸) */}
+        {i === Math.min(1, g.sections.length - 1) && <QuickConsult site={gs} kw={kw} topic={linked[0]?.name ?? ''} />}
+      </>
     ))}
     {g.faq.length > 0 && (
       <section>

@@ -5,6 +5,8 @@ import CtaBand from '../../components/CtaBand.astro';
 import { getPublicColumns, related, postPath, fmtDate, sectionSlug, sections, tagPath, variantOfSection, type Post } from '../../data/posts';
 import { site } from '../../data/site';
 import { allAreas, areaPath } from '../../data/areas';
+import QuickConsult from '../../components/QuickConsult.astro';
+import { tipLinkOf } from '../../data/tiplinks';
 
 export async function getStaticPaths() {
   const cols = await getPublicColumns();
@@ -19,6 +21,8 @@ const colsLabel = variant === 're' ? '부동산 칼럼' : '칼럼';
 const field = variant === 're' ? '부동산' : '상속';
 const linkedAreas = allAreas.filter((a) => a.tags.some((t) => p.tags.includes(t))).sort((a, b) => (a.axis === b.axis ? 0 : (a.axis === variant ? -1 : 1))).slice(0, 3);
 const { Content } = await render(p.entry);
+// 2026.11.06 방문자 분석 후속: 꿀팁 글(세입자 정보글)은 분쟁 안내 페이지로 잇고, 그 밖의 글은 간이 상담 상자를 둔다. 본문 셋째 소제목 앞에도 복제한다(아래 script).
+const tl = p.section === '꿀팁' ? tipLinkOf({ title: p.title, keyword: p.keyword, tags: p.tags }) : null;
 const faqLd = p.faq.length ? { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: p.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) } : null;
 const ld = {
   '@context': 'https://schema.org', '@type': 'BlogPosting', headline: p.title, datePublished: p.date, dateModified: p.rewritten || p.date, ...(p.cover ? { image: new URL(p.cover, site.url).href } : {}),
@@ -44,6 +48,16 @@ const ld = {
         {p.full ? (
           <div>
             <div class="prose"><Content /></div>
+            {tl ? (
+              <aside class="tipbox" data-midbox>
+                <div class="k">이 문제로 분쟁이 생겼다면</div>
+                <h3><a href={tl.href}>{tl.label}</a></h3>
+                <p>{tl.desc} 부동산 전문 변호사가 상담도 재판도 직접 합니다.</p>
+                <div class="row"><a class="btn btn-seal btn-sm" href={tl.href}>안내 읽기</a><a class="btn btn-ghost btn-sm" href={tl.topic ? `/real-estate/contact?topic=${encodeURIComponent(tl.topic)}` : '/real-estate/contact'}>부동산 상담 신청</a><a class="btn btn-paper btn-sm" href={site.phoneHref}>전화 {site.phone}</a></div>
+              </aside>
+            ) : (
+              <QuickConsult site={variant} kw={p.keyword || ''} topic={linkedAreas[0]?.name ?? ''} id="qc-col" />
+            )}
             {p.faq.length > 0 && (
               <section style="margin-top:34px">
                 <h2>자주 묻는 질문</h2>
@@ -100,3 +114,13 @@ const ld = {
   </article>
   <CtaBand />
 </Base>
+
+<script>
+  // 본문에 소제목이 셋 이상이면 상담·안내 상자를 셋째 소제목 앞에도 복제해 둔다(끝까지 안 읽는 사람용).
+  const prose = document.querySelector('.prose');
+  const box = document.querySelector('[data-midbox]');
+  if (prose && box) {
+    const hs = prose.querySelectorAll('h2');
+    if (hs.length >= 3) { const c = box.cloneNode(true) as HTMLElement; c.removeAttribute('id'); c.classList.add('mid'); hs[2].before(c); }
+  }
+</script>

@@ -7,6 +7,7 @@ const sides = [['임차인', '세입자 (보증금·권리금)'], ['임대인', 
 const topics = [['전세보증금', '전세보증금 반환·전세사기'], ['매매', '매매계약·계약금·가계약'], ['임대차', '임대차·명도·권리금'], ['분양', '분양계약·분양권'], ['재개발', '재개발·재건축·현금청산'], ['공사', '공사대금·하자'], ['등기', '등기·명의·소유권'], ['기타', '부동산 외 (민사·상속·형사·가사)']];
 ---
 <form class="formwrap" id="cform" method="post" action="/api/contact" novalidate>
+  <div class="phonebar"><span>전화가 편하시면</span><a href={site.phoneHref}>{site.phone}</a><small>{site.hours} · 변호사 직통. 아래 신청서는 성함·연락처·한 줄이면 접수됩니다.</small></div>
   <input type="hidden" name="area" value="부동산" />
   <input type="hidden" name="site" value="re" />
   <div class="frow">
@@ -19,38 +20,40 @@ const topics = [['전세보증금', '전세보증금 반환·전세사기'], ['�
       <input id="c-phone" name="phone" type="tel" placeholder="010-0000-0000" required autocomplete="tel" />
     </div>
   </div>
-  <div class="frow">
-    <div class="f">
-      <label for="c-dates">중요한 날짜</label>
-      <input id="c-dates" name="dates" type="text" placeholder="예) 계약 만료 2026.11.30 / 잔금일 지남 / 소장 받은 날" />
-      <div class="hint">만료일·잔금일·소장 송달일처럼 기한이 걸린 날짜부터 확인합니다.</div>
+  <div class="f">
+    <label for="c-story">상황 <small class="opt">한 줄이면 됩니다</small></label>
+    <textarea id="c-story" class="short" name="story" placeholder="아시는 만큼만, 사실 그대로. “만기가 지났는데 보증금을 못 받고 있습니다”라고만 적으셔도 됩니다."></textarea>
+  </div>
+  <details class="more">
+    <summary><b>더 자세히 적기</b> <span>선택 · 중요한 날짜, 걸린 금액, 지금 입장, 관련 항목, 통화 시간</span></summary>
+    <div class="frow">
+      <div class="f">
+        <label for="c-dates">중요한 날짜</label>
+        <input id="c-dates" name="dates" type="text" placeholder="예) 계약 만료 2026.11.30 / 잔금일 지남 / 소장 받은 날" />
+        <div class="hint">만료일·잔금일·소장 송달일처럼 기한이 걸린 날짜부터 확인합니다.</div>
+      </div>
+      <div class="f">
+        <label for="c-amount">걸린 금액</label>
+        <input id="c-amount" name="amount" type="text" placeholder="예) 보증금 2억 / 계약금 5천만 원" />
+      </div>
     </div>
     <div class="f">
-      <label for="c-amount">걸린 금액</label>
-      <input id="c-amount" name="amount" type="text" placeholder="예) 보증금 2억 / 계약금 5천만 원" />
+      <span class="lbl">지금 어느 쪽에 계신가요</span>
+      <div class="chips">
+        {sides.map(([v, l]) => <label><input type="radio" name="side" value={v} checked={side === v} /> {l}</label>)}
+      </div>
     </div>
-  </div>
-  <div class="f">
-    <span class="lbl">지금 어느 쪽에 계신가요</span>
-    <div class="chips">
-      {sides.map(([v, l]) => <label><input type="radio" name="side" value={v} checked={side === v} /> {l}</label>)}
+    <div class="f">
+      <span class="lbl">관련된 것 (여러 개 선택 가능)</span>
+      <div class="chips">
+        {topics.map(([v, l]) => <label><input type="checkbox" name="topic" value={v} checked={topic === v} /> {l}</label>)}
+      </div>
     </div>
-  </div>
-  <div class="f">
-    <span class="lbl">관련된 것 (여러 개 선택 가능)</span>
-    <div class="chips">
-      {topics.map(([v, l]) => <label><input type="checkbox" name="topic" value={v} checked={topic === v} /> {l}</label>)}
+    <div class="f">
+      <label for="c-calltime">통화 가능한 시간</label>
+      <input id="c-calltime" name="calltime" type="text" placeholder="예) 평일 오후 / 문자 먼저" />
     </div>
-  </div>
-  <div class="f">
-    <label for="c-story">상황</label>
-    <textarea id="c-story" name="story" placeholder="아시는 만큼만, 사실 그대로 적어주세요."></textarea>
-    <div class="hint">“만기가 지났는데 보증금을 못 받고 있습니다”라고만 적으셔도 됩니다.</div>
-  </div>
-  <div class="f">
-    <label for="c-calltime">통화 가능한 시간</label>
-    <input id="c-calltime" name="calltime" type="text" placeholder="예) 평일 오후 / 문자 먼저" />
-  </div>
+  </details>
   <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
   <label class="agree">
     <input id="c-agree" name="agree" type="checkbox" required />
@@ -70,6 +73,7 @@ const topics = [['전세보증금', '전세보증금 반환·전세사기'], ['�
     const side = q.get('side'); const topic = q.get('topic');
     if (side) (form.querySelector(`input[name=side][value="${side}"]`) as HTMLInputElement | null)?.click();
     if (topic) (form.querySelector(`input[name=topic][value="${topic}"]`) as HTMLInputElement | null)?.click();
+    if (side || topic) form.querySelector('details.more')?.setAttribute('open', '');
   }
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();

@@ -1,0 +1,69 @@
+---
+/* 간이 상담 상자(2026.11.06 방문자 분석 후속). 안내·상황 페이지 본문 중간과 칼럼 본문에 넣는다.
+   전화 버튼 + 성함·연락처·한 줄 상황 3칸. 전송은 server.js /api/contact (source 에 페이지 경로가 들어간다). */
+import { site as S } from '../data/site';
+interface Props { site?: 'in' | 're'; topic?: string; kw?: string; heading?: string; note?: string; id?: string }
+const { site = 'in', topic = '', kw = '', heading, note, id = 'qc' } = Astro.props;
+const contact = site === 're' ? '/real-estate/contact' : '/contact';
+const h = heading ?? (kw ? `${kw} 문제, 이 상황이면 지금 상담하세요` : '이 상황이면 지금 상담하세요');
+const n = note ?? (site === 're'
+  ? '만료일·잔금일·소장 송달일처럼 기한이 걸린 일부터 봅니다. 계약서와 등기부는 상담에서 사진으로 보내 주시면 됩니다.'
+  : '상속포기·한정승인 3개월, 유류분 1년처럼 기한이 걸린 일부터 봅니다. 서류는 상담에서 사진으로 보내 주시면 됩니다.');
+const ph = site === 're' ? '한 줄이면 됩니다. 예) 만기 지났는데 보증금을 못 받고 있습니다' : '한 줄이면 됩니다. 예) 형이 아버지 예금을 미리 빼 갔습니다';
+---
+<aside class="qc" data-site={site} id={id} data-midbox>
+  <div class="qc-head">
+    <div class="k">바로 상담</div>
+    <h3>{h}</h3>
+    <p>{n}</p>
+  </div>
+  <a class="qc-tel" href={S.phoneHref}><span>변호사 직통</span><b>{S.phone}</b><small>{S.hours}</small></a>
+  <form class="qc-form" method="post" action="/api/contact" novalidate>
+    <input type="hidden" name="site" value={site} />
+    {site === 're' && <input type="hidden" name="area" value="부동산" />}
+    {topic && <input type="hidden" name="topic" value={topic} />}
+    <input type="hidden" name="source" value="" data-source />
+    <div class="qc-row">
+      <input name="name" type="text" placeholder="성함" required autocomplete="name" aria-label="성함" maxlength="40" />
+      <input name="phone" type="tel" placeholder="연락처 010-0000-0000" required autocomplete="tel" aria-label="연락처" maxlength="30" />
+    </div>
+    <input class="qc-story" name="story" type="text" placeholder={ph} aria-label="상황 한 줄" maxlength="300" />
+    <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" class="qc-hp" />
+    <label class="qc-agree"><input name="agree" type="checkbox" required /><span>상담 목적의 개인정보 수집·이용에 동의합니다. 상담 종료 후 1년 안에 파기합니다. <a href="/privacy">방침</a></span></label>
+    <button class="btn btn-seal qc-btn" type="submit">변호사에게 바로 묻기</button>
+    <div class="qc-done" role="status" aria-live="polite"></div>
+    <p class="qc-note">사무실을 거치지 않고 변호사에게 바로 전달됩니다. {S.reply}. 더 자세히 적으시려면 <a href={contact}>상담 신청서</a>로.</p>
+  </form>
+</aside>
+
+<script>
+  // 페이지 안의 모든 간이 상담 폼(본문 중간에 복제된 것 포함)을 한 번에 처리한다.
+  document.addEventListener('submit', async (e) => {
+    const form = e.target as HTMLFormElement | null;
+    if (!form || !form.classList.contains('qc-form')) return;
+    e.preventDefault();
+    const done = form.querySelector('.qc-done') as HTMLDivElement;
+    const btn = form.querySelector('.qc-btn') as HTMLButtonElement;
+    const val = (n: string) => ((form.querySelector(`[name="${n}"]`) as HTMLInputElement | null)?.value || '').trim();
+    const agree = (form.querySelector('[name="agree"]') as HTMLInputElement).checked;
+    done.style.display = 'block';
+    if (!val('name') || !val('phone')) { done.textContent = '성함과 연락처를 적어 주셔야 연락드릴 수 있습니다.'; return; }
+    if (!agree) { done.textContent = '개인정보 수집·이용에 동의해 주셔야 접수됩니다.'; return; }
+    (form.querySelector('[data-source]') as HTMLInputElement).value = `간이신청 ${location.pathname}`;
+    const data: Record<string, unknown> = Object.fromEntries(new FormData(form).entries());
+    data.agree = true;
+    const h = (window as any).__hit; if (h) { data.sid = h.sid; data.vid = h.vid; }
+    btn.disabled = true; btn.textContent = '보내는 중…';
+    try {
+      const r = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok) throw new Error('fail');
+      done.textContent = '접수되었습니다. 24시간 안에 변호사가 직접 연락드리겠습니다.';
+      form.querySelectorAll('input:not([type=hidden])').forEach((el) => { (el as HTMLInputElement).disabled = true; });
+      btn.textContent = '접수 완료';
+    } catch {
+      done.textContent = '전송에 실패했습니다. 위의 전화번호로 연락 주시면 바로 안내드리겠습니다.';
+      btn.disabled = false; btn.textContent = '변호사에게 바로 묻기';
+    }
+  });
+</script>

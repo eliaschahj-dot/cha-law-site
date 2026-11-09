@@ -455,3 +455,4 @@
 {"id": "224459348315", "slug": "Objection-To-Enforcement-Lawsuit", "keyword": "청구이의의 소", "title": "청구이의의 소 절차, 이미 갚은 빚에 강제집행이 들어왔다면", "sim": 0.05, "kw": 6, "in": 4300, "out": 5495, "chars": 2400}
 {"id": "224459350570", "slug": "Lien-Establishment-Requirements", "keyword": "유치권 성립요건", "title": "유치권 성립요건, 공사대금을 못 받았다면 점유와 시점부터 확인하세요", "sim": 0.092, "kw": 6, "in": 4505, "out": 5024, "chars": 2549}
 {"id": "224459353170", "slug": "Commercial-Property-Restoration", "keyword": "상가 원상회복", "title": "상가 원상회복 범위, 가게를 비울 때 어디까지 철거해야 할까", "sim": 0.069, "kw": 6, "in": 4543, "out": 6847, "chars": 2779}
+{"id": "224469876685", "slug": "Paramour-Alimony-Claim", "keyword": "상간자 위자료 청구", "title": "상간자 위자료 청구 조건과 기한, 증거를 모으기 전에 확인할 점", "sim": 0.109, "kw": 6, "in": 4446, "out": 5464, "chars": 2633}

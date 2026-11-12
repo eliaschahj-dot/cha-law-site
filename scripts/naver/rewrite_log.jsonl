@@ -456,3 +456,5 @@
 {"id": "224459350570", "slug": "Lien-Establishment-Requirements", "keyword": "유치권 성립요건", "title": "유치권 성립요건, 공사대금을 못 받았다면 점유와 시점부터 확인하세요", "sim": 0.092, "kw": 6, "in": 4505, "out": 5024, "chars": 2549}
 {"id": "224459353170", "slug": "Commercial-Property-Restoration", "keyword": "상가 원상회복", "title": "상가 원상회복 범위, 가게를 비울 때 어디까지 철거해야 할까", "sim": 0.069, "kw": 6, "in": 4543, "out": 6847, "chars": 2779}
 {"id": "224469876685", "slug": "Paramour-Alimony-Claim", "keyword": "상간자 위자료 청구", "title": "상간자 위자료 청구 조건과 기한, 증거를 모으기 전에 확인할 점", "sim": 0.109, "kw": 6, "in": 4446, "out": 5464, "chars": 2633}
+{"id": "224471789966", "slug": "Inheritance-Renunciation-Deadline-3", "keyword": "상속포기 기한", "title": "상속포기 기한 3개월, 신고 전에 확인할 한정승인·후순위 상속·재산 처분 문제", "sim": 0.068, "kw": 6, "in": 4331, "out": 5376, "chars": 2567}
+{"id": "224471786033", "slug": "Adult-Guardian-Application", "keyword": "성년후견인 신청", "title": "성년후견인 신청 절차와 후견인의 권한, 부모님 재산을 지키려면 알아야 할 것", "sim": 0.05, "kw": 6, "in": 4443, "out": 5783, "chars": 2504}

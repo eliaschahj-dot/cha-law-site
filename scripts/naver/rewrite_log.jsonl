@@ -460,3 +460,4 @@
 {"id": "224471786033", "slug": "Adult-Guardian-Application", "keyword": "성년후견인 신청", "title": "성년후견인 신청 절차와 후견인의 권한, 부모님 재산을 지키려면 알아야 할 것", "sim": 0.05, "kw": 6, "in": 4443, "out": 5783, "chars": 2504}
 {"id": "224478632960", "slug": "Forced-Share-Return-Claim", "keyword": "유류분반환청구", "title": "유류분반환청구 2026년 개정, 달라진 청구 자격과 기한 정리", "sim": 0.07, "kw": 6, "in": 9054, "out": 16066, "chars": 2395}
 {"id": "224478645764", "slug": "Land-Compensation-Increase", "keyword": "토지보상금 증액", "title": "토지보상금 증액, 통지서를 받은 뒤 단계별로 다투는 방법", "sim": 0.11, "kw": 6, "in": 4333, "out": 6833, "chars": 2657}
+{"id": "224478649496", "slug": "Construction-Payment-Claim", "keyword": "공사대금 청구", "title": "공사대금 청구, 소멸시효 3년이 지나기 전에 점검할 네 가지", "sim": 0.069, "kw": 6, "in": 4331, "out": 7881, "chars": 2575}

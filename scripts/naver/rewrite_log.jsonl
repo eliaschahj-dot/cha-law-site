@@ -462,3 +462,4 @@
 {"id": "224478645764", "slug": "Land-Compensation-Increase", "keyword": "토지보상금 증액", "title": "토지보상금 증액, 통지서를 받은 뒤 단계별로 다투는 방법", "sim": 0.11, "kw": 6, "in": 4333, "out": 6833, "chars": 2657}
 {"id": "224478649496", "slug": "Construction-Payment-Claim", "keyword": "공사대금 청구", "title": "공사대금 청구, 소멸시효 3년이 지나기 전에 점검할 네 가지", "sim": 0.069, "kw": 6, "in": 4331, "out": 7881, "chars": 2575}
 {"id": "224487914655", "slug": "Inheritance-Division-Lawsuit", "keyword": "상속재산분할 소송", "title": "상속재산분할 소송, 형제가 동의하지 않을 때 기여분과 특별수익 짚어 보기", "sim": 0.101, "kw": 6, "in": 5096, "out": 5494, "chars": 2755}
+{"id": "224487925148", "slug": "Jeonse-Fraud-Leasehold-Registration", "keyword": "전세사기 임차권등기", "title": "전세사기 임차권등기, 보증금 못 받고 이사해야 할 때 순서", "sim": 0.066, "kw": 6, "in": 4326, "out": 5446, "chars": 2261}
